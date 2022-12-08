@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cryptocurrencies {% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="/styles/styles.css">
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+</head>
+<body>
+<div id="pageContainer">
+
+    <div id="top">
+        <div id="headerContainer">
+            <div><a class="headerLink" href="/">Cryptocurrencies</a></div>
+            <div class="accountDisplay">
+                {% if auth %}
+                    <p>Welcome, </p>
+                    <p class="userName"><a href="/account">{{ auth.name }}</a></p>
+                    <p><a href="/logout">Log out</a></p>
+                {% else %}
+                    <p><a href="/login">Log in</a></p>
+                    <p class="userName"></p>
+                    <p><a href="/register">Register</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div id="content">
+        {% if errors.database %}
+            <div class="errorMessage">ERROR: {{ errors.database }}</div>
+        {% endif %}
+        {% if messages.delete %}
+            <div class="flashMessage">{{ messages.delete }}</div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <div id="bottom">
+        {% block footer %}{% endblock %}
+    </div>
+
+</div>
+</body>
+</html>

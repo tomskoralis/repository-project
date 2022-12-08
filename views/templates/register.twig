@@ -1,0 +1,34 @@
+{% extends 'base.twig' %}
+
+{% block title %}| register{% endblock %}
+
+{% block content %}
+    <div class="userInputFormContainer">
+        <div class="pageTitle">Register account</div>
+        <form class="userInputForm" action="/register" method="post">
+            <label class="userInputBoxLabel">Username:<br>
+                <input required class="userInputBox" name="name">
+            </label><br>
+            <label class="userInputBoxLabel">E-mail:<br>
+                <input required class="userInputBox" name="email">
+            </label><br>
+            <label class="userInputBoxLabel">Password:<br>
+                <input required class="userInputBox password" name="password" type="password">
+            </label><br>
+            <label class="userInputBoxLabel">Repeat password:<br>
+                <input required class="userInputBox passwordRepeated" name="passwordRepeated" type="password">
+            </label><br>
+            <div class="alignCenter">
+                <button class="submitButton">Register</button>
+            </div>
+        </form>
+        <br>
+
+        {% for error in errors %}
+            <div class="errorMessage">
+                ERROR: {{ error }}
+            </div>
+        {% endfor %}
+
+    </div>
+{% endblock %}

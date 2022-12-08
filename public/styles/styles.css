@@ -1,0 +1,221 @@
+* {
+    box-sizing: border-box;
+    font-size: calc(5px + 0.7vw);
+}
+
+html, body {
+    background: #363636;
+    color: #ffffff;
+    padding: 0;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    height: 100vh;
+    width: 100vw;
+}
+
+a {
+    color: #6080ff;
+}
+
+p {
+    display: block;
+    margin-block: 0;
+    margin-inline: 0;
+}
+
+pre {
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+#pageContainer {
+    height: 100%;
+    padding-top: 2.7rem;
+    display: grid;
+    justify-items: center;
+    overflow-x: hidden;
+    overflow-y: auto;
+    text-align: left;
+}
+
+#top {
+    background: #252525;
+    width: 40rem;
+    max-width: 40rem;
+    min-width: 40rem;
+    position: fixed;
+    top: 0;
+    height: 2.7rem;
+    padding: 0.3rem 1rem;
+    border-bottom: 2px solid #ffffff;
+}
+
+#content {
+    background: #252525;
+    height: 100%;
+    width: 40rem;
+    overflow-wrap: break-word;
+    text-align: left;
+    padding: 0 1rem;
+}
+
+#bottom {
+    background: #252525;
+    height: 100%;
+    width: 40rem;
+    margin: 0 auto;
+    display: flex;
+}
+
+#headerContainer {
+    display: flex;
+    height: 2.1em;
+    justify-content: space-between;
+}
+
+div.accountDisplay {
+    text-align: left;
+    max-width: 25rem;
+    display: grid;
+    grid-template-columns: max-content 1fr max-content;
+}
+
+p.userName {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 15rem;
+    margin: 0 0.5rem;
+}
+
+.headerLink {
+    color: #ffffff;
+    font-size: calc(8px + 1vw);
+    text-decoration: none;
+}
+
+div.tableGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border: 2px solid #707070;
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    grid-gap: 0.5rem 0;
+}
+
+div.tableItem {
+    text-justify: inter-word;
+    text-align: right;
+}
+
+div.tableItem:nth-child(3n-1) {
+    text-align: left;
+}
+
+div.tableItem:nth-child(5), div.tableItem:nth-child(6), div.tableItem:nth-child(7) {
+    border-top: 2px solid #606060;;
+}
+
+div.tableItem:nth-child(n+8) {
+    border-top: 1px solid #404040;
+}
+
+div.tableTopRow {
+    font-weight: bold;
+}
+
+div.tableHeading {
+    grid-column: 1 / 4;
+    font-size: calc(7px + 0.9vw);
+    text-align: center;
+    padding-bottom: 0.5rem;
+}
+
+div.userInputFormContainer {
+    margin-top: 0.5rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 1rem;
+    width: 25rem;
+    border: 2px solid #707070;
+    border-radius: 0.5rem;
+}
+
+form.userInputForm {
+    width: fit-content;
+    margin: 0 auto;
+}
+
+div.pageTitle {
+    font-size: calc(7px + 0.9vw);
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+input.userInputBox {
+    width: 20rem;
+    height: 1.4rem;
+    margin-bottom: 0.7rem;
+}
+
+button.submitButton {
+    color: #ffffff;
+    background-image: linear-gradient(-180deg, #1D95C9 0%, #17759C 100%);
+    border: 0;
+    border-radius: 0.3rem;
+    text-align: center;
+    padding: 0.2rem 1rem;
+    height: 2rem;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+button.submitButton:hover {
+    background-image: linear-gradient(-180deg, #37AEE2 0%, #1E96C8 100%);
+}
+
+button.dangerButton {
+    background-image: linear-gradient(-180deg, #c8511d 0%, #e16937 100%);
+}
+
+button.dangerButton:hover {
+    background-image: linear-gradient(-180deg, #e26a36 0%, #e88a63 100%);
+}
+
+div.errorMessage {
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    color: #770000;
+    background: #ffdddd;
+    border: 1px solid #770000;
+    border-radius: 0.5rem;
+}
+
+div.flashMessage {
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    color: #007700;
+    background: #ddffdd;
+    border: 1px solid #007700;
+    border-radius: 0.5rem;
+}
+
+div.alignCenter {
+    text-align: center;
+}
+
+span.greenText {
+    color: #00aa00;
+}
+
+span.redText {
+    color: #aa0000;
+}

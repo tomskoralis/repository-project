@@ -1,0 +1,35 @@
+{% extends 'base.twig' %}
+
+{% block content %}
+    {% if currenciesError %}
+        <pre>{{ currenciesError }}</pre>
+    {% else %}
+        {% if currencies %}
+            <div class="tableGrid">
+                <div class="tableHeading">Cryptocurrency Prices</div>
+                <div class="tableItem tableTopRow">Cryptocurrency</div>
+                <div class="tableItem tableTopRow">Price</div>
+                <div class="tableItem tableTopRow">Change 24h</div>
+
+                {% for currency in currencies.getCurrencies %}
+                    <div class="tableItem">{{ currency.getName }}</div>
+                    <div class="tableItem">
+                        {% if currency.getPrice < 1 %}
+                            {{ currency.getPrice | format_currency(currencyCode, {max_significant_digits_used: 4}) }}
+                        {% else %}
+                            {{ (currency.getPrice | format_currency(currencyCode, {fraction_digit: 2})) | replace({',': ''}) }}
+                        {% endif %}
+                    </div>
+                    <div class="tableItem">
+                        {% if currency.getChange > 0 %}
+                            <span class="greenText">&#9650;{{ (currency.getChange) | number_format(2, '.', '') }}%</span>
+                        {% else %}
+                            <span class="redText">&#9660;{{ (currency.getChange) | abs | number_format(2, '.', '') }}%</span>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+            </div>
+        {% endif %}
+    {% endif %}
+{% endblock %}
