@@ -9,21 +9,24 @@ use Dotenv\Exception\ValidationException;
 
 class UsersDatabaseRepository implements UsersRepository
 {
-    private static Connection $connection;
-    private static ?string $errorMessage = null;
+    private static ?Connection $connection;
+    private ?string $errorMessage = null;
 
     public function __construct(Dotenv $dotenv)
     {
-        self::$connection = self::getConnection($dotenv);
+        self::$connection = $this->getConnection($dotenv);
     }
 
     public function getErrorMessage(): ?string
     {
-        return self::$errorMessage;
+        return $this->errorMessage;
     }
 
     public function getUser(int $userId): User
     {
+        if (!isset(self::$connection)) {
+            return new User();
+        }
         try {
             $queryBuilder = self::$connection->createQueryBuilder();
             $queryBuilder
@@ -33,7 +36,7 @@ class UsersDatabaseRepository implements UsersRepository
                 ->setParameter(0, $userId);
             $user = $queryBuilder->executeQuery()->fetchAssociative() ?? [];
         } catch (Exception $e) {
-            self::$errorMessage = "Database Exception: " . $e->getMessage();
+            $this->errorMessage = "Database Exception: " . $e->getMessage();
             return new User();
         }
         return new User(
@@ -45,6 +48,9 @@ class UsersDatabaseRepository implements UsersRepository
 
     public function insertUser(User $user): void
     {
+        if (!isset(self::$connection)) {
+            return;
+        }
         try {
             $queryBuilder = self::$connection->createQueryBuilder();
             $queryBuilder
@@ -59,12 +65,15 @@ class UsersDatabaseRepository implements UsersRepository
                 ->setParameter(2, password_hash($user->getPassword(), PASSWORD_BCRYPT));
             $queryBuilder->executeQuery();
         } catch (Exception $e) {
-            self::$errorMessage = "Database Exception: " . $e->getMessage();
+            $this->errorMessage = "Database Exception: " . $e->getMessage();
         }
     }
 
     public function updateUser(User $user, int $userId): void
     {
+        if (!isset(self::$connection)) {
+            return;
+        }
         try {
             $queryBuilder = self::$connection->createQueryBuilder();
             $queryBuilder->update('users');
@@ -96,12 +105,15 @@ class UsersDatabaseRepository implements UsersRepository
                 ->setParameter($key, $userId)
                 ->executeQuery();
         } catch (Exception $e) {
-            self::$errorMessage = "Database Exception: " . $e->getMessage();
+            $this->errorMessage = "Database Exception: " . $e->getMessage();
         }
     }
 
     public function deleteUser(int $userId): void
     {
+        if (!isset(self::$connection)) {
+            return;
+        }
         try {
             $queryBuilder = self::$connection->createQueryBuilder();
             $queryBuilder
@@ -110,12 +122,15 @@ class UsersDatabaseRepository implements UsersRepository
                 ->setParameter(1, $userId);
             $queryBuilder->executeQuery();
         } catch (Exception $e) {
-            self::$errorMessage = "Database Exception: " . $e->getMessage();
+            $this->errorMessage = "Database Exception: " . $e->getMessage();
         }
     }
 
     public function searchIdByEmail(User $user): int
     {
+        if (!isset(self::$connection)) {
+            return 0;
+        }
         try {
             $queryBuilder = self::$connection->createQueryBuilder();
             $queryBuilder
@@ -125,13 +140,16 @@ class UsersDatabaseRepository implements UsersRepository
                 ->setParameter(0, $user->getEmail());
             return $queryBuilder->executeQuery()->fetchAssociative()["id"] ?? 0;
         } catch (Exception $e) {
-            self::$errorMessage = "Database Exception: " . $e->getMessage();
+            $this->errorMessage = "Database Exception: " . $e->getMessage();
         }
         return 0;
     }
 
-    public function getEmailsExcept(int $userId): \Generator
+    public function getEmailsExcept(int $userId = 0): \Generator
     {
+        if (!isset(self::$connection)) {
+            return;
+        }
         $emails = [];
         try {
             $queryBuilder = self::$connection->createQueryBuilder();
@@ -163,18 +181,17 @@ class UsersDatabaseRepository implements UsersRepository
             try {
                 $dotenv->required(["DATABASE_NAME", "DATABASE_USER", "DATABASE_PASSWORD",])->notEmpty();
             } catch (ValidationException $e) {
-                self::$errorMessage = "Dotenv Validation Exception: {$e->getMessage()}";
+                $this->errorMessage = "Dotenv Validation Exception: {$e->getMessage()}";
                 return null;
             } catch (\Exception $e) {
-                self::$errorMessage = "Exception: {$e->getMessage()}";
+                $this->errorMessage = "Exception: {$e->getMessage()}";
                 return null;
             }
 
             try {
                 self::$connection = DriverManager::getConnection($connectionParams);
-                self::$errorMessage = null;
             } catch (Exception $e) {
-                self::$errorMessage = "Database Exception: " . $e->getMessage();
+                $this->errorMessage = "Database Exception: " . $e->getMessage();
                 return null;
             }
         }

@@ -18,5 +18,5 @@ interface UsersRepository
 
     public function searchIdByEmail(User $user): int;
 
-    public function getEmailsExcept(int $userId): \Generator;
+    public function getEmailsExcept(int $userId = 0): \Generator;
 }

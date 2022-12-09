@@ -8,7 +8,7 @@ use Dotenv\Dotenv;
 
 class UsersService
 {
-    private UsersDatabaseRepository $database;
+    private ?UsersDatabaseRepository $database;
 
     public function __construct()
     {
@@ -22,7 +22,7 @@ class UsersService
 
     public function getUser(int $userId): User
     {
-        $user = $this->database->getUser($userId);
+        $user = (isset($this->database)) ? $this->database->getUser($userId) : new User();
         if ($this->database->getErrorMessage() !== null) {
             $_SESSION["errors"]["database"] = $this->database->getErrorMessage();
         }
@@ -31,7 +31,9 @@ class UsersService
 
     public function insertUser(User $user): void
     {
-        $this->database->insertUser($user);
+        if (isset($this->database)) {
+            $this->database->insertUser($user);
+        }
         if ($this->database->getErrorMessage() !== null) {
             $_SESSION["errors"]["database"] = $this->database->getErrorMessage();
         }
@@ -39,7 +41,9 @@ class UsersService
 
     public function updateUser(User $user, int $userId): void
     {
-        $this->database->updateUser($user, $userId);
+        if (isset($this->database)) {
+            $this->database->updateUser($user, $userId);
+        }
         if ($this->database->getErrorMessage() !== null) {
             $_SESSION["errors"]["database"] = $this->database->getErrorMessage();
         }
@@ -47,7 +51,9 @@ class UsersService
 
     public function deleteUser(int $userId): void
     {
-        $this->database->deleteUser($userId);
+        if (isset($this->database)) {
+            $this->database->deleteUser($userId);
+        }
         if ($this->database->getErrorMessage() !== null) {
             $_SESSION["errors"]["database"] = $this->database->getErrorMessage();
         }
@@ -55,7 +61,7 @@ class UsersService
 
     public function searchIdByEmail(User $user): int
     {
-        $userId = $this->database->searchIdByEmail($user);
+        $userId = (isset($this->database)) ? $this->database->searchIdByEmail($user) : 0;
         if ($this->database->getErrorMessage() !== null) {
             $_SESSION["errors"]["database"] = $this->database->getErrorMessage();
         }
@@ -64,7 +70,9 @@ class UsersService
 
     public function getEmailsExcept(int $userId): \Generator
     {
-        $emails = $this->database->getEmailsExcept($userId);
+        if (isset($this->database)) {
+            $emails = $this->database->getEmailsExcept($userId);
+        }
         if ($this->database->getErrorMessage() !== null) {
             $_SESSION["errors"]["database"] = $this->database->getErrorMessage();
         }
