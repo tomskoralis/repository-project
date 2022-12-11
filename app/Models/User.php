@@ -15,7 +15,7 @@ class User
         string $email = null,
         string $password = null,
         string $passwordRepeated = null,
-        float $wallet = null
+        float  $wallet = null
     )
     {
         $this->name = $name;

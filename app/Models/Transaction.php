@@ -11,10 +11,10 @@ class Transaction
     private string $dateTime;
 
     public function __construct(
-        int       $userId,
-        string    $symbol,
-        float     $price,
-        float     $amount,
+        int    $userId,
+        string $symbol,
+        float  $price,
+        float  $amount,
         string $dateTime
     )
     {

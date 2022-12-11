@@ -9,7 +9,7 @@ use Doctrine\DBAL\{Connection, DriverManager, Exception};
 use Dotenv\Dotenv;
 use Dotenv\Exception\ValidationException;
 
-class DatabaseTransactionsRepository
+class DatabaseTransactionsRepository implements TransactionsRepository
 {
     private static ?Connection $connection;
     private ?string $errorMessage = null;
