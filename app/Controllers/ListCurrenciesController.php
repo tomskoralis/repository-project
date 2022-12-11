@@ -6,17 +6,15 @@ use App\Template;
 use App\Services\CurrenciesService;
 use const App\{CRYPTOCURRENCY_SYMBOLS, CURRENCY_CODE};
 
-class CurrenciesController
+class ListCurrenciesController
 {
     public function index(): Template
     {
         $currenciesService = new CurrenciesService();
         $currencies = $currenciesService->fetchCurrencies(CRYPTOCURRENCY_SYMBOLS, CURRENCY_CODE);
-        $errorMessage = $currenciesService->getErrorMessage();
-        return new Template ("templates/currencies.twig", [
-            "currencies" => $currencies,
-            "currencyCode" => CURRENCY_CODE,
-            "currenciesError" => $errorMessage,
+        return new Template ('templates/list.twig', [
+            'currencies' => $currencies->getCurrencies(),
+            'currencyCode' => CURRENCY_CODE,
         ]);
     }
 }

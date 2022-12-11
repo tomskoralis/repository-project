@@ -7,14 +7,16 @@ use Doctrine\DBAL\{Connection, DriverManager, Exception};
 use Dotenv\Dotenv;
 use Dotenv\Exception\ValidationException;
 
-class UsersDatabaseRepository implements UsersRepository
+class DatabaseUsersRepository implements UsersRepository
 {
     private static ?Connection $connection;
     private ?string $errorMessage = null;
 
-    public function __construct(Dotenv $dotenv)
+    public function __construct()
     {
-        self::$connection = $this->getConnection($dotenv);
+        if (!isset(self::$connection)) {
+            self::$connection = $this->getConnection();
+        }
     }
 
     public function getErrorMessage(): ?string
@@ -36,17 +38,19 @@ class UsersDatabaseRepository implements UsersRepository
                 ->setParameter(0, $userId);
             $user = $queryBuilder->executeQuery()->fetchAssociative() ?? [];
         } catch (Exception $e) {
-            $this->errorMessage = "Database Exception: " . $e->getMessage();
+            $this->errorMessage = 'Database Exception: ' . $e->getMessage();
             return new User();
         }
         return new User(
-            $user["name"],
-            $user["email"],
-            $user["password"],
+            $user['name'],
+            $user['email'],
+            $user['password'],
+            $user['password'],
+            $user['wallet']
         );
     }
 
-    public function insertUser(User $user): void
+    public function addUser(User $user): void
     {
         if (!isset(self::$connection)) {
             return;
@@ -54,18 +58,19 @@ class UsersDatabaseRepository implements UsersRepository
         try {
             $queryBuilder = self::$connection->createQueryBuilder();
             $queryBuilder
-                ->insert("users")
+                ->insert('users')
                 ->values([
                     'name' => '?',
                     'email' => '?',
                     'password' => '?',
+                    'wallet' => 0,
                 ])
                 ->setParameter(0, $user->getName())
                 ->setParameter(1, $user->getEmail())
                 ->setParameter(2, password_hash($user->getPassword(), PASSWORD_BCRYPT));
             $queryBuilder->executeQuery();
         } catch (Exception $e) {
-            $this->errorMessage = "Database Exception: " . $e->getMessage();
+            $this->errorMessage = 'Database Exception: ' . $e->getMessage();
         }
     }
 
@@ -105,7 +110,7 @@ class UsersDatabaseRepository implements UsersRepository
                 ->setParameter($key, $userId)
                 ->executeQuery();
         } catch (Exception $e) {
-            $this->errorMessage = "Database Exception: " . $e->getMessage();
+            $this->errorMessage = 'Database Exception: ' . $e->getMessage();
         }
     }
 
@@ -122,7 +127,7 @@ class UsersDatabaseRepository implements UsersRepository
                 ->setParameter(1, $userId);
             $queryBuilder->executeQuery();
         } catch (Exception $e) {
-            $this->errorMessage = "Database Exception: " . $e->getMessage();
+            $this->errorMessage = 'Database Exception: ' . $e->getMessage();
         }
     }
 
@@ -138,9 +143,9 @@ class UsersDatabaseRepository implements UsersRepository
                 ->from('users')
                 ->where('email = ?')
                 ->setParameter(0, $user->getEmail());
-            return $queryBuilder->executeQuery()->fetchAssociative()["id"] ?? 0;
+            return $queryBuilder->executeQuery()->fetchAssociative()['id'] ?? 0;
         } catch (Exception $e) {
-            $this->errorMessage = "Database Exception: " . $e->getMessage();
+            $this->errorMessage = 'Database Exception: ' . $e->getMessage();
         }
         return 0;
     }
@@ -160,41 +165,59 @@ class UsersDatabaseRepository implements UsersRepository
                 ->setParameter(0, $userId);
             $emails = $queryBuilder->executeQuery()->fetchAllAssociative();
         } catch (Exception $e) {
-            $_SESSION["errors"]["database"] = "UsersDatabaseRepository Exception: " . $e->getMessage();
+            $this->errorMessage = 'Database Exception: ' . $e->getMessage();
         }
         foreach ($emails as $email) {
-            yield $email["email"];
+            yield $email['email'];
         }
     }
 
-    private function getConnection(Dotenv $dotenv): ?Connection
+    public function addMoneyToWallet(int $userId, float $amount): void
     {
         if (!isset(self::$connection)) {
-            $connectionParams = [
-                "dbname" => $_ENV["DATABASE_NAME"],
-                "user" => $_ENV["DATABASE_USER"],
-                "password" => $_ENV["DATABASE_PASSWORD"],
-                "host" => $_ENV["DATABASE_HOST"] ?: "localhost",
-                "driver" => $_ENV["DATABASE_DRIVER"] ?: "pdo_mysql",
-            ];
-
-            try {
-                $dotenv->required(["DATABASE_NAME", "DATABASE_USER", "DATABASE_PASSWORD",])->notEmpty();
-            } catch (ValidationException $e) {
-                $this->errorMessage = "Dotenv Validation Exception: {$e->getMessage()}";
-                return null;
-            } catch (\Exception $e) {
-                $this->errorMessage = "Exception: {$e->getMessage()}";
-                return null;
-            }
-
-            try {
-                self::$connection = DriverManager::getConnection($connectionParams);
-            } catch (Exception $e) {
-                $this->errorMessage = "Database Exception: " . $e->getMessage();
-                return null;
-            }
+            return;
         }
-        return self::$connection;
+        try {
+            $sql = "UPDATE users SET wallet = wallet + ? WHERE id = ?";
+            $statement = self::$connection->prepare($sql);
+            $statement->bindValue(1, $amount);
+            $statement->bindValue(2, $userId);
+            $statement->executeQuery();
+//            $queryBuilder = self::$connection->createQueryBuilder();
+//            $queryBuilder
+//                ->update('users')
+//                ->where('id', $userId)
+//                ->update(['wallet' => self::$connection->raw('wallet + ?', [$amount])])
+//                ->executeQuery();
+        } catch (Exception $e) {
+            $this->errorMessage = 'Database Exception: ' . $e->getMessage();
+        }
+    }
+
+    private function getConnection(): ?Connection
+    {
+        $dotenv = Dotenv::createImmutable(__DIR__, '../../.env');
+        $dotenv->load();
+        $connectionParams = [
+            'dbname' => $_ENV['DATABASE_NAME'],
+            'user' => $_ENV['DATABASE_USER'],
+            'password' => $_ENV['DATABASE_PASSWORD'],
+            'host' => $_ENV['DATABASE_HOST'] ?: 'localhost',
+            'driver' => $_ENV['DATABASE_DRIVER'] ?: 'pdo_mysql',
+        ];
+
+        try {
+            $dotenv->required(['DATABASE_NAME', 'DATABASE_USER', 'DATABASE_PASSWORD',])->notEmpty();
+        } catch (ValidationException $e) {
+            $this->errorMessage = 'Dotenv Exception: ' . $e->getMessage();
+            return null;
+        }
+
+        try {
+            return DriverManager::getConnection($connectionParams);
+        } catch (Exception $e) {
+            $this->errorMessage = 'Database Exception: ' . $e->getMessage();
+        }
+        return null;
     }
 }

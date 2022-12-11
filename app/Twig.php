@@ -14,9 +14,9 @@ class Twig
     public static function renderTemplate(Template $template): void
     {
         if (!isset(self::$twig)) {
-            self::$twig = new Environment(new FilesystemLoader("../views"));
+            self::$twig = new Environment(new FilesystemLoader('../views'));
             self::$twig->addExtension(new IntlExtension());
-            foreach (ClassMapGenerator::createMap("../app/ViewVariables") as $symbol => $path) {
+            foreach (ClassMapGenerator::createMap('../app/ViewVariables') as $symbol => $path) {
                 if (class_exists($symbol)) {
                     $variable = new $symbol;
                     self::$twig->addGlobal($variable->getName(), $variable->getValue());
@@ -27,11 +27,11 @@ class Twig
 //        try {
 //            echo self::$twig->render($template->getPath(), $template->getParameters());
 //        } catch (\Twig\Error\LoaderError $e) {
-//            echo "Twig Loader Error: " . $e->getMessage();
+//            echo 'Twig Loader Error: ' . $e->getMessage();
 //        } catch (\Twig\Error\RuntimeError $e) {
-//            echo "Twig Runtime Error: " . $e->getMessage();
+//            echo 'Twig Runtime Error: ' . $e->getMessage();
 //        } catch (\Twig\Error\SyntaxError $e) {
-//            echo "Twig Syntax Error: " . $e->getMessage();
+//            echo 'Twig Syntax Error: ' . $e->getMessage();
 //        }
     }
 }

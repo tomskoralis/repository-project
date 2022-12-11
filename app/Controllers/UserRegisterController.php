@@ -2,44 +2,43 @@
 
 namespace App\Controllers;
 
-use App\{Redirect, Template, Validation};
-use App\Services\UsersService;
+use App\{Redirect, Session, Template, UserValidation};
 use App\Models\User;
+use App\Services\UsersService;
 
 class UserRegisterController
 {
     public function displayRegisterForm(): Template
     {
-        return new Template("templates/register.twig");
+        return new Template('templates/register.twig');
     }
 
     public function store(): Redirect
     {
-        $password = $_POST["password"] ?? "";
-        $email = $_POST["email"] ?? "";
-        $name = $_POST["name"] ?? "";
-        $passwordRepeated = $_POST["passwordRepeated"] ?? "";
+        $password = $_POST['password'] ?? '';
+        $email = $_POST['email'] ?? '';
+        $name = $_POST['name'] ?? '';
+        $passwordRepeated = $_POST['passwordRepeated'] ?? '';
 
         $user = new User($name, $email, $password, $passwordRepeated);
-        $validation = new Validation($user);
+        $validation = new UserValidation($user);
 
         $validation->isUserValid();
-        if (!empty($_SESSION["errors"])) {
-            return new Redirect("/register");
+        if (Session::has('errors')) {
+            return new Redirect('/register');
         }
 
         $validation->isEmailTaken();
-        if (!empty($_SESSION["errors"])) {
-            return new Redirect("/register");
+        if (Session::has('errors')) {
+            return new Redirect('/register');
         }
 
         $usersService = new UsersService();
         $usersService->insertUser($user);
-        if (isset($_SESSION["errors"])) {
-            return new Redirect("/register");
+        if (Session::has('errors')) {
+            return new Redirect('/register');
         }
-
-        $_SESSION["userId"] = $usersService->searchIdByEmail($user);
-        return new Redirect("/");
+        Session::add($usersService->searchIdByEmail($user), 'userId');
+        return new Redirect('/');
     }
 }

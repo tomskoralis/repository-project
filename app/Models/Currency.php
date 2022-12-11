@@ -4,15 +4,33 @@ namespace App\Models;
 
 class Currency
 {
+    private string $symbol;
     private string $name;
     private float $price;
-    private float $change;
+    private float $change1h;
+    private float $change24h;
+    private float $change7d;
 
-    public function __construct(string $name, float $price, float $change)
+    public function __construct(
+        string $symbol,
+        string $name,
+        float  $price,
+        float  $change1h,
+        float  $change24h,
+        float  $change7d
+    )
     {
+        $this->symbol = $symbol;
         $this->name = $name;
         $this->price = $price;
-        $this->change = $change;
+        $this->change1h = $change1h;
+        $this->change24h = $change24h;
+        $this->change7d = $change7d;
+    }
+
+    public function getSymbol(): string
+    {
+        return $this->symbol;
     }
 
     public function getName(): string
@@ -25,8 +43,18 @@ class Currency
         return $this->price;
     }
 
-    public function getChange(): float
+    public function getChange1h(): float
     {
-        return $this->change;
+        return $this->change1h;
+    }
+
+    public function getChange24h(): float
+    {
+        return $this->change24h;
+    }
+
+    public function getChange7d(): float
+    {
+        return $this->change7d;
     }
 }

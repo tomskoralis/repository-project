@@ -2,15 +2,17 @@
 
 namespace App\ViewVariables;
 
+use App\Session;
+
 class MessagesViewVariables implements ViewVariables
 {
     public function getName(): string
     {
-        return "messages";
+        return 'messages';
     }
 
     public function getValue(): array
     {
-        return $_SESSION["flashMessages"] ?? [];
+        return Session::get('flashMessages') ?? [];
     }
 }

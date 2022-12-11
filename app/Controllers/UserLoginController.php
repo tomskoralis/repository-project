@@ -2,42 +2,41 @@
 
 namespace App\Controllers;
 
-use App\{Redirect, Template, Validation};
-use App\Services\UsersService;
+use App\{Redirect, Session, Template, UserValidation};
 use App\Models\User;
+use App\Services\UsersService;
 
 class UserLoginController
 {
     public function displayLoginForm(): Template
     {
-        return new Template("templates/login.twig");
+        return new Template('templates/login.twig');
     }
 
     public function login(): Redirect
     {
-        $password = $_POST["password"] ?? "";
-        $email = $_POST["email"] ?? "";
+        $password = $_POST['password'] ?? '';
+        $email = $_POST['email'] ?? '';
 
         $user = new User(null, $email, $password);
-        $validation = new Validation($user);
+        $validation = new UserValidation($user);
 
         $validation->isUserValid();
-        if (!empty($_SESSION["errors"])) {
-            return new Redirect("/login");
+        if (Session::has('errors')) {
+            return new Redirect('/login');
         }
 
         $userId = (new UsersService())->searchIdByEmail($user);
         if (!$validation->isPasswordMatchingHash($userId)) {
-            return new Redirect("/login");
+            return new Redirect('/login');
         }
-
-        $_SESSION["userId"] = $userId;
-        return new Redirect("/");
+        Session::add($userId, 'userId');
+        return new Redirect('/');
     }
 
     public function logout(): Redirect
     {
-        unset($_SESSION["userId"]);
-        return new Redirect("/");
+        Session::remove('userId');
+        return new Redirect('/');
     }
 }

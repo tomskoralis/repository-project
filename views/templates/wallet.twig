@@ -1,0 +1,31 @@
+{% extends 'base.twig' %}
+
+{% block title %} | Wallet{% endblock %}
+
+{% block content %}
+    <div class="userInputFormContainer">
+        <div class="pageTitle">Wallet</div>
+        <div class="addMarginTop">
+            Wallet:
+            {{ (auth.wallet | format_currency(currencyCode)) | replace({',': ''}) }}
+        </div>
+        {% for balance in balances %}
+        <div class="addMarginTop">
+            {{ balance.getSymbol }}: {{ balance.getAmount|number_format(8, '.', '')|trim('0','right')|trim('.','right') }}
+        </div>
+        {% endfor %}
+        <div class="addMarginTop">
+            <label for="addMoney">Add money to wallet:</label>
+        </div>
+        <form class="twoFieldInputForm" action="/wallet/add-money" method="post">
+            <input required id="addMoney" class="shortInputBox" name="amount" type="text">
+            <button class="submitButton">Confirm</button>
+        </form>
+        {% if messages.wallet %}
+            <div class="flashMessage">{{ messages.wallet }}</div>
+        {% endif %}
+        {% if errors.wallet %}
+            <div class="errorMessage">ERROR: {{ errors.wallet }}</div>
+        {% endif %}
+    </div>
+{% endblock %}

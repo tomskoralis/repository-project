@@ -5,25 +5,40 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Cryptocurrencies {% block title %}{% endblock %}</title>
+    <title>Crypto{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="/styles/styles.css">
     <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+    <script src="/scripts/scripts.js"></script>
 </head>
 <body>
 <div id="pageContainer">
-
     <div id="top">
         <div id="headerContainer">
-            <div><a class="headerLink" href="/">Cryptocurrencies</a></div>
-            <div class="accountDisplay">
+            <div id="headerLinkContainer"><a class="headerLink" href="/">Crypto Market</a></div>
+            <div>
+                <form id="searchForm" class="twoFieldInputForm" action="/currency/" method="post"
+                      onsubmit="appendCurrencyUrl()">
+                    <input required id="searchInput" class="shortInputBox" type="text" name="search"
+                           placeholder="Search"
+                            {% if searchText %} value="{{ searchText }}"{% endif %}>
+                    <button class="submitButton">Search</button>
+                </form>
+            </div>
+            <div id="accountControl">
                 {% if auth %}
-                    <p>Welcome, </p>
-                    <p class="userName"><a href="/account">{{ auth.name }}</a></p>
-                    <p><a href="/logout">Log out</a></p>
+                    <div id="accountDisplay">
+                        Welcome, <p class="userName">{{ auth.name }}</p>
+                    </div>
+                    <div class="alignRight">
+                        <a href="/wallet">Wallet</a>
+                        <a href="/account">Account</a>
+                        <a href="/logout">Logout</a>
+                    </div>
                 {% else %}
-                    <p><a href="/login">Log in</a></p>
-                    <p class="userName"></p>
-                    <p><a href="/register">Register</a></p>
+                    <div class="alignRight">
+                        <a href="/login">Login</a>
+                        <a href="/register">Register</a>
+                    </div>
                 {% endif %}
             </div>
         </div>
@@ -40,10 +55,7 @@
         {% block content %}{% endblock %}
     </div>
 
-    <div id="bottom">
-        {% block footer %}{% endblock %}
-    </div>
-
+    <div id="bottom"></div>
 </div>
 </body>
 </html>

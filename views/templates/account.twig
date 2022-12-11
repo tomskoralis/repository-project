@@ -1,21 +1,27 @@
 {% extends 'base.twig' %}
 
-{% block title %}| Account{% endblock %}
+{% block title %} | Account{% endblock %}
 
 {% block content %}
     <div class="userInputFormContainer">
         <div class="pageTitle">Edit Account</div>
-        <form class="userInputForm" action="/update" method="post">
-            <label class="userInputBoxLabel">Username:<br>
-                <input class="userInputBox" name="name" value="{{ auth.name }}">
-            </label><br>
-            <label class="userInputBoxLabel">E-mail:<br>
-                <input class="userInputBox" name="email" value="{{ auth.email }}">
-            </label><br>
-            <label class="userInputBoxLabel">Enter password to confirm:<br>
-                <input required class="userInputBox password" name="password" type="password">
-            </label><br>
-            <div class="alignCenter">
+        <form class="userInputForm" action="/account/update" method="post">
+            <div>
+                <label class="userInputBoxLabel">Username:<br>
+                    <input class="userInputBox" name="name" value="{{ auth.name }}">
+                </label>
+            </div>
+            <div class="addMarginTop">
+                <label class="userInputBoxLabel">E-mail:<br>
+                    <input class="userInputBox" name="email" value="{{ auth.email }}">
+                </label>
+            </div>
+            <div class="addMarginTop">
+                <label class="userInputBoxLabel">Enter password to confirm:<br>
+                    <input required class="userInputBox" name="password" type="password">
+                </label>
+            </div>
+            <div class="alignCenter addMarginTop">
                 <button class="submitButton">Save</button>
             </div>
         </form>
@@ -32,22 +38,27 @@
         {% if errors.passwordMatchingEdit %}
             <div class="errorMessage">ERROR: {{ errors.passwordMatchingEdit }}</div>
         {% endif %}
-
     </div>
 
     <div class="userInputFormContainer">
         <div class="pageTitle">Change Password</div>
-        <form class="userInputForm" action="/update-password" method="post">
-            <label class="userInputBoxLabel">Current password:<br>
-                <input required class="userInputBox password" name="passwordCurrent" type="password">
-            </label><br>
-            <label class="userInputBoxLabel">New password:<br>
-                <input required class="userInputBox password" name="passwordNew" type="password">
-            </label><br>
-            <label class="userInputBoxLabel">Repeat new password:<br>
-                <input required class="userInputBox password" name="passwordNewRepeated" type="password">
-            </label><br>
-            <div class="alignCenter">
+        <form class="userInputForm" action="/account/update-password" method="post">
+            <div>
+                <label class="userInputBoxLabel">Current password:<br>
+                    <input required class="userInputBox" name="passwordCurrent" type="password">
+                </label>
+            </div>
+            <div class="addMarginTop">
+                <label class="userInputBoxLabel">New password:<br>
+                    <input required class="userInputBox" name="passwordNew" type="password">
+                </label>
+            </div>
+            <div class="addMarginTop">
+                <label class="userInputBoxLabel">Repeat new password:<br>
+                    <input required class="userInputBox" name="passwordNewRepeated" type="password">
+                </label>
+            </div>
+            <div class="alignCenter addMarginTop">
                 <button class="submitButton">Save</button>
             </div>
         </form>
@@ -67,11 +78,13 @@
 
     <div class="userInputFormContainer">
         <div class="pageTitle">Delete Account</div>
-        <form class="userInputForm" action="/delete" method="post">
-            <label class="userInputBoxLabel">Enter password to confirm:<br>
-                <input required class="userInputBox password" name="passwordForDeletion" type="password">
-            </label><br>
-            <div class="alignCenter">
+        <form class="userInputForm" action="/account/delete" method="post">
+            <div>
+                <label class="userInputBoxLabel">Enter password to confirm:<br>
+                    <input required class="userInputBox " name="passwordForDeletion" type="password">
+                </label>
+            </div>
+            <div class="alignCenter addMarginTop">
                 <button class="submitButton dangerButton">Delete Account</button>
             </div>
         </form>

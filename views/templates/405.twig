@@ -1,6 +1,6 @@
 {% extends "base.twig" %}
 
-{% block title %}| Error 405{% endblock %}
+{% block title %} | Error 405{% endblock %}
 
 {% block content %}
     <pre>Error 405: Method not allowed!<br>Allowed Methods: {% for method in allowedMethods %}{{ method }}{% endfor %}</pre>

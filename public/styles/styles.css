@@ -29,9 +29,13 @@ pre {
     word-wrap: break-word;
 }
 
+.addMarginTop {
+    margin-top: 0.5rem;
+}
+
 #pageContainer {
     height: 100%;
-    padding-top: 2.7rem;
+    padding-top: 3.2rem;
     display: grid;
     justify-items: center;
     overflow-x: hidden;
@@ -42,11 +46,9 @@ pre {
 #top {
     background: #252525;
     width: 40rem;
-    max-width: 40rem;
-    min-width: 40rem;
     position: fixed;
     top: 0;
-    height: 2.7rem;
+    height: 3.2rem;
     padding: 0.3rem 1rem;
     border-bottom: 2px solid #ffffff;
 }
@@ -70,23 +72,18 @@ pre {
 
 #headerContainer {
     display: flex;
-    height: 2.1em;
-    justify-content: space-between;
+    height: 2.1rem;
+    width: 100%;
+    gap: 1rem;
+    align-items: center;
 }
 
-div.accountDisplay {
-    text-align: left;
-    max-width: 25rem;
-    display: grid;
-    grid-template-columns: max-content 1fr max-content;
-}
-
-p.userName {
+#headerLinkContainer {
+    max-width: 17rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 15rem;
-    margin: 0 0.5rem;
+    flex-grow: 1;
 }
 
 .headerLink {
@@ -95,9 +92,45 @@ p.userName {
     text-decoration: none;
 }
 
+.twoFieldInputForm {
+    width: 100%;
+    min-width: 10rem;
+    max-width: 20rem;
+    display: grid;
+    grid-template-columns: max-content max-content;
+}
+
+.shortInputBox {
+    width: 11rem;
+    text-align: left;
+    height: 1.8rem;
+    margin-right: 0.2rem;
+}
+
+#accountControl {
+    flex-grow: 1;
+    max-width: 15rem;
+}
+
+#accountDisplay {
+    min-width: 10rem;
+    width: 100%;
+    display: grid;
+    grid-template-columns: min-content min-content;
+    justify-content: right;
+}
+
+p.userName {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 6rem;
+    margin-left: 0.25rem;
+}
+
 div.tableGrid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: max-content repeat(4, 1fr);
     border: 2px solid #707070;
     border-radius: 0.5rem;
     margin-top: 1rem;
@@ -110,15 +143,15 @@ div.tableItem {
     text-align: right;
 }
 
-div.tableItem:nth-child(3n-1) {
+div.tableItem:nth-child(5n-3) {
     text-align: left;
 }
 
-div.tableItem:nth-child(5), div.tableItem:nth-child(6), div.tableItem:nth-child(7) {
+div.tableItem:nth-child(n+7):nth-child(-n+11) {
     border-top: 2px solid #606060;;
 }
 
-div.tableItem:nth-child(n+8) {
+div.tableItem:nth-child(n+12) {
     border-top: 1px solid #404040;
 }
 
@@ -127,7 +160,7 @@ div.tableTopRow {
 }
 
 div.tableHeading {
-    grid-column: 1 / 4;
+    grid-column: 1 / 6;
     font-size: calc(7px + 0.9vw);
     text-align: center;
     padding-bottom: 0.5rem;
@@ -155,9 +188,24 @@ div.pageTitle {
 }
 
 input.userInputBox {
-    width: 20rem;
+    width: 18rem;
     height: 1.4rem;
-    margin-bottom: 0.7rem;
+}
+
+div.twoColumns {
+    width: 100%;
+    display: inline-grid;
+    grid-template-columns: max-content 1fr;
+    align-items: center;
+}
+
+div.twoColumns:nth-child(1) {
+    align-self: start;
+}
+
+div.twoColumns:nth-child(2) {
+    align-self: end;
+    align-items: center;
 }
 
 button.submitButton {
@@ -166,8 +214,8 @@ button.submitButton {
     border: 0;
     border-radius: 0.3rem;
     text-align: center;
-    padding: 0.2rem 1rem;
-    height: 2rem;
+    padding: 0.2rem 0.7rem;
+    height: 1.8rem;
     cursor: pointer;
     touch-action: manipulation;
 }
@@ -210,6 +258,10 @@ div.flashMessage {
 
 div.alignCenter {
     text-align: center;
+}
+
+div.alignRight {
+    text-align: right;
 }
 
 span.greenText {

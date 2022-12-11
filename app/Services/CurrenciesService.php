@@ -3,34 +3,33 @@
 namespace App\Services;
 
 use App\Models\Collections\CurrenciesCollection;
-use App\Repositories\{MarketCapCurrenciesRepository, CurrenciesRepository};
-use Dotenv\Dotenv;
+use App\Session;
+use App\Repositories\{CoinMarketCapCurrenciesRepository, CurrenciesRepository};
 
 class CurrenciesService
 {
-    private CurrenciesRepository $currenciesRepository;
-    private ?string $errorMessage;
+    private ?CurrenciesRepository $currenciesRepository;
 
     public function __construct()
     {
-        $dotenv = Dotenv::createImmutable(__DIR__, "../../.env");
-        $dotenv->load();
-        $this->currenciesRepository = new MarketCapCurrenciesRepository($dotenv);
-        $this->errorMessage = $this->currenciesRepository->getErrorMessage();
-    }
-
-    public function getErrorMessage(): ?string
-    {
-        return $this->errorMessage ?? null;
+        $this->currenciesRepository = new CoinMarketCapCurrenciesRepository();
+        $this->addErrorMessageToSession();
     }
 
     public function fetchCurrencies(array $symbols, string $currencyType): CurrenciesCollection
     {
-        if ($this->errorMessage) {
-            return new CurrenciesCollection();
-        }
-        $currencies = $this->currenciesRepository->fetchCurrencies($symbols, $currencyType);
-        $this->errorMessage = $this->currenciesRepository->getErrorMessage();
+        $currencies = (isset($this->currenciesRepository))
+            ? $this->currenciesRepository->fetchCurrencies($symbols, $currencyType)
+            : new CurrenciesCollection();
+        $this->addErrorMessageToSession();
         return $currencies;
+    }
+
+    private function addErrorMessageToSession(): void
+    {
+        $errorMessage = $this->currenciesRepository->getErrorMessage();
+        if ($errorMessage !== null) {
+            Session::add($errorMessage, 'errors', 'currencies');
+        }
     }
 }

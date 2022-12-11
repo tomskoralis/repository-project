@@ -2,15 +2,17 @@
 
 namespace App\ViewVariables;
 
+use App\Session;
+
 class ErrorsViewVariables implements ViewVariables
 {
     public function getName(): string
     {
-        return "errors";
+        return 'errors';
     }
 
     public function getValue(): array
     {
-        return $_SESSION["errors"] ?? [];
+        return Session::get('errors') ?? [];
     }
 }

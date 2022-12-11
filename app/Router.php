@@ -14,7 +14,8 @@ class Router
 
     public function __construct()
     {
-        session_start();
+        date_default_timezone_set("UTC");
+        Session::start();
         $this->dispatcher = simpleDispatcher(function (RouteCollector $route) {
             foreach (ROUTES_MAP as $routePoint) {
                 $route->addRoute($routePoint[0], $routePoint[1], [$routePoint[2][0], $routePoint[2]][1]);
@@ -51,8 +52,8 @@ class Router
                 $response = (new $controller)->{$method}($vars);
                 if ($response instanceof Template) {
                     Twig::renderTemplate($response);
-                    unset($_SESSION["errors"]);
-                    unset($_SESSION["flashMessages"]);
+                    Session::remove("errors");
+                    Session::remove("flashMessages");
                 }
                 if ($response instanceof Redirect) {
                     header("Location: " . $response->getUri());

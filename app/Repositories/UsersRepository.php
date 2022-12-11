@@ -10,7 +10,7 @@ interface UsersRepository
 
     public function getUser(int $userId): User;
 
-    public function insertUser(User $user): void;
+    public function addUser(User $user): void;
 
     public function updateUser(User $user, int $userId): void;
 
