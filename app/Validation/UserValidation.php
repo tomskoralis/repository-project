@@ -1,7 +1,8 @@
 <?php
 
-namespace App;
+namespace App\Validation;
 
+use App\Session;
 use App\Models\User;
 use App\Services\UsersService;
 

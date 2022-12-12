@@ -2,9 +2,10 @@
 
 namespace App\Controllers;
 
-use App\{Redirect, Session, Template, UserValidation};
+use App\{Redirect, Session, Template};
 use App\Models\User;
 use App\Services\UsersService;
+use App\Validation\UserValidation;
 
 class UserRegisterController
 {
