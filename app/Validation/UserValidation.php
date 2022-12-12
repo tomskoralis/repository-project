@@ -9,37 +9,27 @@ use App\Services\UsersService;
 class UserValidation
 {
     private User $user;
+    private UsersService $usersService;
 
-    public function __construct(User $user)
+    public function __construct(User $user, UsersService $usersService)
     {
         $this->user = $user;
+        $this->usersService = $usersService;
     }
 
     public function isUserValid(): bool
     {
-        $nameValid = false;
-        $emailValid = false;
-        $passwordValid = false;
-        $passwordRepeatedValid = false;
-        if ($this->user->getName() !== null) {
-            $nameValid = $this->isNameValid();
-        }
-        if ($this->user->getEmail() !== null) {
-            $emailValid = $this->isEmailValid();
-        }
-        if ($this->user->getPassword() !== null) {
-            $passwordValid = $this->isPasswordValid();
-        }
-        if ($this->user->getPasswordRepeated() !== null) {
-            $passwordRepeatedValid = $this->isPasswordRepeatedValid();
-        }
-        return ($nameValid && $emailValid && $passwordValid && $passwordRepeatedValid);
+        return (
+            ($this->user->getName() === null || $this->isNameValid()) &&
+            ($this->user->getEmail() === null || $this->isEmailValid()) &&
+            ($this->user->getPassword() === null || $this->isPasswordValid()) &&
+            ($this->user->getPasswordRepeated() === null || $this->isPasswordRepeatedValid())
+        );
     }
 
     public function isEmailTaken(int $userId = 0): bool
     {
-        $usersService = new UsersService();
-        $emails = $usersService->getEmailsExcept($userId);
+        $emails = $this->usersService->getEmailsExcept($userId);
         foreach ($emails as $email) {
             if ($email === $this->user->getEmail()) {
                 Session::add('This e-mail is already registered!', 'errors', 'email');
@@ -51,10 +41,13 @@ class UserValidation
 
     public function isPasswordMatchingHash(int $userId = 0, $form = ''): bool
     {
-        if (password_verify($this->user->getPassword(), (new UsersService())->getUser($userId)->getPassword())) {
-            return true;
+        $passwordHash = $this->usersService->getUser($userId)->getPassword();
+        if (!Session::has('errors')) {
+            if (password_verify($this->user->getPassword(), $passwordHash)) {
+                return true;
+            }
+            Session::add('Incorrect password!', 'errors', 'passwordMatching' . $form);
         }
-        Session::add('Incorrect password!', 'errors', 'passwordMatching' . $form);
         return false;
     }
 

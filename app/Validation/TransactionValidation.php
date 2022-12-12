@@ -4,15 +4,17 @@ namespace App\Validation;
 
 use App\Session;
 use App\Models\{AccountBalance, Transaction};
-use App\Services\{TransactionsService, UsersService};
+use App\Services\TransactionsService;
 
 class TransactionValidation
 {
     private Transaction $transaction;
+    private TransactionsService $transactionsService;
 
-    public function __construct(Transaction $transaction)
+    public function __construct(Transaction $transaction, TransactionsService $transactionsService)
     {
         $this->transaction = $transaction;
+        $this->transactionsService = $transactionsService;
     }
 
     public function canBuyCurrency(): bool
@@ -26,7 +28,7 @@ class TransactionValidation
             Session::add('Too small cost to buy!', 'errors', 'currency');
             return false;
         }
-        $moneyAvailable = (new UsersService())->getUser(Session::get('userId'))->getWallet();
+        $moneyAvailable = $this->transactionsService->getUser(Session::get('userId'))->getWallet();
         if ($moneyAvailable < $cost) {
             Session::add('Not enough money in wallet!', 'errors', 'currency');
             return false;
@@ -53,7 +55,7 @@ class TransactionValidation
 
     private function userHasEnoughCurrency(string $symbol, float $amount): bool
     {
-        foreach ((new TransactionsService())->getUserBalances(Session::get('userId'))->getBalances() as $balance) {
+        foreach ($this->transactionsService->getUserBalances(Session::get('userId'))->getBalances() as $balance) {
             /** @var AccountBalance $balance */
             if ($balance->getSymbol() === $symbol && $balance->getAmount() >= $amount)
                 return true;

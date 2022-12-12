@@ -9,6 +9,13 @@ use App\Validation\UserValidation;
 
 class UserUpdateController
 {
+    private UsersService $usersService;
+
+    public function __construct(UsersService $usersService)
+    {
+        $this->usersService = $usersService;
+    }
+
     public function displayAccount()
     {
         if (!Session::has('userId')) {
@@ -24,23 +31,22 @@ class UserUpdateController
         $email = $_POST['email'] ?? '';
 
         $user = new User($name, $email);
-        $validation = new UserValidation($user);
+        $validation = new UserValidation($user, $this->usersService);
 
-        $validation->isUserValid();
-        if (Session::has('errors')) {
+        if (!$validation->isUserValid() || Session::has('errors')) {
             return new Redirect('/account');
         }
 
         $validation->isEmailTaken(Session::get('userId'));
 
         $userPassword = new User(null, null, $password);
-        $validationPassword = new UserValidation($userPassword);
+        $validationPassword = new UserValidation($userPassword, $this->usersService);
         $validationPassword->isPasswordMatchingHash(Session::get('userId'), 'Edit');
         if (Session::has('errors')) {
             return new Redirect('/account');
         }
 
-        (new UsersService())->updateUser($user, Session::get('userId'));
+        $this->usersService->updateUser($user, Session::get('userId'));
         if (!Session::has('errors')) {
             Session::add('Successfully changed the username and e-mail!', 'flashMessages', 'update');
         }
@@ -55,21 +61,20 @@ class UserUpdateController
 
         $userNew = new User(null, null, $passwordNew, $passwordNewRepeated);
 
-        $validationNew = new UserValidation($userNew);
-        $validationNew->isUserValid();
-        if (Session::has('errors')) {
+        $validationNew = new UserValidation($userNew, $this->usersService);
+        if (!$validationNew->isUserValid() || Session::has('errors')) {
             return new Redirect('/account');
         }
 
         $user = new User(null, null, $passwordCurrent);
 
-        $validation = new UserValidation($user);
+        $validation = new UserValidation($user, $this->usersService);
         $validation->isPasswordMatchingHash(Session::get('userId'), 'Password');
         if (Session::has('errors')) {
             return new Redirect('/account');
         }
 
-        (new UsersService())->updateUser($userNew, Session::get('userId'));
+        $this->usersService->updateUser($userNew, Session::get('userId'));
         if (!Session::has('errors')) {
             Session::add('Successfully changed the password!', 'flashMessages', 'updatePassword');
         }
@@ -81,14 +86,14 @@ class UserUpdateController
         $password = $_POST['passwordForDeletion'] ?? '';
         $user = new User(null, null, $password);
 
-        $validation = new UserValidation($user);
+        $validation = new UserValidation($user, $this->usersService);
 
         $validation->isPasswordMatchingHash(Session::get('userId'), 'Delete');
         if (Session::has('errors')) {
             return new Redirect('/account');
         }
 
-        (new UsersService())->deleteUser(Session::get('userId'));
+        $this->usersService->deleteUser(Session::get('userId'));
         if (Session::has('errors')) {
             return new Redirect('/account');
         }

@@ -2,7 +2,17 @@
 
 namespace App;
 
+use App\Repositories\{
+    UsersRepository,
+    DatabaseUsersRepository,
+    CurrenciesRepository,
+    CoinMarketCapCurrenciesRepository,
+    TransactionsRepository,
+    DatabaseTransactionsRepository
+};
+use DI\Container;
 use FastRoute\{Dispatcher, RouteCollector};
+use function DI\create;
 use function FastRoute\simpleDispatcher;
 
 require_once 'routes.php';
@@ -11,11 +21,14 @@ require_once 'constants.php';
 class Router
 {
     private Dispatcher $dispatcher;
+    private Container $container;
 
     public function __construct()
     {
-        date_default_timezone_set("UTC");
-        Session::start();
+        $this->container = new Container();
+        $this->container->set(UsersRepository::class, create(DatabaseUsersRepository::class));
+        $this->container->set(CurrenciesRepository::class, create(CoinMarketCapCurrenciesRepository::class));
+        $this->container->set(TransactionsRepository::class, create(DatabaseTransactionsRepository::class));
         $this->dispatcher = simpleDispatcher(function (RouteCollector $route) {
             foreach (ROUTES_MAP as $routePoint) {
                 $route->addRoute($routePoint[0], $routePoint[1], [$routePoint[2][0], $routePoint[2]][1]);
@@ -49,7 +62,7 @@ class Router
                 $handler = $routeInfo[1];
                 $vars = $routeInfo[2];
                 [$controller, $method] = $handler;
-                $response = (new $controller)->{$method}($vars);
+                $response = $this->container->get($controller)->{$method}($vars);
                 if ($response instanceof Template) {
                     Twig::renderTemplate($response);
                     Session::remove("errors");

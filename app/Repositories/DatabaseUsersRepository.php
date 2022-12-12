@@ -183,12 +183,6 @@ class DatabaseUsersRepository implements UsersRepository
             $statement->bindValue(1, $amount);
             $statement->bindValue(2, $userId);
             $statement->executeQuery();
-//            $queryBuilder = self::$connection->createQueryBuilder();
-//            $queryBuilder
-//                ->update('users')
-//                ->where('id', $userId)
-//                ->update(['wallet' => self::$connection->raw('wallet + ?', [$amount])])
-//                ->executeQuery();
         } catch (Exception $e) {
             $this->errorMessage = 'Database Exception: ' . $e->getMessage();
         }

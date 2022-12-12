@@ -9,6 +9,13 @@ use App\Validation\UserValidation;
 
 class UserLoginController
 {
+    private UsersService $usersService;
+
+    public function __construct(UsersService $usersService)
+    {
+        $this->usersService = $usersService;
+    }
+
     public function displayLoginForm(): Template
     {
         return new Template('templates/login.twig');
@@ -20,14 +27,13 @@ class UserLoginController
         $email = $_POST['email'] ?? '';
 
         $user = new User(null, $email, $password);
-        $validation = new UserValidation($user);
+        $validation = new UserValidation($user, $this->usersService);
 
-        $validation->isUserValid();
-        if (Session::has('errors')) {
+        if (!$validation->isUserValid() || Session::has('errors')) {
             return new Redirect('/login');
         }
 
-        $userId = (new UsersService())->searchIdByEmail($user);
+        $userId = $this->usersService->searchIdByEmail($user);
         if (!$validation->isPasswordMatchingHash($userId)) {
             return new Redirect('/login');
         }

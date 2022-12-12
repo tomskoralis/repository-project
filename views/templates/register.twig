@@ -32,11 +32,18 @@
         </form>
         <br>
 
-        {% for error in errors %}
-            <div class="errorMessage">
-                ERROR: {{ error }}
-            </div>
-        {% endfor %}
+        {% if errors.name %}
+            <div class="errorMessage">ERROR: {{ errors.name }}</div>
+        {% endif %}
+        {% if errors.email %}
+            <div class="errorMessage">ERROR: {{ errors.email }}</div>
+        {% endif %}
+        {% if errors.password %}
+            <div class="errorMessage">ERROR: {{ errors.password }}</div>
+        {% endif %}
+        {% if errors.passwordRepeated %}
+            <div class="errorMessage">ERROR: {{ errors.passwordRepeated }}</div>
+        {% endif %}
 
     </div>
 {% endblock %}

@@ -64,9 +64,9 @@ class DatabaseTransactionsRepository implements TransactionsRepository
                 ->insert('transactions')
                 ->values([
                     'user_id' => '?',
-                    'currency_symbol' => '?',
-                    'currency_price' => '?',
-                    'currency_amount' => '?',
+                    'symbol' => '?',
+                    'price' => '?',
+                    'amount' => '?',
                     'time' => '?',
                 ])
                 ->setParameter(0, $transaction->getUserId())

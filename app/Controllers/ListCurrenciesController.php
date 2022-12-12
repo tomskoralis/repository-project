@@ -8,10 +8,16 @@ use const App\{CRYPTOCURRENCY_SYMBOLS, CURRENCY_CODE};
 
 class ListCurrenciesController
 {
+    private CurrenciesService $currenciesService;
+
+    public function __construct(CurrenciesService $currenciesService)
+    {
+        $this->currenciesService = $currenciesService;
+    }
+
     public function index(): Template
     {
-        $currenciesService = new CurrenciesService();
-        $currencies = $currenciesService->fetchCurrencies(CRYPTOCURRENCY_SYMBOLS, CURRENCY_CODE);
+        $currencies = $this->currenciesService->fetchCurrencies(CRYPTOCURRENCY_SYMBOLS);
         return new Template ('templates/list.twig', [
             'currencies' => $currencies->getCurrencies(),
             'currencyCode' => CURRENCY_CODE,

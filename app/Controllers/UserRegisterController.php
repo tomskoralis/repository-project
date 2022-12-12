@@ -9,6 +9,13 @@ use App\Validation\UserValidation;
 
 class UserRegisterController
 {
+    private UsersService $usersService;
+
+    public function __construct(UsersService $usersService)
+    {
+        $this->usersService = $usersService;
+    }
+
     public function displayRegisterForm(): Template
     {
         return new Template('templates/register.twig');
@@ -22,10 +29,9 @@ class UserRegisterController
         $passwordRepeated = $_POST['passwordRepeated'] ?? '';
 
         $user = new User($name, $email, $password, $passwordRepeated);
-        $validation = new UserValidation($user);
+        $validation = new UserValidation($user, $this->usersService);
 
-        $validation->isUserValid();
-        if (Session::has('errors')) {
+        if (!$validation->isUserValid() || Session::has('errors')) {
             return new Redirect('/register');
         }
 
@@ -34,12 +40,11 @@ class UserRegisterController
             return new Redirect('/register');
         }
 
-        $usersService = new UsersService();
-        $usersService->insertUser($user);
+        $this->usersService->insertUser($user);
         if (Session::has('errors')) {
             return new Redirect('/register');
         }
-        Session::add($usersService->searchIdByEmail($user), 'userId');
+        Session::add($this->usersService->searchIdByEmail($user), 'userId');
         return new Redirect('/');
     }
 }

@@ -2,25 +2,37 @@
 
 namespace App\Services;
 
-use App\Models\Collections\CurrenciesCollection;
 use App\Session;
-use App\Repositories\{CoinMarketCapCurrenciesRepository, CurrenciesRepository};
+use App\Models\Currency;
+use App\Models\Collections\CurrenciesCollection;
+use App\Repositories\CurrenciesRepository;
+use const App\CURRENCY_CODE;
 
 class CurrenciesService
 {
     private ?CurrenciesRepository $currenciesRepository;
 
-    public function __construct()
+    public function __construct(CurrenciesRepository $currenciesRepository)
     {
-        $this->currenciesRepository = new CoinMarketCapCurrenciesRepository();
+        $this->currenciesRepository = $currenciesRepository;
         $this->addErrorMessageToSession();
     }
 
-    public function fetchCurrencies(array $symbols, string $currencyType): CurrenciesCollection
+    public function fetchSingleCurrency(string $symbol): ?Currency
+    {
+        $currency = iterator_to_array(
+            $this->currenciesRepository
+                ->fetchCurrencies([$symbol], CURRENCY_CODE)
+                ->getCurrencies()
+        );
+        return (!empty($currency)) ? $currency[0] : null;
+    }
+
+    public function fetchCurrencies(array $symbols): ?CurrenciesCollection
     {
         $currencies = (isset($this->currenciesRepository))
-            ? $this->currenciesRepository->fetchCurrencies($symbols, $currencyType)
-            : new CurrenciesCollection();
+            ? $this->currenciesRepository->fetchCurrencies($symbols, CURRENCY_CODE)
+            : null;
         $this->addErrorMessageToSession();
         return $currencies;
     }
