@@ -13,10 +13,13 @@ class CurrencyController
     public function displayCurrency(array $currency): Template
     {
         $symbol = strtoupper($currency["symbol"]);
-        $currency = (new CurrenciesService())->fetchCurrencies([$symbol], CURRENCY_CODE);
-        $amountOwned = $this->getAmountOwned($symbol);
+        $currency = iterator_to_array((new CurrenciesService())->fetchCurrencies([$symbol], CURRENCY_CODE)
+                ->getCurrencies())[0];
+        if (!empty($currency)) {
+            $amountOwned = $this->getAmountOwned($symbol);
+        }
         return new Template ('templates/currency.twig', [
-            'currency' => iterator_to_array($currency->getCurrencies())[0],
+            'currency' => $currency,
             'currencyCode' => CURRENCY_CODE,
             'amountOwned' => $amountOwned,
         ]);
