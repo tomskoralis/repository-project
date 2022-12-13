@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use App\{Redirect, Session, Template};
-use App\Models\{AccountBalance, Transaction};
+use App\Models\{Balance, Transaction};
 use App\Services\{CurrenciesService, TransactionsService};
 use App\Validation\TransactionValidation;
 use const App\CURRENCY_CODE;
@@ -39,6 +39,9 @@ class CurrencyController
         $amountToBuy = floor((float)$_POST['amountToBuy'] * 100000000) / 100000000;
         $symbol = $this->getSymbolFromUrl();
         $price = $this->transactionsService->getPriceBySymbol($symbol);
+        if (Session::has('errors')) {
+            return new Redirect('/currency/' . $symbol);
+        }
 
         $transaction = new Transaction(
             Session::get('userId'),
@@ -71,6 +74,9 @@ class CurrencyController
         $amountToSell = floor((float)$_POST['amountToSell'] * 100000000) / 100000000;
         $symbol = $this->getSymbolFromUrl();
         $price = $this->transactionsService->getPriceBySymbol($symbol);
+        if (Session::has('errors')) {
+            return new Redirect('/currency/' . $symbol);
+        }
 
         $transaction = new Transaction(
             Session::get('userId'),
@@ -90,7 +96,6 @@ class CurrencyController
         }
 
         $amountToSell = rtrim(number_format($amountToSell, 8, '.', ''), '0.');
-        $currencySymbol = $this->getCurrencySymbol();
         $cost = floor($amountToSell * $price * 100) / 100;
         Session::add(
             "Successfully sold $amountToSell $symbol for {$this->getCurrencySymbol()}$cost",
@@ -102,7 +107,7 @@ class CurrencyController
     private function getAmountOwned(string $symbol): float
     {
         foreach ($this->transactionsService->getUserBalances(Session::get('userId'))->getBalances() as $balance) {
-            /** @var AccountBalance $balance */
+            /** @var Balance $balance */
             if ($balance->getSymbol() === $symbol) {
                 return $balance->getAmount();
             }

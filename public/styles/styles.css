@@ -29,8 +29,16 @@ pre {
     word-wrap: break-word;
 }
 
+ul {
+    margin: 0;
+}
+
 .addMarginTop {
     margin-top: 0.5rem;
+}
+
+.addSmallMarginTop {
+    margin-top: 0.2rem;
 }
 
 #pageContainer {
@@ -86,13 +94,13 @@ pre {
     flex-grow: 1;
 }
 
-.headerLink {
+a.headerLink {
     color: #ffffff;
     font-size: calc(8px + 1vw);
     text-decoration: none;
 }
 
-.twoFieldInputForm {
+form.twoFieldInputForm {
     width: 100%;
     min-width: 10rem;
     max-width: 20rem;
@@ -100,7 +108,7 @@ pre {
     grid-template-columns: max-content max-content;
 }
 
-.shortInputBox {
+input.shortInputBox {
     width: 11rem;
     text-align: left;
     height: 1.8rem;
@@ -148,7 +156,7 @@ div.tableItem:nth-child(5n-3) {
 }
 
 div.tableItem:nth-child(n+7):nth-child(-n+11) {
-    border-top: 2px solid #606060;;
+    border-top: 2px solid #606060;
 }
 
 div.tableItem:nth-child(n+12) {
@@ -270,4 +278,42 @@ span.greenText {
 
 span.redText {
     color: #aa0000;
+}
+
+table.transactionsTable {
+    margin: 0 auto;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+table.transactionsTable th {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    padding: 0.25rem 0.5rem;
+    background: #252525;
+    border-bottom: 2px solid #606060;
+}
+
+table.transactionsTable thead > tr > td,
+table.transactionsTable tbody > tr > td {
+    padding: 0.15rem 0.5rem;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+table.transactionsTable tbody > tr > td {
+    border-top: 1px solid #404040;
+}
+
+table.transactionsTable thead > tr > :nth-child(1),
+table.transactionsTable tbody > tr > :nth-child(1) {
+    text-align: left;
+}
+
+table.transactionsTable thead > tr > :nth-child(n+2):nth-child(-n+5),
+table.transactionsTable tbody > tr > :nth-child(n+2):nth-child(-n+5) {
+    text-align: right;
 }

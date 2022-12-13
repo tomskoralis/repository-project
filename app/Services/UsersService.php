@@ -19,7 +19,7 @@ class UsersService
     public function getUser(int $userId): User
     {
         $user = (isset($this->usersRepository))
-            ? $this->usersRepository->getUser($userId)
+            ? $this->usersRepository->fetchUser($userId)
             : new User();
         $this->addErrorMessageToSession();
         return $user;
@@ -51,7 +51,9 @@ class UsersService
 
     public function searchIdByEmail(User $user): int
     {
-        $userId = (isset($this->usersRepository)) ? $this->usersRepository->searchIdByEmail($user) : 0;
+        $userId = (isset($this->usersRepository))
+            ? $this->usersRepository->searchIdByEmail($user)
+            : 0;
         $this->addErrorMessageToSession();
         return $userId;
     }
@@ -60,7 +62,7 @@ class UsersService
     {
         $emails = [];
         if (isset($this->usersRepository)) {
-            $emails = $this->usersRepository->getEmailsExcept($userId);
+            $emails = $this->usersRepository->fetchEmailsExcept($userId);
         }
         $this->addErrorMessageToSession();
         foreach ($emails as $email) {
@@ -80,7 +82,7 @@ class UsersService
     {
         $errorMessage = $this->usersRepository->getErrorMessage();
         if ($errorMessage !== null) {
-            Session::add($errorMessage, 'errors', 'database');
+            Session::add($errorMessage, 'errors', 'repository', 'users');
         }
     }
 }

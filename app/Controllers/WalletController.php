@@ -26,10 +26,10 @@ class WalletController
             return new Redirect('/login');
         }
         $transactionsService = $this->transactionsService;
-        $balances = $transactionsService->getUserBalances(Session::get('userId'));
+        $balances = $transactionsService->getUserBalances(Session::get('userId'))->getBalances();
         return new Template ('templates/wallet.twig', [
             'currencyCode' => CURRENCY_CODE,
-            'balances' => $balances->getBalances(),
+            'balances' => $balances,
         ]);
     }
 

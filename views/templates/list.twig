@@ -2,52 +2,51 @@
 
 {% block content %}
     {% if errors.currencies %}
-        <pre>{{ errors.currencies }}</pre>
+        <div class="errorMessage">ERROR: {{ errors.currencies }}</div>
     {% else %}
-        {% if currencies %}
-            <div class="tableGrid">
-                <div class="tableHeading">Cryptocurrency Prices</div>
-                <div class="tableItem tableTopRow">Name</div>
-                <div class="tableItem tableTopRow">Price</div>
-                <div class="tableItem tableTopRow">Change 1h</div>
-                <div class="tableItem tableTopRow">Change 24h</div>
-                <div class="tableItem tableTopRow">Change 7d</div>
+        <div class="tableGrid">
+            <div class="tableHeading">Cryptocurrency Prices</div>
+            <div class="tableItem tableTopRow">Name</div>
+            <div class="tableItem tableTopRow">Price</div>
+            <div class="tableItem tableTopRow">Change 1h</div>
+            <div class="tableItem tableTopRow">Change 24h</div>
+            <div class="tableItem tableTopRow">Change 7d</div>
 
-                {% for currency in currencies %}
-                    <div class="tableItem">
-                        <a href="/currency/{{ currency.getSymbol }}">{{ currency.getName }} ({{ currency.getSymbol }})</a>
-                    </div>
-                    <div class="tableItem">
-                        {% if currency.getPrice < 1 %}
-                            {{ currency.getPrice | format_currency(currencyCode, {max_significant_digits_used: 4}) }}
-                        {% else %}
-                            {{ (currency.getPrice | format_currency(currencyCode, {fraction_digit: 2})) | replace({',': ''}) }}
-                        {% endif %}
-                    </div>
-                    <div class="tableItem">
-                        {% if currency.getChange1h > 0 %}
-                            <span class="greenText">&#9650;{{ (currency.getChange1h) | number_format(2, '.', '') }}%</span>
-                        {% else %}
-                            <span class="redText">&#9660;{{ (currency.getChange1h) | abs | number_format(2, '.', '') }}%</span>
-                        {% endif %}
-                    </div>
-                    <div class="tableItem">
-                        {% if currency.getChange24h > 0 %}
-                            <span class="greenText">&#9650;{{ (currency.getChange24h) | number_format(2, '.', '') }}%</span>
-                        {% else %}
-                            <span class="redText">&#9660;{{ (currency.getChange24h) | abs | number_format(2, '.', '') }}%</span>
-                        {% endif %}
-                    </div>
-                    <div class="tableItem">
-                        {% if currency.getChange7d > 0 %}
-                            <span class="greenText">&#9650;{{ (currency.getChange7d) | number_format(2, '.', '') }}%</span>
-                        {% else %}
-                            <span class="redText">&#9660;{{ (currency.getChange7d) | abs | number_format(2, '.', '') }}%</span>
-                        {% endif %}
-                    </div>
-                {% endfor %}
+            {% for currency in currencies %}
+                <div class="tableItem">
+                    <a href="/currency/{{ currency.getSymbol }}">{{ currency.getName }} ({{ currency.getSymbol }}
+                        )</a>
+                </div>
+                <div class="tableItem">
+                    {% if currency.getPrice < 1 %}
+                        {{ currency.getPrice | format_currency(currencyCode, {max_significant_digits_used: 4}) }}
+                    {% else %}
+                        {{ (currency.getPrice | format_currency(currencyCode, {fraction_digit: 2})) | replace({',': ''}) }}
+                    {% endif %}
+                </div>
+                <div class="tableItem">
+                    {% if currency.getChange1h > 0 %}
+                        <span class="greenText">&#9650;{{ (currency.getChange1h) | number_format(2, '.', '') }}%</span>
+                    {% else %}
+                        <span class="redText">&#9660;{{ (currency.getChange1h) | abs | number_format(2, '.', '') }}%</span>
+                    {% endif %}
+                </div>
+                <div class="tableItem">
+                    {% if currency.getChange24h > 0 %}
+                        <span class="greenText">&#9650;{{ (currency.getChange24h) | number_format(2, '.', '') }}%</span>
+                    {% else %}
+                        <span class="redText">&#9660;{{ (currency.getChange24h) | abs | number_format(2, '.', '') }}%</span>
+                    {% endif %}
+                </div>
+                <div class="tableItem">
+                    {% if currency.getChange7d > 0 %}
+                        <span class="greenText">&#9650;{{ (currency.getChange7d) | number_format(2, '.', '') }}%</span>
+                    {% else %}
+                        <span class="redText">&#9660;{{ (currency.getChange7d) | abs | number_format(2, '.', '') }}%</span>
+                    {% endif %}
+                </div>
+            {% endfor %}
 
-            </div>
-        {% endif %}
+        </div>
     {% endif %}
 {% endblock %}

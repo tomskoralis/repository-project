@@ -3,9 +3,9 @@
 namespace App\Repositories;
 
 use App\Models\User;
-use Doctrine\DBAL\{Connection, DriverManager, Exception};
 use Dotenv\Dotenv;
 use Dotenv\Exception\ValidationException;
+use Doctrine\DBAL\{Connection, DriverManager, Exception};
 
 class DatabaseUsersRepository implements UsersRepository
 {
@@ -24,7 +24,7 @@ class DatabaseUsersRepository implements UsersRepository
         return $this->errorMessage;
     }
 
-    public function getUser(int $userId): User
+    public function fetchUser(int $userId): User
     {
         if (!isset(self::$connection)) {
             return new User();
@@ -150,7 +150,7 @@ class DatabaseUsersRepository implements UsersRepository
         return 0;
     }
 
-    public function getEmailsExcept(int $userId = 0): \Generator
+    public function fetchEmailsExcept(int $userId = 0): \Generator
     {
         if (!isset(self::$connection)) {
             return;

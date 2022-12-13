@@ -8,7 +8,7 @@ interface UsersRepository
 {
     public function getErrorMessage(): ?string;
 
-    public function getUser(int $userId): User;
+    public function fetchUser(int $userId): User;
 
     public function addUser(User $user): void;
 
@@ -18,7 +18,7 @@ interface UsersRepository
 
     public function searchIdByEmail(User $user): int;
 
-    public function getEmailsExcept(int $userId = 0): \Generator;
+    public function fetchEmailsExcept(int $userId = 0): \Generator;
 
     public function addMoneyToWallet(int $userId, float $amount): void;
 }

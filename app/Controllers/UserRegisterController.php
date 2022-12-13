@@ -18,6 +18,10 @@ class UserRegisterController
 
     public function displayRegisterForm(): Template
     {
+        $urlPath = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH);
+        if (isset($urlPath) && $urlPath !== '/' && $urlPath !== '/register') {
+            Session::add($urlPath, 'urlPath');
+        }
         return new Template('templates/register.twig');
     }
 
@@ -45,6 +49,6 @@ class UserRegisterController
             return new Redirect('/register');
         }
         Session::add($this->usersService->searchIdByEmail($user), 'userId');
-        return new Redirect('/');
+        return new Redirect(Session::get('urlPath') ?? '/');
     }
 }

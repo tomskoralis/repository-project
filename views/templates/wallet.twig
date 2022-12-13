@@ -5,14 +5,18 @@
 {% block content %}
     <div class="userInputFormContainer">
         <div class="pageTitle">Wallet</div>
-        <div class="addMarginTop">
+        <div class="alignRight">
+            <a href="/transactions">Details</a>
+        </div>
+        <div>
             Wallet:
             {{ (auth.wallet | format_currency(currencyCode)) | replace({',': ''}) }}
         </div>
         {% for balance in balances %}
-        <div class="addMarginTop">
-            {{ balance.getSymbol }}: {{ balance.getAmount|number_format(8, '.', '')|trim('0','right')|trim('.','right') }}
-        </div>
+            <div class="addMarginTop">
+                {{ balance.getSymbol }}:
+                {{ balance.getAmount | number_format(8, '.', '') | trim('0.', 'right') }}
+            </div>
         {% endfor %}
         <div class="addMarginTop">
             <label for="addMoney">Add money to wallet:</label>

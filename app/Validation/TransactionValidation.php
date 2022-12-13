@@ -3,7 +3,7 @@
 namespace App\Validation;
 
 use App\Session;
-use App\Models\{AccountBalance, Transaction};
+use App\Models\{Balance, Transaction};
 use App\Services\TransactionsService;
 
 class TransactionValidation
@@ -29,7 +29,7 @@ class TransactionValidation
             return false;
         }
         $moneyAvailable = $this->transactionsService->getUser(Session::get('userId'))->getWallet();
-        if ($moneyAvailable < $cost) {
+        if (isset($moneyAvailable) && $moneyAvailable < $cost) {
             Session::add('Not enough money in wallet!', 'errors', 'currency');
             return false;
         }
@@ -56,7 +56,7 @@ class TransactionValidation
     private function userHasEnoughCurrency(string $symbol, float $amount): bool
     {
         foreach ($this->transactionsService->getUserBalances(Session::get('userId'))->getBalances() as $balance) {
-            /** @var AccountBalance $balance */
+            /** @var Balance $balance */
             if ($balance->getSymbol() === $symbol && $balance->getAmount() >= $amount)
                 return true;
         }

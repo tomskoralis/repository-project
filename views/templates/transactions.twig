@@ -1,0 +1,71 @@
+{% extends 'base.twig' %}
+
+{% block title %} | Transactions{% endblock %}
+
+{% block content %}
+    {% if errors.transactions %}
+        <div class="errorMessage">ERROR: {{ errors.transactions }}</div>
+    {% else %}
+        <div class="tableHeading addMarginTop">Statistics</div>
+        <div>
+            <p class="addSmallMarginTop">Total costs:
+                {{ totalCost | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+            </p>
+            <p class="addSmallMarginTop">Total revenue:
+                {{ revenue | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+            </p>
+            <p class="addSmallMarginTop">Value of wallet:
+                {{ currencyValueInWallet | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+            </p>
+            <p class="addSmallMarginTop">Profit:
+                <span class="{% if profit > 0 %}greenText{% else %}redText{% endif %}">
+                {{ profit | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+                </span>
+            </p>
+            <br>
+            <p>Average price per currency</p>
+            {% for key, value in averageCurrencyCosts %}
+                {% if value < 1 %}
+                    <ul class="addSmallMarginTop">{{ key }}:
+                        {{ value | format_currency(currencyCode, {max_significant_digits_used: 4}) }}</ul>
+                {% else %}
+                    <ul class="addSmallMarginTop">{{ key }}:
+                        {{ value | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}</ul>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <br>
+        <div class="tableHeading addMarginTop">All Transactions</div>
+        <table class="transactionsTable">
+            <thead>
+            <tr>
+                <th>&#8470;</th>
+                <th>Symbol</th>
+                <th>Price</th>
+                <th>Amount</th>
+                <th>Time</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for transaction in transactions %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ transaction.getSymbol }}</td>
+                    <td>
+                        {% if transaction.getPrice < 1 %}
+                            {{ transaction.getPrice | format_currency(currencyCode, {max_significant_digits_used: 4}) }}
+                        {% else %}
+                            {{ transaction.getPrice | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{ transaction.getAmount | number_format(8, '.', '') | trim('0.', 'right') }}
+                    </td>
+                    <td>{{ transaction.getDateTime }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <br>
+    {% endif %}
+{% endblock %}

@@ -21,11 +21,16 @@
             </div>
         </form>
         <br>
+
         {% if errors.email %}
             <div class="errorMessage">ERROR: {{ errors.email }}</div>
         {% endif %}
         {% if errors.password %}
             <div class="errorMessage">ERROR: {{ errors.password }}</div>
         {% endif %}
+        {% if errors.passwordMatching %}
+            <div class="errorMessage">ERROR: {{ errors.passwordMatching }}</div>
+        {% endif %}
+
     </div>
 {% endblock %}

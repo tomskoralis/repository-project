@@ -45,14 +45,15 @@
     </div>
 
     <div id="content">
-        {% if errors.database %}
-            <div class="errorMessage">ERROR: {{ errors.database }}</div>
-        {% endif %}
         {% if messages.delete %}
             <div class="flashMessage">{{ messages.delete }}</div>
         {% endif %}
-
-        {% block content %}{% endblock %}
+        {% for error in errors.repository %}
+            <div class="errorMessage">ERROR: {{ error }}</div>
+        {% endfor %}
+        {% if not errors.repository %}
+            {% block content %}{% endblock %}
+        {% endif %}
     </div>
 
     <div id="bottom"></div>

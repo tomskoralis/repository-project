@@ -25,15 +25,26 @@ class CurrenciesService
                 ->fetchCurrencies([$symbol], CURRENCY_CODE)
                 ->getCurrencies()
         );
+        $this->addErrorMessageToSession();
+        if (empty($currency)) {
+            Session::add('No market data found when searching for ' . $symbol,
+                'errors', 'currencies'
+            );
+        }
         return (!empty($currency)) ? $currency[0] : null;
     }
 
-    public function fetchCurrencies(array $symbols): ?CurrenciesCollection
+    public function fetchCurrencies(array $symbols): CurrenciesCollection
     {
         $currencies = (isset($this->currenciesRepository))
             ? $this->currenciesRepository->fetchCurrencies($symbols, CURRENCY_CODE)
-            : null;
+            : new CurrenciesCollection();
         $this->addErrorMessageToSession();
+        if ($this->getCount($currencies->getCurrencies()) === 0) {
+            Session::add('No market data found when searching for ' . join(',', $symbols),
+                'errors', 'currencies'
+            );
+        }
         return $currencies;
     }
 
@@ -41,7 +52,16 @@ class CurrenciesService
     {
         $errorMessage = $this->currenciesRepository->getErrorMessage();
         if ($errorMessage !== null) {
-            Session::add($errorMessage, 'errors', 'currencies');
+            Session::add($errorMessage, 'errors', 'repository', 'currencies');
         }
+    }
+
+    private function getCount(\Generator $functor): int
+    {
+        $count = 0;
+        foreach ($functor as $value) {
+            $count++;
+        }
+        return $count;
     }
 }

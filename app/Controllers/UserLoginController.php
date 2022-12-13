@@ -18,6 +18,10 @@ class UserLoginController
 
     public function displayLoginForm(): Template
     {
+        $urlPath = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH);
+        if (isset($urlPath) && $urlPath !== '/' && $urlPath !== '/login' && $urlPath !== '/register') {
+            Session::add($urlPath, 'urlPath');
+        }
         return new Template('templates/login.twig');
     }
 
@@ -38,12 +42,16 @@ class UserLoginController
             return new Redirect('/login');
         }
         Session::add($userId, 'userId');
-        return new Redirect('/');
+        return new Redirect(Session::get('urlPath') ?? '/');
     }
 
     public function logout(): Redirect
     {
         Session::remove('userId');
-        return new Redirect('/');
+        $urlPath = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH);
+        if ($urlPath === '/account' || $urlPath === '/wallet' || $urlPath === '/transactions') {
+            return new Redirect('/');
+        }
+        return new Redirect($urlPath ?? '/');
     }
 }

@@ -1,88 +1,93 @@
 {% extends 'base.twig' %}
 
 {% block title %}
-    {% if currency.getName %} | {{ currency.getName }}{% endif %}
+    {% if currency.getName %} | {{ currency.getName }} {% else %} | Not Found {% endif %}
 {% endblock %}
 
 {% block content %}
     {% if errors.currencies %}
-        <pre>{{ errors.currencies }}</pre>
+        <div class="errorMessage">ERROR: {{ errors.currencies }}</div>
     {% else %}
-        {% if currency %}
-            <div class="userInputFormContainer">
-                <div class="pageTitle">{{ currency.getName }} ({{ currency.getSymbol }})</div>
-                <div class="twoColumns">
-                    <div>
-                        <div>Price:
-                            {% if currency.getPrice < 1 %}
-                                {{ currency.getPrice | format_currency(currencyCode, {max_significant_digits_used: 4}) }}
-                            {% else %}
-                                {{ (currency.getPrice | format_currency(currencyCode, {fraction_digit: 2})) | replace({',': ''}) }}
-                            {% endif %}
-                        </div>
-                        <div>
-                            Change 1h:
-                            {% if currency.getChange1h > 0 %}
-                                <span class="greenText">&#9650;{{ (currency.getChange1h) | number_format(2, '.', '') }}%</span>
-                            {% else %}
-                                <span class="redText">&#9660;{{ (currency.getChange1h) | abs | number_format(2, '.', '') }}%</span>
-                            {% endif %}
-                        </div>
-                        <div>
-                            Change 24h:
-                            {% if currency.getChange24h > 0 %}
-                                <span class="greenText">&#9650;{{ (currency.getChange24h) | number_format(2, '.', '') }}%</span>
-                            {% else %}
-                                <span class="redText">&#9660;{{ (currency.getChange24h) | abs | number_format(2, '.', '') }}%</span>
-                            {% endif %}
-                        </div>
-                        <div>
-                            Change 7d:
-                            {% if currency.getChange7d > 0 %}
-                                <span class="greenText">&#9650;{{ (currency.getChange7d) | number_format(2, '.', '') }}%</span>
-                            {% else %}
-                                <span class="redText">&#9660;{{ (currency.getChange7d) | abs | number_format(2, '.', '') }}%</span>
-                            {% endif %}
-                        </div>
+
+        <div class="userInputFormContainer">
+            <div class="pageTitle">{{ currency.getName }} ({{ currency.getSymbol }})</div>
+            <div class="twoColumns">
+                <div>
+                    <div>Price:
+                        {% if currency.getPrice < 1 %}
+                            {{ currency.getPrice | format_currency(currencyCode, {max_significant_digits_used: 4}) }}
+                        {% else %}
+                            {{ (currency.getPrice | format_currency(currencyCode, {fraction_digit: 2})) | replace({',': ''}) }}
+                        {% endif %}
                     </div>
                     <div>
+                        Change 1h:
+                        {% if currency.getChange1h > 0 %}
+                            <span class="greenText">&#9650;{{ (currency.getChange1h) | number_format(2, '.', '') }}%</span>
+                        {% else %}
+                            <span class="redText">&#9660;{{ (currency.getChange1h) | abs | number_format(2, '.', '') }}%</span>
+                        {% endif %}
+                    </div>
+                    <div>
+                        Change 24h:
+                        {% if currency.getChange24h > 0 %}
+                            <span class="greenText">&#9650;{{ (currency.getChange24h) | number_format(2, '.', '') }}%</span>
+                        {% else %}
+                            <span class="redText">&#9660;{{ (currency.getChange24h) | abs | number_format(2, '.', '') }}%</span>
+                        {% endif %}
+                    </div>
+                    <div>
+                        Change 7d:
+                        {% if currency.getChange7d > 0 %}
+                            <span class="greenText">&#9650;{{ (currency.getChange7d) | number_format(2, '.', '') }}%</span>
+                        {% else %}
+                            <span class="redText">&#9660;{{ (currency.getChange7d) | abs | number_format(2, '.', '') }}%</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div>
+                    {% if auth %}
                         <div class="pageTitle">
                             You own:
                             {% if amountOwned %}
-                                {{ amountOwned|number_format(8, '.', '')|trim('0','right')|trim('.','right') }}
+                                {{ amountOwned | number_format(8, '.', '') | trim('0.','right') }}
                             {% else %}
                                 0
                             {% endif %}
                         </div>
-                    </div>
+                    {% endif %}
                 </div>
+            </div>
 
-                <div class="twoColumns">
-                    <div>
-                        <form class="twoFieldInputForm addMarginTop" action="/buy-currency" method="post">
-                            <input required class="shortInputBox" name="amountToBuy" type="text"
-                                   placeholder="Amount to buy">
-                            <button class="submitButton">Buy</button>
-                        </form>
+            <div class="twoColumns">
+                <div>
+                    <form class="twoFieldInputForm addMarginTop" action="/buy-currency" method="post">
+                        <input required class="shortInputBox" name="amountToBuy" type="text"
+                               placeholder="Amount to buy">
+                        <button class="submitButton">Buy</button>
+                    </form>
 
-                        <form class="twoFieldInputForm addMarginTop" action="/sell-currency" method="post">
-                            <input required class="shortInputBox" name="amountToSell" type="text"
-                                   placeholder="Amount to sell">
-                            <button class="submitButton">Sell</button>
-                        </form>
-                    </div>
-                    <div>
+                    <form class="twoFieldInputForm addMarginTop" action="/sell-currency" method="post">
+                        <input required class="shortInputBox" name="amountToSell" type="text"
+                               placeholder="Amount to sell">
+                        <button class="submitButton">Sell</button>
+                    </form>
+                </div>
+                <div>
+                    {% if auth %}
                         <div class="pageTitle">
                             Wallet:
-                            {{ (auth.wallet | format_currency(currencyCode)) | replace({',': ''}) }}
+                            {{ auth.wallet | format_currency(currencyCode) | replace({',': ''}) }}
                         </div>
-                    </div>
+                    {% endif %}
                 </div>
-                {% if errors.currency %}
-                    <div class="errorMessage">ERROR: {{ errors.currency }}</div>
-                {% endif %}
 
             </div>
-        {% endif %}
+
+            {% if errors.currency %}
+                <div class="errorMessage">ERROR: {{ errors.currency }}</div>
+            {% endif %}
+
+        </div>
     {% endif %}
 {% endblock %}

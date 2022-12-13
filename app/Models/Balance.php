@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class AccountBalance
+class Balance
 {
     private string $symbol;
     private float $balance;

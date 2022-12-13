@@ -2,9 +2,9 @@
 
 namespace App\Models\Collections;
 
-use App\Models\AccountBalance;
+use App\Models\Balance;
 
-class AccountBalancesCollection
+class BalancesCollection
 {
     private array $balances;
 
@@ -20,7 +20,7 @@ class AccountBalancesCollection
         }
     }
 
-    public function addBalance(AccountBalance $balance): void
+    public function addBalance(Balance $balance): void
     {
         $this->balances [] = $balance;
     }

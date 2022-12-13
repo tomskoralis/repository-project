@@ -2,12 +2,11 @@
 
 namespace App\Repositories;
 
-use App\Models\AccountBalance;
-use App\Models\Collections\AccountBalancesCollection;
-use App\Models\Transaction;
-use Doctrine\DBAL\{Connection, DriverManager, Exception};
+use App\Models\{Balance, Transaction};
+use App\Models\Collections\{BalancesCollection, TransactionsCollection};
 use Dotenv\Dotenv;
 use Dotenv\Exception\ValidationException;
+use Doctrine\DBAL\{Connection, DriverManager, Exception};
 
 class DatabaseTransactionsRepository implements TransactionsRepository
 {
@@ -26,10 +25,40 @@ class DatabaseTransactionsRepository implements TransactionsRepository
         return $this->errorMessage;
     }
 
-    public function getBalances(int $userId): AccountBalancesCollection
+    public function fetchTransactions(int $userId): TransactionsCollection
     {
         if (!isset(self::$connection)) {
-            return new AccountBalancesCollection();
+            return new TransactionsCollection();
+        }
+        try {
+            $queryBuilder = self::$connection->createQueryBuilder();
+            $queryBuilder
+                ->select('*')
+                ->from('transactions')
+                ->where('user_id = ?')
+                ->setParameter(0, $userId);
+            $transactions = $queryBuilder->executeQuery()->fetchAllAssociative() ?? [];
+        } catch (Exception $e) {
+            $this->errorMessage = 'Database Exception: ' . $e->getMessage();
+            return new TransactionsCollection();
+        }
+        $userTransactions = new TransactionsCollection();
+        foreach ($transactions as $transaction) {
+            $userTransactions->addTransaction(new Transaction(
+                $transaction['user_id'],
+                $transaction['symbol'],
+                $transaction['price'],
+                $transaction['amount'],
+                $transaction['time']
+            ));
+        }
+        return $userTransactions;
+    }
+
+    public function fetchBalances(int $userId): BalancesCollection
+    {
+        if (!isset(self::$connection)) {
+            return new BalancesCollection();
         }
         try {
             $queryBuilder = self::$connection->createQueryBuilder();
@@ -41,11 +70,11 @@ class DatabaseTransactionsRepository implements TransactionsRepository
             $balances = $queryBuilder->executeQuery()->fetchAllAssociative() ?? [];
         } catch (Exception $e) {
             $this->errorMessage = 'Database Exception: ' . $e->getMessage();
-            return new AccountBalancesCollection();
+            return new BalancesCollection();
         }
-        $userBalances = new AccountBalancesCollection();
+        $userBalances = new BalancesCollection();
         foreach ($balances as $balance) {
-            $userBalances->addBalance(new AccountBalance(
+            $userBalances->addBalance(new Balance(
                 $balance['symbol'],
                 $balance['balance'],
             ));

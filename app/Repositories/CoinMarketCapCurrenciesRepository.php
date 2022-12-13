@@ -55,13 +55,12 @@ class CoinMarketCapCurrenciesRepository implements CurrenciesRepository
         }
         $response = json_decode($response->getBody()->getContents());
 
-        if (empty($response->data->{$symbols[0]})) {
-            $this->errorMessage = "Error: No market data found!";
+        if ($response->status->error_code > 0) {
+            $this->errorMessage = $response->status->error_message;
             return new CurrenciesCollection();
         }
 
-        if ($response->status->error_code > 0) {
-            $this->errorMessage = $response->status->error_message;
+        if (empty($response->data->{$symbols[0]})) {
             return new CurrenciesCollection();
         }
 

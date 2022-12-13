@@ -3,7 +3,7 @@
 namespace App;
 
 const ROUTES_MAP = [
-    ['GET', '/', [\App\Controllers\ListCurrenciesController::class, 'index']],
+    ['GET', '/', [\App\Controllers\CurrenciesController::class, 'displayCurrenciesList']],
     ['GET', '/register', [\App\Controllers\UserRegisterController::class, 'displayRegisterForm']],
     ['POST', '/register', [\App\Controllers\UserRegisterController::class, 'store']],
     ['GET', '/login', [\App\Controllers\UserLoginController::class, 'displayLoginForm']],
@@ -19,4 +19,5 @@ const ROUTES_MAP = [
     ['POST', '/sell-currency', [\App\Controllers\CurrencyController::class, 'sellCurrency']],
     ['GET', '/wallet', [\App\Controllers\WalletController::class, 'displayWallet']],
     ['POST', '/wallet/add-money', [\App\Controllers\WalletController::class, 'addMoney']],
+    ['GET', '/transactions', [\App\Controllers\TransactionsController::class, 'displayTransactionsList']],
 ];
