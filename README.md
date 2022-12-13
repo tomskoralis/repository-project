@@ -2,17 +2,17 @@
 
 ### Instructions to run the website:
 
-1. Clone this repository using the command
+1. Clone this repository using the command:
    ```
    git clone https://github.com/tomskoralis/repository-project
    ```
-2. Install the required packages using the command
+2. Install the required packages using the command:
    ```
    composer install
    ```
 3. Make a copy of the `.env.example` and rename it to `.env`.
 4. Enter your https://coinmarketcap.com/ API key in the `.env` file.
-5. Create a new mySQL 8.0 database tables with these SQL queries:
+5. Create a mySQL 8.0 database with 2 tables and 1 view with these SQL queries:
    ```
    create table users
    (
@@ -26,7 +26,6 @@
       unique (email)
    );
    ```
-
    ```
    create table transactions
    (
@@ -39,7 +38,6 @@
        time    datetime       null
    );
    ```
-
    ```
    create view balances as
    select transactions.user_id                             as id,
@@ -50,8 +48,7 @@
    group by transactions.user_id, transactions.symbol
    having cast(sum(transactions.amount) as decimal(16, 8)) > 0;
    ```
-6. Enter your database credentials in the `.env`
-   file.
+6. Enter your database credentials in the `.env` file.
     - Fields `DATABASE_NAME`, `DATABASE_USER`, `DATABASE_PASSWORD` are required.
     - Field `DATABASE_HOST` is localhost by default and `DATABASE_DRIVER` is pdo_mysql by default.
 7. Test the website by running it from the `public` directory using the command:
