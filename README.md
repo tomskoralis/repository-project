@@ -16,35 +16,32 @@
    ```
    create table users
    (
-      id       int auto_increment
-      primary key,
-      name     varchar(255)   not null,
-      email    varchar(255)   not null,
-      password varchar(255)   null,
-      wallet   decimal(22, 2) not null,
-      constraint unique_email
-      unique (email)
+   id       int auto_increment primary key,
+   name     varchar(255)   not null,
+   email    varchar(255)   not null,
+   password varchar(255)   null,
+   wallet   decimal(22, 2) not null,
+   constraint unique_email
+   unique (email)
    );
    ```
    ```
    create table transactions
    (
-       id      int auto_increment
-           primary key,
-       user_id int            not null,
-       symbol  varchar(10)    not null,
-       price   decimal(16, 8) not null,
-       amount  decimal(16, 8) not null,
-       time    datetime       null
+   id      int auto_increment primary key,
+   user_id int            not null,
+   symbol  varchar(10)    not null,
+   price   decimal(16, 8) not null,
+   amount  decimal(16, 8) not null,
+   time    datetime       null
    );
    ```
    ```
    create view balances as
-   select transactions.user_id                             as id,
-          transactions.symbol                              as symbol,
-          cast(sum(transactions.amount) as decimal(16, 8)) as balance
-   from users
-            join transactions on users.id = transactions.user_id
+   select transactions.user_id                      as id,
+   transactions.symbol                              as symbol,
+   cast(sum(transactions.amount) as decimal(16, 8)) as balance
+   from transactions
    group by transactions.user_id, transactions.symbol
    having cast(sum(transactions.amount) as decimal(16, 8)) > 0;
    ```

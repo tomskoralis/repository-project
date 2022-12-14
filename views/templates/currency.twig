@@ -50,7 +50,7 @@
                         <div class="pageTitle">
                             You own:
                             {% if amountOwned %}
-                                {{ amountOwned | number_format(8, '.', '') | trim('0.','right') }}
+                                {{ amountOwned | number_format(8, '.', '') | trim('0','right') | trim('.', 'right') }}
                             {% else %}
                                 0
                             {% endif %}

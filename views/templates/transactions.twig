@@ -14,7 +14,7 @@
             <p class="addSmallMarginTop">Total revenue:
                 {{ revenue | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
             </p>
-            <p class="addSmallMarginTop">Value of wallet:
+            <p class="addSmallMarginTop">Value of coins in the wallet:
                 {{ currencyValueInWallet | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
             </p>
             <p class="addSmallMarginTop">Profit:
@@ -59,7 +59,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        {{ transaction.getAmount | number_format(8, '.', '') | trim('0.', 'right') }}
+                        {{ transaction.getAmount | number_format(8, '.', '') | trim('0', 'right') | trim('.', 'right')}}
                     </td>
                     <td>{{ transaction.getDateTime }}</td>
                 </tr>
