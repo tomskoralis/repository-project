@@ -60,7 +60,10 @@ class CurrencyController
             return new Redirect('/currency/' . $symbol);
         }
 
-        $amountToBuy = rtrim(number_format($amountToBuy, 8, '.', ''), '0.');
+        $amountToBuy = rtrim(rtrim(
+            number_format($amountToBuy, 8, '.', ''),
+            '0'), '.'
+        );
         $cost = floor($amountToBuy * $price * 100) / 100;
         Session::add(
             "Successfully bought $amountToBuy $symbol for {$this->getCurrencySymbol()}$cost",
@@ -95,7 +98,10 @@ class CurrencyController
             return new Redirect('/currency/' . $symbol);
         }
 
-        $amountToSell = rtrim(number_format($amountToSell, 8, '.', ''), '0.');
+        $amountToSell = rtrim(rtrim(
+            number_format($amountToSell, 8, '.', ''),
+            '0'), '.'
+        );
         $cost = floor($amountToSell * $price * 100) / 100;
         Session::add(
             "Successfully sold $amountToSell $symbol for {$this->getCurrencySymbol()}$cost",

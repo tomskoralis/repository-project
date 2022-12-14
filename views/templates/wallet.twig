@@ -15,7 +15,7 @@
         {% for balance in balances %}
             <div class="addMarginTop">
                 {{ balance.getSymbol }}:
-                {{ balance.getAmount | number_format(8, '.', '') | trim('0.', 'right') }}
+                {{ balance.getAmount | number_format(8, '.', '') | trim('0', 'right') | trim('0', 'right') }}
             </div>
         {% endfor %}
         <div class="addMarginTop">
