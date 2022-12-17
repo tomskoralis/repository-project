@@ -1,0 +1,38 @@
+{% extends 'base.twig' %}
+
+{% block title %} | Transactions{% endblock %}
+
+{% block content %}
+    <div class="pageHeading addMarginTop">Transaction Statistics</div>
+    {% if errors.nothingFound %}
+        <div class="errorMessage">ERROR: {{ errors.nothingFound }}</div>
+    {% else %}
+        <div>
+            <p class="addSmallMarginTop">Total spent on crypto:
+                {{ statistics.getSpent | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+            </p>
+            <p class="addSmallMarginTop">Total revenue from selling crypto:
+                {{ statistics.getRevenue | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+            </p>
+            <p class="addSmallMarginTop">Total value of crypto in the wallet:
+                {{ statistics.getWalletValue | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+            </p>
+            <p class="addSmallMarginTop">Total profit:
+                <span class="{% if profit > 0 %}greenText{% else %}redText{% endif %}">
+                {{ statistics.getProfit | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+                </span>
+            </p>
+            <br>
+            <p>Average prices for each currency in transactions:</p>
+            {% for price in statistics.getAveragePrices.getAll %}
+                {% if price.getPrice < 1 %}
+                    <ul class="addSmallMarginTop">{{ price.getSymbol }}:
+                        {{ price.getPrice | format_currency(currencyCode, {max_significant_digits_used: 4}) }}</ul>
+                {% else %}
+                    <ul class="addSmallMarginTop">{{ price.getSymbol }}:
+                        {{ price.getPrice | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}</ul>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}

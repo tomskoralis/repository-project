@@ -2,53 +2,49 @@
 
 namespace App\Controllers;
 
-use App\{Redirect, Session, Template};
+use App\{Template, Redirect, Session};
 use App\Models\User;
-use App\Services\UsersService;
-use App\Validation\UserValidation;
+use App\Services\UserRegisterService;
 
 class UserRegisterController
 {
-    private UsersService $usersService;
+    private UserRegisterService $userRegisterService;
 
-    public function __construct(UsersService $usersService)
+    public function __construct(UserRegisterService $userRegisterService)
     {
-        $this->usersService = $usersService;
+        $this->userRegisterService = $userRegisterService;
     }
 
-    public function displayRegisterForm(): Template
+    public function showRegisterForm(): Template
     {
         $urlPath = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH);
-        if (isset($urlPath) && $urlPath !== '/' && $urlPath !== '/register') {
-            Session::add($urlPath, 'urlPath');
+        if (
+            isset($urlPath) &&
+            $urlPath !== '' &&
+            $urlPath !== '/' &&
+            $urlPath !== '/login' &&
+            $urlPath !== '/register'
+        ) {
+            Session::add($urlPath, 'redirectUrl');
         }
         return new Template('templates/register.twig');
     }
 
-    public function store(): Redirect
+    public function register(): Redirect
     {
         $password = $_POST['password'] ?? '';
         $email = $_POST['email'] ?? '';
         $name = $_POST['name'] ?? '';
         $passwordRepeated = $_POST['passwordRepeated'] ?? '';
+        $user = new User($password, $email, $name, $passwordRepeated);
 
-        $user = new User($name, $email, $password, $passwordRepeated);
-        $validation = new UserValidation($user, $this->usersService);
-
-        if (!$validation->isUserValid() || Session::has('errors')) {
+        $userId = $this->userRegisterService->registerAndGetId($user);
+        Session::addErrors($this->userRegisterService->getErrors());
+        if (Session::has('errors') || $userId === 0) {
             return new Redirect('/register');
         }
 
-        $validation->isEmailTaken();
-        if (Session::has('errors')) {
-            return new Redirect('/register');
-        }
-
-        $this->usersService->insertUser($user);
-        if (Session::has('errors')) {
-            return new Redirect('/register');
-        }
-        Session::add($this->usersService->searchIdByEmail($user), 'userId');
-        return new Redirect(Session::get('urlPath') ?? '/');
+        Session::add($userId, 'userId');
+        return new Redirect(Session::get('redirectUrl') ?? '/');
     }
 }

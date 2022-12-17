@@ -3,50 +3,81 @@
 namespace App\Controllers;
 
 use App\{Redirect, Session, Template};
-use App\Services\{UsersService, TransactionsService};
+use App\Services\{WalletShowService, WalletUpdateService};
 use const App\CURRENCY_CODE;
 
 class WalletController
 {
-    private UsersService $usersService;
-    private TransactionsService $transactionsService;
+    private WalletShowService $walletShowService;
+    private WalletUpdateService $walletUpdateService;
 
     public function __construct(
-        UsersService        $usersService,
-        TransactionsService $transactionsService
+        WalletShowService   $walletShowService,
+        WalletUpdateService $walletUpdateService
     )
     {
-        $this->usersService = $usersService;
-        $this->transactionsService = $transactionsService;
+        $this->walletShowService = $walletShowService;
+        $this->walletUpdateService = $walletUpdateService;
     }
 
-    public function displayWallet()
+    public function showWallet()
     {
         if (!Session::has('userId')) {
+            Session::add(
+                "Need to be logged in to view wallet",
+                'flashMessages', 'login'
+            );
             return new Redirect('/login');
         }
-        $transactionsService = $this->transactionsService;
-        $balances = $transactionsService->getUserBalances(Session::get('userId'))->getBalances();
+
+        $balances = $this->walletShowService->getUserBalances(Session::get('userId'))->getAll();
+        Session::addErrors($this->walletShowService->getErrors());
+
         return new Template ('templates/wallet.twig', [
             'currencyCode' => CURRENCY_CODE,
             'balances' => $balances,
         ]);
     }
 
-    public function addMoney(): Redirect
+    public function depositMoney(): Redirect
     {
-        $amountToAdd = floor((float)$_POST['amount'] * 100) / 100;
-        if ($amountToAdd > 0) {
-            $this->usersService->addMoneyToWallet(Session::get('userId'), $amountToAdd);
-        } else {
-            Session::add('Incorrect amount!', 'errors', 'wallet');
-        }
+        $amount = $_POST['amount'] ?? '0';
+
+        $this->walletUpdateService->addMoneyToWallet(Session::get('userId'), $amount);
+        Session::addErrors($this->walletUpdateService->getErrors());
+
         if (!Session::has('errors')) {
-            $symbol = (new \NumberFormatter(\Locale::getDefault() . "@currency=" . CURRENCY_CODE, \NumberFormatter::CURRENCY))
-                ->getSymbol(\NumberFormatter::CURRENCY_SYMBOL);
-            $amountToAdd = number_format($amountToAdd, 2, '.', '');
-            Session::add('Successfully added ' . $symbol . "$amountToAdd to the wallet!", 'flashMessages', 'wallet');
+            Session::add(
+                'Successfully deposited ' . $this->getCurrencySymbol() .
+                number_format($amount, 2, '.', ''),
+                'flashMessages', 'wallet'
+            );
         }
         return new Redirect('/wallet');
+    }
+
+    public function withdrawMoney(): Redirect
+    {
+        $amount = $_POST['amount'] ?? '0';
+
+        $this->walletUpdateService->subtractMoneyFromWallet(Session::get('userId'), $amount);
+        Session::addErrors($this->walletUpdateService->getErrors());
+
+        if (!Session::has('errors')) {
+            Session::add(
+                'Successfully withdrew ' . $this->getCurrencySymbol() .
+                number_format($amount, 2, '.', ''),
+                'flashMessages', 'wallet'
+            );
+        }
+        return new Redirect('/wallet');
+    }
+
+    private function getCurrencySymbol(): string
+    {
+        return (new \NumberFormatter(
+            \Locale::getDefault() . '@currency=' . CURRENCY_CODE,
+            \NumberFormatter::CURRENCY
+        ))->getSymbol(\NumberFormatter::CURRENCY_SYMBOL);
     }
 }

@@ -3,15 +3,15 @@
 namespace App\ViewVariables;
 
 use App\Session;
-use App\Services\UsersService;
+use App\Repositories\UsersRepository;
 
 class AuthViewVariables implements ViewVariables
 {
-    private UsersService $usersService;
+    private UsersRepository $usersRepository;
 
-    public function __construct(UsersService $usersService)
+    public function __construct(UsersRepository $usersRepository)
     {
-        $this->usersService = $usersService;
+        $this->usersRepository = $usersRepository;
     }
 
     public function getName(): string
@@ -24,7 +24,7 @@ class AuthViewVariables implements ViewVariables
         if (!Session::has('userId')) {
             return [];
         }
-        $user = $this->usersService->getUser(Session::get('userId'));
+        $user = $this->usersRepository->fetchUser(Session::get('userId'));
         return [
             'name' => $user->getName(),
             'email' => $user->getEmail(),

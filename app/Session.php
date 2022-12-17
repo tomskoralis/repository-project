@@ -2,6 +2,9 @@
 
 namespace App;
 
+use App\Models\Error;
+use App\Models\Collections\ErrorsCollection;
+
 class Session
 {
     public static function start(): void
@@ -11,7 +14,7 @@ class Session
         }
     }
 
-    public static function get(...$keys)
+    public static function get(string ...$keys)
     {
         if (empty($keys)) {
             return null;
@@ -28,7 +31,7 @@ class Session
         );
     }
 
-    public static function add($value, ...$keys): void
+    public static function add($value, ?string ...$keys): void
     {
         if (empty($keys)) {
             return;
@@ -36,7 +39,7 @@ class Session
         $_SESSION = array_replace_recursive($_SESSION, self::nestElement($value, $keys));
     }
 
-    public static function remove(...$keys): void
+    public static function remove(string ...$keys): void
     {
         if (empty($keys)) {
             return;
@@ -44,7 +47,7 @@ class Session
         self::deleteElement($_SESSION, $keys);
     }
 
-    public static function has(...$keys): bool
+    public static function has(string ...$keys): bool
     {
         if (empty($keys)) {
             return false;
@@ -62,12 +65,28 @@ class Session
         return isset($value);
     }
 
+    public static function addErrors(ErrorsCollection $errors): void
+    {
+        foreach ($errors->getAll() as $error) {
+            /** @var Error $error */
+            self::add(
+                $error->getMessage(),
+                'errors',
+                $error->getType(),
+                $error->getSubtype()
+            );
+        }
+    }
+
     private static function nestElement(string $value, array $keys)
     {
         if (empty($keys)) {
             return $value;
         }
         $key = array_shift($keys);
+        if ($key === null) {
+            return $value;
+        }
         return [$key => self::nestElement($value, $keys)];
     }
 

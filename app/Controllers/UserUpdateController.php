@@ -2,54 +2,53 @@
 
 namespace App\Controllers;
 
-use App\{Redirect, Session, Template};
+use App\{Template, Redirect, Session};
 use App\Models\User;
-use App\Services\UsersService;
-use App\Validation\UserValidation;
+use App\Services\{UserUpdateService, UserDeleteService};
 
 class UserUpdateController
 {
-    private UsersService $usersService;
+    private UserUpdateService $userUpdateService;
+    private UserDeleteService $userDeleteService;
 
-    public function __construct(UsersService $usersService)
+    public function __construct(
+        UserUpdateService $userUpdateService,
+        UserDeleteService $userDeleteService
+    )
     {
-        $this->usersService = $usersService;
+        $this->userUpdateService = $userUpdateService;
+        $this->userDeleteService = $userDeleteService;
     }
 
-    public function displayAccount()
+    public function showAccount()
     {
         if (!Session::has('userId')) {
+            Session::add(
+                "Need to be logged in to view account",
+                'flashMessages', 'login'
+            );
             return new Redirect('/login');
         }
         return new Template('templates/account.twig');
     }
 
-    public function update(): Redirect
+    public function updateNameAndEmail(): Redirect
     {
-        $password = $_POST['password'] ?? '';
         $name = $_POST['name'] ?? '';
         $email = $_POST['email'] ?? '';
+        $password = $_POST['password'] ?? '';
+        $user = new User($password, $email, $name);
 
-        $user = new User($name, $email);
-        $validation = new UserValidation($user, $this->usersService);
-
-        if (!$validation->isUserValid() || Session::has('errors')) {
-            return new Redirect('/account');
-        }
-
-        $validation->isEmailTaken(Session::get('userId'));
-
-        $userPassword = new User(null, null, $password);
-        $validationPassword = new UserValidation($userPassword, $this->usersService);
-        $validationPassword->isPasswordMatchingHash(Session::get('userId'), 'Edit');
+        $this->userUpdateService->updateNameAndEmail($user, Session::get('userId'));
+        Session::addErrors($this->userUpdateService->getErrors());
         if (Session::has('errors')) {
             return new Redirect('/account');
         }
 
-        $this->usersService->updateUser($user, Session::get('userId'));
-        if (!Session::has('errors')) {
-            Session::add('Successfully changed the username and e-mail!', 'flashMessages', 'update');
-        }
+        Session::add(
+            'Successfully changed the username and e-mail!',
+            'flashMessages', 'update'
+        );
         return new Redirect('/account');
     }
 
@@ -58,47 +57,37 @@ class UserUpdateController
         $passwordCurrent = $_POST['passwordCurrent'] ?? '';
         $passwordNew = $_POST['passwordNew'] ?? '';
         $passwordNewRepeated = $_POST['passwordNewRepeated'] ?? '';
+        $userNew = new User($passwordNew, null, null, $passwordNewRepeated);
 
-        $userNew = new User(null, null, $passwordNew, $passwordNewRepeated);
-
-        $validationNew = new UserValidation($userNew, $this->usersService);
-        if (!$validationNew->isUserValid() || Session::has('errors')) {
-            return new Redirect('/account');
-        }
-
-        $user = new User(null, null, $passwordCurrent);
-
-        $validation = new UserValidation($user, $this->usersService);
-        $validation->isPasswordMatchingHash(Session::get('userId'), 'Password');
+        $this->userUpdateService->updatePassword($userNew, $passwordCurrent, Session::get('userId'));
+        Session::addErrors($this->userUpdateService->getErrors());
         if (Session::has('errors')) {
             return new Redirect('/account');
         }
 
-        $this->usersService->updateUser($userNew, Session::get('userId'));
-        if (!Session::has('errors')) {
-            Session::add('Successfully changed the password!', 'flashMessages', 'updatePassword');
-        }
+        Session::add(
+            'Successfully changed the password!',
+            'flashMessages', 'updatePassword'
+        );
         return new Redirect('/account');
     }
 
     public function delete(): Redirect
     {
         $password = $_POST['passwordForDeletion'] ?? '';
-        $user = new User(null, null, $password);
+        $user = new User($password);
 
-        $validation = new UserValidation($user, $this->usersService);
-
-        $validation->isPasswordMatchingHash(Session::get('userId'), 'Delete');
+        $this->userDeleteService->deleteUser($user, Session::get('userId'));
+        Session::addErrors($this->userDeleteService->getErrors());
         if (Session::has('errors')) {
             return new Redirect('/account');
         }
 
-        $this->usersService->deleteUser(Session::get('userId'));
-        if (Session::has('errors')) {
-            return new Redirect('/account');
-        }
         Session::remove('userId');
-        Session::add('Successfully deleted the account!', 'flashMessages', 'delete');
+        Session::add(
+            'Successfully deleted the account!',
+            'flashMessages', 'userDeleted'
+        );
         return new Redirect('/');
     }
 }

@@ -4,30 +4,30 @@ namespace App\Models;
 
 class User
 {
-    private ?string $name;
-    private ?string $email;
     private ?string $password;
+    private ?string $email;
+    private ?string $name;
     private ?string $passwordRepeated;
     private ?float $wallet;
 
     public function __construct(
-        string $name = null,
-        string $email = null,
         string $password = null,
+        string $email = null,
+        string $name = null,
         string $passwordRepeated = null,
         float  $wallet = null
     )
     {
-        $this->name = $name;
-        $this->email = $email;
         $this->password = $password;
+        $this->email = $email;
+        $this->name = $name;
         $this->passwordRepeated = $passwordRepeated;
         $this->wallet = $wallet;
     }
 
-    public function getName(): ?string
+    public function getPassword(): ?string
     {
-        return $this->name;
+        return $this->password;
     }
 
     public function getEmail(): ?string
@@ -35,9 +35,9 @@ class User
         return $this->email;
     }
 
-    public function getPassword(): ?string
+    public function getName(): ?string
     {
-        return $this->password;
+        return $this->name;
     }
 
     public function getPasswordRepeated(): ?string

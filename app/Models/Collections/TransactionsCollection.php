@@ -4,24 +4,10 @@ namespace App\Models\Collections;
 
 use App\Models\Transaction;
 
-class TransactionsCollection
+class TransactionsCollection extends Collection
 {
-    private array $transactions;
-
-    public function __construct(array $transactions = [])
+    public function add(Transaction $item): void
     {
-        $this->transactions = $transactions;
-    }
-
-    public function getTransactions(): \Generator
-    {
-        foreach ($this->transactions as $transaction) {
-            yield $transaction;
-        }
-    }
-
-    public function addTransaction(Transaction $transaction): void
-    {
-        $this->transactions [] = $transaction;
+        $this->items [] = $item;
     }
 }

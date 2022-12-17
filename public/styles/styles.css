@@ -169,6 +169,9 @@ div.tableTopRow {
 
 div.tableHeading {
     grid-column: 1 / 6;
+}
+
+div.pageHeading {
     font-size: calc(7px + 0.9vw);
     text-align: center;
     padding-bottom: 0.5rem;
@@ -299,6 +302,7 @@ table.transactionsTable th {
 table.transactionsTable thead > tr > td,
 table.transactionsTable tbody > tr > td {
     padding: 0.15rem 0.5rem;
+    font-size: calc(4px + 0.6vw);
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -313,7 +317,7 @@ table.transactionsTable tbody > tr > :nth-child(1) {
     text-align: left;
 }
 
-table.transactionsTable thead > tr > :nth-child(n+2):nth-child(-n+5),
-table.transactionsTable tbody > tr > :nth-child(n+2):nth-child(-n+5) {
+table.transactionsTable thead > tr > :nth-child(n+2):nth-child(-n+6),
+table.transactionsTable tbody > tr > :nth-child(n+2):nth-child(-n+6) {
     text-align: right;
 }

@@ -2,23 +2,24 @@
 
 namespace App\Repositories;
 
-use App\Models\User;
+use Generator;
+use App\Models\{Error, User};
 
 interface UsersRepository
 {
-    public function getErrorMessage(): ?string;
+    public static function getError(): ?Error;
 
-    public function fetchUser(int $userId): User;
+    public static function fetchUser(int $userId): ?User;
 
-    public function addUser(User $user): void;
+    public static function add(User $user): void;
 
-    public function updateUser(User $user, int $userId): void;
+    public static function update(User $user, int $userId): void;
 
-    public function deleteUser(int $userId): void;
+    public static function delete(int $userId): void;
 
-    public function searchIdByEmail(User $user): int;
+    public static function searchId(User $user): int;
 
-    public function fetchEmailsExcept(int $userId = 0): \Generator;
+    public static function fetchEmailsExcept(int $userId = 0): Generator;
 
-    public function addMoneyToWallet(int $userId, float $amount): void;
+    public static function addMoneyToWallet(int $userId, float $amount): void;
 }

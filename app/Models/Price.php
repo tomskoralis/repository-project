@@ -2,18 +2,18 @@
 
 namespace App\Models;
 
-class Balance
+class Price
 {
     private string $symbol;
-    private float $balance;
+    private float $price;
 
     public function __construct(
         string $symbol,
-        float  $balance
+        float  $price
     )
     {
         $this->symbol = $symbol;
-        $this->balance = $balance;
+        $this->price = $price;
     }
 
     public function getSymbol(): string
@@ -21,8 +21,8 @@ class Balance
         return $this->symbol;
     }
 
-    public function getAmount(): float
+    public function getPrice(): float
     {
-        return $this->balance;
+        return $this->price;
     }
 }

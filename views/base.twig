@@ -45,8 +45,8 @@
     </div>
 
     <div id="content">
-        {% if messages.delete %}
-            <div class="flashMessage">{{ messages.delete }}</div>
+        {% if messages.userDeleted %}
+            <div class="flashMessage">{{ messages.userDeleted }}</div>
         {% endif %}
         {% for error in errors.repository %}
             <div class="errorMessage">ERROR: {{ error }}</div>

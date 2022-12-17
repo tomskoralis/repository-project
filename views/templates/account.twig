@@ -8,12 +8,12 @@
         <form class="userInputForm" action="/account/update" method="post">
             <div>
                 <label class="userInputBoxLabel">Username:<br>
-                    <input class="userInputBox" name="name" value="{{ auth.name }}">
+                    <input required class="userInputBox" name="name" value="{{ auth.name }}">
                 </label>
             </div>
             <div class="addMarginTop">
                 <label class="userInputBoxLabel">E-mail:<br>
-                    <input class="userInputBox" name="email" value="{{ auth.email }}">
+                    <input required class="userInputBox" name="email" value="{{ auth.email }}">
                 </label>
             </div>
             <div class="addMarginTop">

@@ -2,16 +2,16 @@
 
 namespace App\Repositories;
 
-use App\Models\Transaction;
+use App\Models\{Transaction, Error};
 use App\Models\Collections\{BalancesCollection, TransactionsCollection};
 
 interface TransactionsRepository
 {
-    public function getErrorMessage(): ?string;
+    public static function getError(): ?Error;
 
-    public function fetchTransactions(int $userId): TransactionsCollection;
+    public static function fetchTransactionsById(int $userId): TransactionsCollection;
 
-    public function fetchBalances(int $userId): BalancesCollection;
+    public static function fetchBalancesById(int $userId, ?string $symbol = null): BalancesCollection;
 
-    public function addTransaction(Transaction $transaction): void;
+    public static function add(Transaction $transaction): void;
 }

@@ -2,11 +2,12 @@
 
 namespace App\Repositories;
 
+use App\Models\Error;
 use App\Models\Collections\CurrenciesCollection;
 
 interface CurrenciesRepository
 {
-    public function fetchCurrencies(array $symbols, string $currencyType): CurrenciesCollection;
+    public static function getError(): ?Error;
 
-    public function getErrorMessage(): ?string;
+    public static function fetchCurrencies(array $symbols, string $currencyConvertType): CurrenciesCollection;
 }

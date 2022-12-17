@@ -5,10 +5,9 @@
 {% endblock %}
 
 {% block content %}
-    {% if errors.currencies %}
-        <div class="errorMessage">ERROR: {{ errors.currencies }}</div>
+    {% if errors.nothingFound %}
+        <div class="errorMessage">ERROR: {{ errors.nothingFound }}</div>
     {% else %}
-
         <div class="userInputFormContainer">
             <div class="pageTitle">{{ currency.getName }} ({{ currency.getSymbol }})</div>
             <div class="twoColumns">
@@ -81,13 +80,11 @@
                         </div>
                     {% endif %}
                 </div>
-
             </div>
 
             {% if errors.currency %}
                 <div class="errorMessage">ERROR: {{ errors.currency }}</div>
             {% endif %}
-
         </div>
     {% endif %}
 {% endblock %}

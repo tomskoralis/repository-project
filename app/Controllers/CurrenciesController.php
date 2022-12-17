@@ -2,24 +2,26 @@
 
 namespace App\Controllers;
 
-use App\Template;
-use App\Services\CurrenciesService;
+use App\{Template, Session};
+use App\Services\CurrenciesListService;
 use const App\{CRYPTOCURRENCY_SYMBOLS, CURRENCY_CODE};
 
 class CurrenciesController
 {
-    private CurrenciesService $currenciesService;
+    private CurrenciesListService $currenciesListService;
 
-    public function __construct(CurrenciesService $currenciesService)
+    public function __construct(CurrenciesListService $currenciesListService)
     {
-        $this->currenciesService = $currenciesService;
+        $this->currenciesListService = $currenciesListService;
     }
 
-    public function displayCurrenciesList(): Template
+    public function showCurrenciesList(): Template
     {
-        $currencies = $this->currenciesService->fetchCurrencies(CRYPTOCURRENCY_SYMBOLS);
+        $currencies = $this->currenciesListService->fetchCurrencies(CRYPTOCURRENCY_SYMBOLS, CURRENCY_CODE);
+        Session::addErrors($this->currenciesListService->getErrors());
+
         return new Template ('templates/list.twig', [
-            'currencies' => $currencies->getCurrencies(),
+            'currencies' => $currencies->getAll(),
             'currencyCode' => CURRENCY_CODE,
         ]);
     }

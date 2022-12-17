@@ -4,24 +4,10 @@ namespace App\Models\Collections;
 
 use App\Models\Balance;
 
-class BalancesCollection
+class BalancesCollection extends Collection
 {
-    private array $balances;
-
-    public function __construct(array $balances = [])
+    public function add(Balance $item): void
     {
-        $this->balances = $balances;
-    }
-
-    public function getBalances(): \Generator
-    {
-        foreach ($this->balances as $balance) {
-            yield $balance;
-        }
-    }
-
-    public function addBalance(Balance $balance): void
-    {
-        $this->balances [] = $balance;
+        $this->items [] = $item;
     }
 }

@@ -4,24 +4,10 @@ namespace App\Models\Collections;
 
 use App\Models\Currency;
 
-class CurrenciesCollection
+class CurrenciesCollection extends Collection
 {
-    private array $currencies;
-
-    public function __construct(array $currencies = [])
+    public function add(Currency $item): void
     {
-        $this->currencies = $currencies;
-    }
-
-    public function getCurrencies(): \Generator
-    {
-        foreach ($this->currencies as $currency) {
-            yield $currency;
-        }
-    }
-
-    public function addCurrency(Currency $currency): void
-    {
-        $this->currencies [] = $currency;
+        $this->items [] = $item;
     }
 }

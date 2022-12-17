@@ -8,14 +8,14 @@ class Transaction
     private string $symbol;
     private float $price;
     private float $amount;
-    private string $dateTime;
+    private ?string $dateTime;
 
     public function __construct(
-        int    $userId,
-        string $symbol,
-        float  $price,
-        float  $amount,
-        string $dateTime
+        int     $userId,
+        string  $symbol,
+        float   $price,
+        float   $amount,
+        ?string $dateTime = null
     )
     {
         $this->userId = $userId;
@@ -45,7 +45,7 @@ class Transaction
         return $this->amount;
     }
 
-    public function getDateTime(): string
+    public function getDateTime(): ?string
     {
         return $this->dateTime;
     }

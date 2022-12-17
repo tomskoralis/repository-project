@@ -3,39 +3,10 @@
 {% block title %} | Transactions{% endblock %}
 
 {% block content %}
-    {% if errors.transactions %}
-        <div class="errorMessage">ERROR: {{ errors.transactions }}</div>
+    <div class="pageHeading addMarginTop">Transactions</div>
+    {% if errors.nothingFound %}
+        <div class="errorMessage">ERROR: {{ errors.nothingFound }}</div>
     {% else %}
-        <div class="tableHeading addMarginTop">Statistics</div>
-        <div>
-            <p class="addSmallMarginTop">Total costs:
-                {{ totalCost | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
-            </p>
-            <p class="addSmallMarginTop">Total revenue:
-                {{ revenue | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
-            </p>
-            <p class="addSmallMarginTop">Value of coins in the wallet:
-                {{ currencyValueInWallet | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
-            </p>
-            <p class="addSmallMarginTop">Profit:
-                <span class="{% if profit > 0 %}greenText{% else %}redText{% endif %}">
-                {{ profit | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
-                </span>
-            </p>
-            <br>
-            <p>Average price per currency</p>
-            {% for key, value in averageCurrencyCosts %}
-                {% if value < 1 %}
-                    <ul class="addSmallMarginTop">{{ key }}:
-                        {{ value | format_currency(currencyCode, {max_significant_digits_used: 4}) }}</ul>
-                {% else %}
-                    <ul class="addSmallMarginTop">{{ key }}:
-                        {{ value | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}</ul>
-                {% endif %}
-            {% endfor %}
-        </div>
-        <br>
-        <div class="tableHeading addMarginTop">All Transactions</div>
         <table class="transactionsTable">
             <thead>
             <tr>
@@ -43,6 +14,7 @@
                 <th>Symbol</th>
                 <th>Price</th>
                 <th>Amount</th>
+                <th>From</th>
                 <th>Time</th>
             </tr>
             </thead>
@@ -59,8 +31,9 @@
                         {% endif %}
                     </td>
                     <td>
-                        {{ transaction.getAmount | number_format(8, '.', '') | trim('0', 'right') | trim('.', 'right')}}
+                        {{ transaction.getAmount | number_format(8, '.', '') | trim('0', 'right') | trim('.', 'right') }}
                     </td>
+                    <td>{% if transaction.getFrom %} {{ transaction.getFrom }} {% else %} market {% endif %}</td>
                     <td>{{ transaction.getDateTime }}</td>
                 </tr>
             {% endfor %}

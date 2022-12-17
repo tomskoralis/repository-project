@@ -1,11 +1,11 @@
 {% extends 'base.twig' %}
 
 {% block content %}
-    {% if errors.currencies %}
-        <div class="errorMessage">ERROR: {{ errors.currencies }}</div>
+    {% if errors.nothingFound %}
+        <div class="errorMessage">ERROR: {{ errors.nothingFound }}</div>
     {% else %}
         <div class="tableGrid">
-            <div class="tableHeading">Cryptocurrency Prices</div>
+            <div class="pageHeading tableHeading">Cryptocurrency Prices</div>
             <div class="tableItem tableTopRow">Name</div>
             <div class="tableItem tableTopRow">Price</div>
             <div class="tableItem tableTopRow">Change 1h</div>

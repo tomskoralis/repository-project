@@ -2,63 +2,121 @@
 
 namespace App\Validation;
 
-use App\Session;
-use App\Models\{Balance, Transaction};
-use App\Services\TransactionsService;
+use App\Models\{Transaction, Balance, Error};
+use App\Models\Collections\ErrorsCollection;
+use App\Repositories\TransactionsRepository;
+use App\Repositories\UsersRepository;
 
 class TransactionValidation
 {
-    private Transaction $transaction;
-    private TransactionsService $transactionsService;
+    private UsersRepository $usersRepository;
+    private TransactionsRepository $transactionsRepository;
+    private ErrorsCollection $errors;
 
-    public function __construct(Transaction $transaction, TransactionsService $transactionsService)
+    public function __construct(
+        UsersRepository        $usersRepository,
+        TransactionsRepository $transactionsRepository
+    )
     {
-        $this->transaction = $transaction;
-        $this->transactionsService = $transactionsService;
+        $this->usersRepository = $usersRepository;
+        $this->transactionsRepository = $transactionsRepository;
+        $this->errors = new ErrorsCollection();
     }
 
-    public function canBuyCurrency(): bool
+    public function getErrors(): ErrorsCollection
     {
-        if ($this->transaction->getAmount() <= 0) {
-            Session::add('Incorrect amount!', 'errors', 'currency');
+        return $this->errors;
+    }
+
+    public function isAmountValid(string $amount): bool
+    {
+        if ((float)$amount !== filter_var($amount, FILTER_VALIDATE_FLOAT)) {
+            $this->errors->add(
+                new Error('Amount must be a number!', 'currency')
+            );
             return false;
         }
-        $cost = floor($this->transaction->getAmount() * $this->transaction->getPrice() * 100) / 100;
+
+        if (floor((float)$amount * 100000000) / 100000000 <= 0) {
+            $this->errors->add(
+                new Error('Amount must be higher than 0.00000001!', 'currency')
+            );
+            return false;
+        }
+
+        if ((float)$amount !== floor((float)$amount * 100000000) / 100000000) {
+            $this->errors->add(
+                new Error('Amount must have 8 decimal digits at most!', 'currency')
+            );
+            return false;
+        }
+        return true;
+    }
+
+    public function canBuyCurrency(Transaction $transaction, int $userId): bool
+    {
+        if ($transaction->getAmount() <= 0) {
+            $this->errors->add(
+                new Error('Incorrect amount!', 'currency')
+            );
+            return false;
+        }
+        $cost = floor($transaction->getAmount() * $transaction->getPrice() * 100) / 100;
         if ($cost < 0.01) {
-            Session::add('Too small cost to buy!', 'errors', 'currency');
+            $this->errors->add(
+                new Error('Too small cost to buy!', 'currency')
+            );
             return false;
         }
-        $moneyAvailable = $this->transactionsService->getUser(Session::get('userId'))->getWallet();
-        if (isset($moneyAvailable) && $moneyAvailable < $cost) {
-            Session::add('Not enough money in wallet!', 'errors', 'currency');
-            return false;
-        }
-        return true;
-    }
-
-    public function canSellCurrency(): bool
-    {
-        if ($this->transaction->getAmount() >= 0) {
-            Session::add('Incorrect amount!', 'errors', 'currency');
-            return false;
-        }
-        if (floor(abs($this->transaction->getAmount()) * $this->transaction->getPrice() * 100) / 100 < 0.01) {
-            Session::add('Too small cost to sell!', 'errors', 'currency');
-            return false;
-        }
-        if (!$this->userHasEnoughCurrency($this->transaction->getSymbol(), abs($this->transaction->getAmount()))) {
-            Session::add('You do not own enough to sell that much!', 'errors', 'currency');
+        $user = $this->usersRepository->fetchUser($userId);
+        if (isset($user) && $user->getWallet() < $cost) {
+            $this->errors->add(
+                new Error('Not enough money in wallet!', 'currency')
+            );
             return false;
         }
         return true;
     }
 
-    private function userHasEnoughCurrency(string $symbol, float $amount): bool
+    public function canSellCurrency(Transaction $transaction, int $userId): bool
     {
-        foreach ($this->transactionsService->getUserBalances(Session::get('userId'))->getBalances() as $balance) {
-            /** @var Balance $balance */
-            if ($balance->getSymbol() === $symbol && $balance->getAmount() >= $amount)
-                return true;
+        if ($transaction->getAmount() >= 0) {
+            $this->errors->add(
+                new Error('Incorrect amount!', 'currency')
+            );
+            return false;
+        }
+        if (floor(abs($transaction->getAmount()) * $transaction->getPrice() * 100) / 100 < 0.01) {
+            $this->errors->add(
+                new Error('Too small cost to sell!', 'currency')
+            );
+            return false;
+        }
+        if (!$this->hasUserEnoughBalance(
+            $userId,
+            new Balance($transaction->getSymbol(), abs($transaction->getAmount()))
+        )) {
+            $this->errors->add(
+                new Error('Not enough ' . $transaction->getSymbol() . ' in the wallet!', 'currency')
+            );
+            return false;
+        }
+        return true;
+    }
+
+    private function hasUserEnoughBalance(int $userId, Balance $balanceToRemove): bool
+    {
+        $currentBalance = $this->transactionsRepository->fetchBalancesById(
+            $userId,
+            $balanceToRemove->getSymbol()
+        )->getAll()->current();
+
+        if (
+            isset($currentBalance) &&
+            $currentBalance->getSymbol() === $balanceToRemove->getSymbol() &&
+            $currentBalance->getAmount() >= $balanceToRemove->getAmount()
+        ) {
+            return true;
         }
         return false;
     }

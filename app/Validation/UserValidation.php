@@ -2,108 +2,137 @@
 
 namespace App\Validation;
 
-use App\Session;
-use App\Models\User;
-use App\Services\UsersService;
+use App\Models\{User, Error};
+use App\Models\Collections\ErrorsCollection;
+use App\Repositories\UsersRepository;
 
 class UserValidation
 {
-    private User $user;
-    private UsersService $usersService;
+    private UsersRepository $usersRepository;
+    private ErrorsCollection $errors;
 
-    public function __construct(User $user, UsersService $usersService)
+    public function __construct(UsersRepository $usersRepository)
     {
-        $this->user = $user;
-        $this->usersService = $usersService;
+        $this->usersRepository = $usersRepository;
+        $this->errors = new ErrorsCollection();
     }
 
-    public function isUserValid(): bool
+    public function getErrors(): ErrorsCollection
     {
-        return (
-            ($this->user->getName() === null || $this->isNameValid()) &&
-            ($this->user->getEmail() === null || $this->isEmailValid()) &&
-            ($this->user->getPassword() === null || $this->isPasswordValid()) &&
-            ($this->user->getPasswordRepeated() === null || $this->isPasswordRepeatedValid())
-        );
+        return $this->errors;
     }
 
-    public function isEmailTaken(int $userId = 0): bool
+    public function isNameValid(User $user): bool
     {
-        $emails = $this->usersService->getEmailsExcept($userId);
+        if (strlen($user->getName()) < 4) {
+            $this->errors->add(
+                new Error('Username cannot be shorter than 4 characters!', 'name')
+            );
+            return false;
+        }
+        if (strlen($user->getName()) > 100) {
+            $this->errors->add(
+                new Error('Username cannot be longer than 100 characters!', 'name')
+            );
+            return false;
+        }
+        if (!ctype_alnum($user->getName())) {
+            $this->errors->add(
+                new Error('Username cannot contain special characters!', 'name')
+            );
+            return false;
+        }
+        return true;
+    }
+
+    public function isEmailValid(User $user): bool
+    {
+        if (!filter_var($user->getEmail(), FILTER_VALIDATE_EMAIL)) {
+            $this->errors->add(
+                new Error('Invalid e-mail address!', 'email')
+            );
+            return false;
+        }
+        if (strlen($user->getEmail()) > 255) {
+            $this->errors->add(
+                new Error('E-mail cannot be longer than 255 characters!', 'email')
+            );
+            return false;
+        }
+        return true;
+    }
+
+    public function isPasswordValid(User $user): bool
+    {
+        if (strlen($user->getPassword()) < 6) {
+            $this->errors->add(
+                new Error('Password cannot be shorter than 6 characters!', 'password')
+            );
+            return false;
+        }
+        if (strlen($user->getPassword()) > 255) {
+            $this->errors->add(
+                new Error('Password cannot be longer than 255 characters!', 'password')
+            );
+            return false;
+        }
+        if (!ctype_graph($user->getPassword())) {
+            $this->errors->add(
+                new Error('Password cannot contain unknown characters!', 'password')
+            );
+            return false;
+        }
+        return true;
+    }
+
+    public function isPasswordRepeatedValid(User $user): bool
+    {
+        if ($user->getPassword() !== $user->getPasswordRepeated()) {
+            $this->errors->add(
+                new Error('Passwords do not match!', 'passwordRepeated')
+            );
+            return false;
+        }
+        return true;
+    }
+
+    public function isEmailAvailable(User $user, int $userId = 0): bool
+    {
+        $error = $this->usersRepository->getError();
+        if ($error !== null) {
+            $this->errors->add($error);
+            return false;
+        }
+
+        $emails = $this->usersRepository->fetchEmailsExcept($userId);
         foreach ($emails as $email) {
-            if ($email === $this->user->getEmail()) {
-                Session::add('This e-mail is already registered!', 'errors', 'email');
+            if ($email === $user->getEmail()) {
+                $this->errors->add(
+                    new Error('This e-mail is already registered!', 'email')
+                );
                 return false;
             }
         }
         return true;
     }
 
-    public function isPasswordMatchingHash(int $userId = 0, $form = ''): bool
+    public function isPasswordMatchingHash(User $newUser, int $userId = 0, $form = ''): bool
     {
-        $passwordHash = $this->usersService->getUser($userId)->getPassword();
-        if (!Session::has('errors')) {
-            if (password_verify($this->user->getPassword(), $passwordHash)) {
+        $error = $this->usersRepository->getError();
+        if ($error !== null) {
+            $this->errors->add($error);
+            return false;
+        }
+
+        $currentUser = $this->usersRepository->fetchUser($userId);
+        if ($this->usersRepository->getError() === null) {
+            if (password_verify($newUser->getPassword(), $currentUser->getPassword())) {
                 return true;
             }
-            Session::add('Incorrect password!', 'errors', 'passwordMatching' . $form);
+            $this->errors->add(
+                new Error('Incorrect password!', 'passwordMatching' . $form)
+            );
         }
         return false;
-    }
-
-    private function isNameValid(): bool
-    {
-        if (strlen($this->user->getName()) < 4) {
-            Session::add('Username cannot be shorter than 4 characters!', 'errors', 'name');
-            return false;
-        }
-        if (strlen($this->user->getName()) > 100) {
-            Session::add('Username cannot be longer than 100 characters!', 'errors', 'name');
-            return false;
-        }
-        if (!ctype_alnum($this->user->getName())) {
-            Session::add('Username cannot contain characters that are not letters or numbers!', 'errors', 'name');
-            return false;
-        }
-        return true;
-    }
-
-    private function isEmailValid(): bool
-    {
-        if (!filter_var($this->user->getEmail(), FILTER_VALIDATE_EMAIL)) {
-            Session::add('Invalid e-mail address!', 'errors', 'email');
-            return false;
-        }
-        if (strlen($this->user->getEmail()) > 255) {
-            Session::add('E-mail cannot be longer than 255 characters!', 'errors', 'email');
-            return false;
-        }
-        return true;
-    }
-
-    private function isPasswordValid(): bool
-    {
-        if (strlen($this->user->getPassword()) < 6) {
-            Session::add('Password cannot be shorter than 6 characters!', 'errors', 'password');
-            return false;
-        }
-        if (strlen($this->user->getPassword()) > 255) {
-            Session::add('Password cannot be longer than 255 characters!', 'errors', 'password');
-            return false;
-        }
-        if (!ctype_graph($this->user->getPassword())) {
-            Session::add('Password cannot contain special characters!', 'errors', 'password');
-            return false;
-        }
-        return true;
-    }
-
-    private function isPasswordRepeatedValid(): bool
-    {
-        if ($this->user->getPassword() !== $this->user->getPasswordRepeated()) {
-            Session::add('Passwords do not match!', 'errors', 'passwordRepeated');
-            return false;
-        }
-        return true;
     }
 }
