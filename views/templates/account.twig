@@ -62,6 +62,7 @@
                 <button class="submitButton">Save</button>
             </div>
         </form>
+
         {% if messages.updatePassword %}
             <div class="flashMessage">{{ messages.updatePassword }}</div>
         {% endif %}
@@ -74,6 +75,7 @@
         {% if errors.passwordRepeated %}
             <div class="errorMessage">ERROR: {{ errors.passwordRepeated }}</div>
         {% endif %}
+
     </div>
 
     <div class="userInputFormContainer">
@@ -88,6 +90,7 @@
                 <button class="submitButton dangerButton">Delete Account</button>
             </div>
         </form>
+
         {% if errors.passwordMatchingDelete %}
             <div class="errorMessage">ERROR: {{ errors.passwordMatchingDelete }}</div>
         {% endif %}

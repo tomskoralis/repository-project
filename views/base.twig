@@ -12,37 +12,8 @@
 </head>
 <body>
 <div id="pageContainer">
-    <div id="top">
-        <div id="headerContainer">
-            <div id="headerLinkContainer"><a class="headerLink" href="/">Crypto Market</a></div>
-            <div>
-                <form id="searchForm" class="twoFieldInputForm" action="/currency/" method="post"
-                      onsubmit="appendCurrencyUrl()">
-                    <input required id="searchInput" class="shortInputBox" type="text" name="search"
-                           placeholder="Search"
-                            {% if searchText %} value="{{ searchText }}"{% endif %}>
-                    <button class="submitButton">Search</button>
-                </form>
-            </div>
-            <div id="accountControl">
-                {% if auth %}
-                    <div id="accountDisplay">
-                        Welcome, <p class="userName">{{ auth.name }}</p>
-                    </div>
-                    <div class="alignRight">
-                        <a href="/wallet">Wallet</a>
-                        <a href="/account">Account</a>
-                        <a href="/logout">Logout</a>
-                    </div>
-                {% else %}
-                    <div class="alignRight">
-                        <a href="/login">Login</a>
-                        <a href="/register">Register</a>
-                    </div>
-                {% endif %}
-            </div>
-        </div>
-    </div>
+
+    {% include('partials/navigation.twig') %}
 
     <div id="content">
         {% if messages.userDeleted %}
@@ -57,6 +28,7 @@
     </div>
 
     <div id="bottom"></div>
+
 </div>
 </body>
 </html>

@@ -24,7 +24,7 @@ class UserLoginService
         return $this->errors;
     }
 
-    public function loginAndGetId(User $user): int
+    public function loginAndGetId(string $email, string $password): int
     {
         $error = $this->usersRepository::getError();
         if ($error !== null) {
@@ -32,20 +32,27 @@ class UserLoginService
             return 0;
         }
 
-        $userId = $this->usersRepository::searchId($user);
+        $validation = Container::get(UserValidation::class);
+        /** @var UserValidation $validation */
+        if (
+            !$validation->isEmailValid($email) ||
+            !$validation->isPasswordValid($password)
+        ) {
+            $this->errors = $validation->getErrors();
+            return 0;
+        }
+
+        $userId = $this->usersRepository::getId($email);
         if ($userId === 0) {
             $this->errors->add(
                 new Error('Incorrect password!', 'password')
             );
             return 0;
         }
-        $validation = Container::get(UserValidation::class);
-        /** @var UserValidation $validation */
-        if (
-            !$validation->isEmailValid($user) ||
-            !$validation->isPasswordValid($user) ||
-            !$validation->isPasswordMatchingHash($user, $userId)
-        ) {
+
+        if (!$validation->isPasswordCorrect(
+            new User($userId, null, $email, $password)
+        )) {
             $this->errors = $validation->getErrors();
             return 0;
         }

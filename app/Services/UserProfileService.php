@@ -2,13 +2,11 @@
 
 namespace App\Services;
 
-use App\Container;
-use App\Models\User;
+use App\Models\{User, Error};
 use App\Models\Collections\ErrorsCollection;
 use App\Repositories\UsersRepository;
-use App\Validation\UserValidation;
 
-class UserDeleteService
+class UserProfileService
 {
     private UsersRepository $usersRepository;
     private ErrorsCollection $errors;
@@ -24,21 +22,21 @@ class UserDeleteService
         return $this->errors;
     }
 
-    public function deleteUser(User $user): void
+    public function getUser(int $userId): ?User
     {
         $error = $this->usersRepository::getError();
         if ($error !== null) {
             $this->errors->add($error);
-            return;
+            return null;
         }
 
-        $validation = Container::get(UserValidation::class);
-        /** @var UserValidation $validation */
-        if (!$validation->isPasswordCorrect($user, 'Delete')) {
-            $this->errors = $validation->getErrors();
-            return;
+        $user = $this->usersRepository::fetchUser($userId);
+        if ($user === null) {
+            $this->errors->add(
+                new Error('User not found!', 'nothingFound')
+            );
+            return null;
         }
-
-        $this->usersRepository::delete($user->getId());
+        return new User($user->getId(), $user->getName(), $user->getEmail());
     }
 }

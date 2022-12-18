@@ -27,7 +27,7 @@ class CurrencySearchService
         return $this->errors;
     }
 
-    public function fetchSingleCurrency(string $symbol, string $currencyType): ?Currency
+    public function getCurrency(string $symbol, string $currencyType): ?Currency
     {
         $error = $this->currenciesRepository::getError();
         if ($error !== null) {
@@ -36,7 +36,6 @@ class CurrencySearchService
         }
 
         $currency = $this->currenciesRepository::fetchCurrencies([$symbol], $currencyType)->getAll()->current();
-
         if (empty($currency)) {
             $this->errors->add(
                 new Error(
@@ -48,6 +47,7 @@ class CurrencySearchService
         return $currency;
     }
 
+    //TODO: combine methods into one
     public function getAmountOwned($userId, $symbol): float
     {
         $error = $this->transactionsRepository::getError();
@@ -55,7 +55,7 @@ class CurrencySearchService
             $this->errors->add($error);
             return 0;
         }
-        $balance = $this->transactionsRepository::fetchBalancesById($userId, $symbol)->getAll()->current();
+        $balance = $this->transactionsRepository::fetchBalances($userId, $symbol)->getAll()->current();
         if (isset($balance) && $balance->getSymbol() === $symbol) {
             return $balance->getAmount();
 

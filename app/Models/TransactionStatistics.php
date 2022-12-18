@@ -7,30 +7,25 @@ use App\Models\Collections\PriceCollection;
 class TransactionStatistics
 {
 
-    private float $spent;
     private float $revenue;
-    private float $walletValue;
+    private float $value;
+    private float $expenses;
     private float $profit;
-    private PriceCollection $averagePrices;
+    private ?PriceCollection $averages;
 
     public function __construct(
-        float           $spent,
-        float           $revenue,
-        float           $walletValue,
-        float           $profit,
-        PriceCollection $averagePrices
+        float            $totalRevenue = 0,
+        float            $walletValue = 0,
+        float            $totalExpenses = 0,
+        float            $totalProfit = 0,
+        ?PriceCollection $averagePrices = null
     )
     {
-        $this->spent = $spent;
-        $this->revenue = $revenue;
-        $this->walletValue = $walletValue;
-        $this->profit = $profit;
-        $this->averagePrices = $averagePrices;
-    }
-
-    public function getSpent(): float
-    {
-        return $this->spent;
+        $this->revenue = $totalRevenue;
+        $this->value = $walletValue;
+        $this->expenses = $totalExpenses;
+        $this->profit = $totalProfit;
+        $this->averages = $averagePrices;
     }
 
     public function getRevenue(): float
@@ -38,9 +33,14 @@ class TransactionStatistics
         return $this->revenue;
     }
 
-    public function getWalletValue(): float
+    public function getValue(): float
     {
-        return $this->walletValue;
+        return $this->value;
+    }
+
+    public function getExpenses(): float
+    {
+        return $this->expenses;
     }
 
     public function getProfit(): float
@@ -48,8 +48,8 @@ class TransactionStatistics
         return $this->profit;
     }
 
-    public function getAveragePrices(): PriceCollection
+    public function getAverages(): ?PriceCollection
     {
-        return $this->averagePrices;
+        return $this->averages;
     }
 }

@@ -9,9 +9,9 @@ interface TransactionsRepository
 {
     public static function getError(): ?Error;
 
-    public static function fetchTransactionsById(int $userId): TransactionsCollection;
+    public static function fetchTransactions(int $userId, string $symbol = ''): TransactionsCollection;
 
-    public static function fetchBalancesById(int $userId, ?string $symbol = null): BalancesCollection;
+    public static function fetchBalances(int $userId, string $symbol = ''): BalancesCollection;
 
     public static function add(Transaction $transaction): void;
 }

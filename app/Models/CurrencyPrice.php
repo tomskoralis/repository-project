@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class Price
+class CurrencyPrice
 {
     private string $symbol;
     private float $price;

@@ -24,8 +24,8 @@ class WalletController
     {
         if (!Session::has('userId')) {
             Session::add(
-                "Need to be logged in to view wallet",
-                'flashMessages', 'login'
+                'Need to be logged in to view wallet',
+                'errors', 'auth'
             );
             return new Redirect('/login');
         }

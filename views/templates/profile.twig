@@ -1,0 +1,52 @@
+{% extends 'base.twig' %}
+
+{% block title %} | {{ user.getName }}{% endblock %}
+
+{% block content %}
+    {% if errors.nothingFound %}
+        <div class="errorMessage">ERROR: {{ errors.nothingFound }}</div>
+    {% else %}
+        <div class="userInputFormContainer">
+            <div class="pageTitle">User Profile</div>
+            <div>Id: {{ user.getId }}</div>
+            <div>Username: {{ user.getName }}</div>
+            <div>E-mail: {{ user.getEmail }}</div>
+
+            {% if auth and user.getId is not same as auth.id %}
+                <div class="pageTitle addMarginTop">Gift cryptocurrency</div>
+                <form class="userInputForm" action="/profile/{{ user.getId }}/gift" method="post">
+                    <div>
+                        <label class="userInputBoxLabel">Cryptocurrency symbol:<br>
+                            <input required class="userInputBox" name="symbol">
+                        </label>
+                    </div>
+                    <div class="addMarginTop">
+                        <label class="userInputBoxLabel">Amount:<br>
+                            <input required class="userInputBox" name="amountToGift">
+                        </label>
+                    </div>
+                    <div class="addMarginTop">
+                        <label class="userInputBoxLabel">Password:<br>
+                            <input required class="userInputBox" name="password" type="password">
+                        </label>
+                    </div>
+                    <div class="addMarginTop alignCenter">
+                        <button class="submitButton">Confirm</button>
+                    </div>
+                </form>
+
+                {% if messages.gift %}
+                    <div class="flashMessage">{{ messages.gift }}</div>
+                {% endif %}
+                {% if errors.currency %}
+                    <div class="errorMessage">ERROR: {{ errors.currency }}</div>
+                {% endif %}
+                {% if errors.passwordMatching %}
+                    <div class="errorMessage">ERROR: {{ errors.passwordMatching }}</div>
+                {% endif %}
+
+            {% endif %}
+
+        </div>
+    {% endif %}
+{% endblock %}

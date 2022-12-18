@@ -2,11 +2,11 @@
 
 namespace App\Models\Collections;
 
-use App\Models\Price;
+use App\Models\CurrencyPrice;
 
 class PriceCollection extends Collection
 {
-    public function add(Price $item): void
+    public function add(CurrencyPrice $item): void
     {
         $this->items [] = $item;
     }

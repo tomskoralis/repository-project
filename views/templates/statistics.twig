@@ -9,13 +9,13 @@
     {% else %}
         <div>
             <p class="addSmallMarginTop">Total spent on crypto:
-                {{ statistics.getSpent | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+                {{ statistics.getExpenses | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
             </p>
             <p class="addSmallMarginTop">Total revenue from selling crypto:
                 {{ statistics.getRevenue | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
             </p>
             <p class="addSmallMarginTop">Total value of crypto in the wallet:
-                {{ statistics.getWalletValue | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+                {{ statistics.getValue | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
             </p>
             <p class="addSmallMarginTop">Total profit:
                 <span class="{% if profit > 0 %}greenText{% else %}redText{% endif %}">
@@ -24,7 +24,7 @@
             </p>
             <br>
             <p>Average prices for each currency in transactions:</p>
-            {% for price in statistics.getAveragePrices.getAll %}
+            {% for price in statistics.getAverages.getAll %}
                 {% if price.getPrice < 1 %}
                     <ul class="addSmallMarginTop">{{ price.getSymbol }}:
                         {{ price.getPrice | format_currency(currencyCode, {max_significant_digits_used: 4}) }}</ul>

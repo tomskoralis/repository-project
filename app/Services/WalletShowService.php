@@ -29,6 +29,6 @@ class WalletShowService
             return new BalancesCollection();
         }
 
-        return $this->transactionsRepository::fetchBalancesById($userId);
+        return $this->transactionsRepository::fetchBalances($userId);
     }
 }

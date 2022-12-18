@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\{Error, Price, Transaction, TransactionStatistics};
+use App\Models\{Error, CurrencyPrice, Transaction, TransactionStatistics};
 use App\Models\Collections\{PriceCollection, ErrorsCollection};
 use App\Repositories\TransactionsRepository;
 
@@ -22,54 +22,68 @@ class TransactionStatisticsService
         return $this->errors;
     }
 
-    public function getTransactionStatistics(int $userId): ?TransactionStatistics
+    public function getTransactionStatistics(int $userId): TransactionStatistics
     {
         $error = $this->transactionsRepository::getError();
         if ($error !== null) {
             $this->errors->add($error);
-            return null;
+            return new TransactionStatistics();
         }
 
-        $transactions = $this->transactionsRepository::fetchTransactionsById($userId);
+        $transactions = $this->transactionsRepository::fetchTransactions($userId);
         if ($transactions->getCount() === 0) {
             $this->errors->add(
                 new Error('No transactions found!', 'nothingFound')
             );
-            return null;
+            return new TransactionStatistics();
         }
 
         $costsByCurrency = [];
         $amountsByCurrency = [];
         $amountsInWallet = [];
-
-        $totalCost = 0;
-        $revenue = 0;
+        $totalSpent = 0;
+        $totalEarned = 0;
         foreach ($transactions->getAll() as $transaction) {
             /** @var Transaction $transaction */
             if ($transaction->getAmount() > 0) {
-                $totalCost += $transaction->getAmount() * $transaction->getPrice();
+                $totalSpent += $transaction->getAmount() * $transaction->getPrice();
             } else {
-                $revenue -= $transaction->getAmount() * $transaction->getPrice();
+                $totalEarned -= $transaction->getAmount() * $transaction->getPrice();
+            }
+
+            if (!array_key_exists($transaction->getSymbol(), $costsByCurrency)) {
+                $costsByCurrency [$transaction->getSymbol()] = 0;
             }
             $costsByCurrency [$transaction->getSymbol()] += $transaction->getPrice() * abs($transaction->getAmount());
+
+            if (!array_key_exists($transaction->getSymbol(), $amountsByCurrency)) {
+                $amountsByCurrency [$transaction->getSymbol()] = 0;
+            }
             $amountsByCurrency [$transaction->getSymbol()] += abs($transaction->getAmount());
+
+            if (!array_key_exists($transaction->getSymbol(), $amountsInWallet)) {
+                $amountsInWallet [$transaction->getSymbol()] = 0;
+            }
             $amountsInWallet [$transaction->getSymbol()] += $transaction->getAmount();
         }
 
-        $currencyValueInWallet = 0;
+        $walletValue = 0;
         $averagePrices = new PriceCollection();
         foreach ($costsByCurrency as $key => $currencyCost) {
-            $averagePrice = new Price($key, $currencyCost / $amountsByCurrency [$key]);
+            $averagePrice = new CurrencyPrice(
+                $key,
+                $currencyCost / $amountsByCurrency [$key]
+            );
             $averagePrices->add($averagePrice);
-            $currencyValueInWallet += $amountsInWallet[$key] * $averagePrice->getPrice();
+            $walletValue += $amountsInWallet[$key] * $averagePrice->getPrice();
         }
-        $profit = $revenue + $currencyValueInWallet - $totalCost;
+        $totalProfit = $totalEarned + $walletValue - $totalSpent;
 
         return new TransactionStatistics(
-            $totalCost,
-            $revenue,
-            $currencyValueInWallet,
-            $profit,
+            $totalEarned,
+            $walletValue,
+            $totalSpent,
+            $totalProfit,
             $averagePrices
         );
     }

@@ -2,6 +2,8 @@
 
 namespace App\Models\Collections;
 
+use Generator;
+
 class Collection
 {
     protected array $items;
@@ -11,7 +13,7 @@ class Collection
         $this->items = $items;
     }
 
-    public function getAll(): \Generator
+    public function getAll(): Generator
     {
         foreach ($this->items as $item) {
             yield $item;

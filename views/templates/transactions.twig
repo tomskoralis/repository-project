@@ -14,6 +14,7 @@
                 <th>Symbol</th>
                 <th>Price</th>
                 <th>Amount</th>
+                <th>Type</th>
                 <th>From</th>
                 <th>Time</th>
             </tr>
@@ -31,9 +32,20 @@
                         {% endif %}
                     </td>
                     <td>
-                        {{ transaction.getAmount | number_format(8, '.', '') | trim('0', 'right') | trim('.', 'right') }}
+                        {{ transaction.getAmount | abs | number_format(8, '.', '') | trim('0', 'right') | trim('.', 'right') }}
                     </td>
-                    <td>{% if transaction.getFrom %} {{ transaction.getFrom }} {% else %} market {% endif %}</td>
+                    <td>
+                        {% if transaction.getAmount > 0 %} added {% else %} removed {% endif %}
+                    </td>
+                    <td>
+                        {% if transaction.getSenderId %}
+                            <a id="alignCellContentsRight" href="/profile/{{ transaction.getSenderId }}">{{ transaction.getSenderName }}</a>
+                        {% elseif transaction.getAmount > 0 %}
+                            market
+                        {% else %}
+                            wallet
+                        {% endif %}
+                    </td>
                     <td>{{ transaction.getDateTime }}</td>
                 </tr>
             {% endfor %}

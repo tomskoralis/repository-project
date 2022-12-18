@@ -49,12 +49,12 @@ class WalletValidation
 
     public function canWithdraw(string $amount, int $userId): bool
     {
-        $error = $this->usersRepository->getError();
+        $error = $this->usersRepository::getError();
         if ($error !== null) {
             $this->errors->add($error);
             return false;
         }
-        $user = $this->usersRepository->fetchUser($userId);
+        $user = $this->usersRepository::fetchUser($userId);
         if (
             isset($user) &&
             $user->getWallet() < floor((float)$amount * 100) / 100

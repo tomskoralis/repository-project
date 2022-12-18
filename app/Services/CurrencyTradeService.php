@@ -61,7 +61,7 @@ class CurrencyTradeService
         /** @var TransactionValidation $validation */
         if (
             !$validation->isAmountValid($amount) ||
-            !$validation->canBuyCurrency($transaction, $userId)
+            !$validation->canBuyCurrency($transaction)
         ) {
             $this->errors = $validation->getErrors();
             return;
@@ -102,7 +102,7 @@ class CurrencyTradeService
         /** @var TransactionValidation $validation */
         if (
             !$validation->isAmountValid($amount) ||
-            !$validation->canSellCurrency($transaction, $userId)
+            !$validation->canSellCurrency($transaction)
         ) {
             $this->errors = $validation->getErrors();
             return;

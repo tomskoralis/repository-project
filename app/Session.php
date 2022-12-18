@@ -22,7 +22,7 @@ class Session
         return array_reduce(
             $keys,
             function ($result, $keys) {
-                if (array_key_exists($keys, $result)) {
+                if ($result && array_key_exists($keys, $result)) {
                     return $result[$keys];
                 }
                 return null;

@@ -4,16 +4,24 @@ namespace App\Models;
 
 class Balance
 {
+    private int $id;
     private string $symbol;
-    private float $balance;
+    private float $amount;
 
     public function __construct(
+        int    $id,
         string $symbol,
-        float  $balance
+        float  $amount
     )
     {
+        $this->id = $id;
         $this->symbol = $symbol;
-        $this->balance = $balance;
+        $this->amount = $amount;
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
     }
 
     public function getSymbol(): string
@@ -23,6 +31,6 @@ class Balance
 
     public function getAmount(): float
     {
-        return $this->balance;
+        return $this->amount;
     }
 }

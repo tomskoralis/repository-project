@@ -52,15 +52,30 @@ class MySqlTransactionsRepository implements TransactionsRepository
         return self::$error;
     }
 
-    public static function fetchTransactionsById(int $userId): TransactionsCollection
+    public static function fetchTransactions(int $userId, string $symbol = ''): TransactionsCollection
     {
         try {
             $queryBuilder = self::getConnection()->createQueryBuilder();
             $queryBuilder
                 ->select('*')
-                ->from('transactions')
-                ->where('user_id = ?')
-                ->setParameter(0, $userId);
+                ->from('transactions');
+
+            if ($symbol === '') {
+                $queryBuilder
+                    ->where('user_id = ?')
+                    ->setParameter(0, $userId);
+            } else {
+                $queryBuilder
+                    ->where(
+                        $queryBuilder->expr()->and(
+                            $queryBuilder->expr()->eq('user_id', '?'),
+                            $queryBuilder->expr()->eq('symbol', '?')
+                        )
+                    )
+                    ->setParameter(0, $userId)
+                    ->setParameter(1, $symbol);
+            }
+
             $transactions = $queryBuilder->executeQuery()->fetchAllAssociative() ?? [];
         } catch (Exception $e) {
             self::$error = new Error(
@@ -77,21 +92,24 @@ class MySqlTransactionsRepository implements TransactionsRepository
                 $transaction['symbol'],
                 $transaction['price'],
                 $transaction['amount'],
+                $transaction['from_user_id'],
                 $transaction['time']
             ));
         }
         return $userTransactions;
     }
 
-    public static function fetchBalancesById(int $userId, ?string $symbol = null): BalancesCollection
+    public static function fetchBalances(int $userId, string $symbol = ''): BalancesCollection
     {
         try {
             $queryBuilder = self::getConnection()->createQueryBuilder();
             $queryBuilder
                 ->select('*')
                 ->from('balances');
-            if ($symbol === null) {
-                $queryBuilder->where('id = ?')
+
+            if ($symbol === '') {
+                $queryBuilder
+                    ->where('id = ?')
                     ->setParameter(0, $userId);
             } else {
                 $queryBuilder
@@ -104,6 +122,7 @@ class MySqlTransactionsRepository implements TransactionsRepository
                     ->setParameter(0, $userId)
                     ->setParameter(1, $symbol);
             }
+
             $balances = $queryBuilder->executeQuery()->fetchAllAssociative() ?? [];
         } catch (Exception $e) {
             self::$error = new Error(
@@ -116,8 +135,9 @@ class MySqlTransactionsRepository implements TransactionsRepository
         $userBalances = new BalancesCollection();
         foreach ($balances as $balance) {
             $userBalances->add(new Balance(
+                $balance['id'],
                 $balance['symbol'],
-                $balance['balance'],
+                $balance['amount'],
             ));
         }
         return $userBalances;
@@ -134,11 +154,13 @@ class MySqlTransactionsRepository implements TransactionsRepository
                     'symbol' => '?',
                     'price' => '?',
                     'amount' => '?',
+                    'from_user_id' => '?',
                 ])
                 ->setParameter(0, $transaction->getUserId())
                 ->setParameter(1, $transaction->getSymbol())
                 ->setParameter(2, $transaction->getPrice())
-                ->setParameter(3, $transaction->getAmount());
+                ->setParameter(3, $transaction->getAmount())
+                ->setParameter(4, $transaction->getSenderId());
             $queryBuilder->executeQuery();
         } catch (Exception $e) {
             self::$error = new Error(

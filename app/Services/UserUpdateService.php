@@ -24,7 +24,7 @@ class UserUpdateService
         return $this->errors;
     }
 
-    public function updateNameAndEmail(User $user, int $userId): void
+    public function updateNameAndEmail(User $user): void
     {
         $error = $this->usersRepository::getError();
         if ($error !== null) {
@@ -34,24 +34,27 @@ class UserUpdateService
 
         $validation = Container::get(UserValidation::class);
         /** @var UserValidation $validation */
-        $nameValid = $validation->isNameValid($user);
-        $emailValid = $validation->isEmailValid($user);
+        $nameValid = $validation->isNameValid($user->getName());
+        $emailValid = $validation->isEmailValid($user->getEmail());
         if (
             !$nameValid ||
             !$emailValid ||
-            !$validation->isEmailAvailable($user, $userId) ||
-            !$validation->isPasswordMatchingHash($user, $userId, 'Edit')
+            !$validation->isEmailAvailable($user->getEmail(), $user->getId()) ||
+            !$validation->isPasswordCorrect($user, 'Edit')
         ) {
             $this->errors = $validation->getErrors();
             return;
         }
         $this->usersRepository::update(
-            new User(null, $user->getEmail(), $user->getName()),
-            $userId
+            new User(
+                $user->getId(),
+                $user->getName(),
+                $user->getEmail()
+            )
         );
     }
 
-    public function updatePassword(User $user, string $password, int $userId): void
+    public function updatePassword(User $user, string $password): void
     {
         $error = $this->usersRepository::getError();
         if ($error !== null) {
@@ -60,23 +63,27 @@ class UserUpdateService
         }
         $validation = Container::get(UserValidation::class);
         /** @var UserValidation $validation */
-        $passwordValid = $validation->isPasswordValid($user);
-        $passwordRepeatedValid = $validation->isPasswordRepeatedValid($user);
+        $passwordValid = $validation->isPasswordValid($user->getPassword());
+        $passwordRepeatedValid = $validation->isPasswordRepeatedValid(
+            $user->getPassword(),
+            $user->getPasswordRepeated()
+        );
         if (
             !$passwordValid ||
-            !$passwordRepeatedValid
+            !$passwordRepeatedValid ||
+            !$validation->isPasswordCorrect(
+                new User(
+                    $user->getId(),
+                    null,
+                    null,
+                    $password
+                ),
+                'Password'
+            )
         ) {
             $this->errors = $validation->getErrors();
             return;
         }
-
-        $currentUser = new User($password);
-        $currentValidation = Container::get(UserValidation::class);
-        /** @var UserValidation $currentValidation */
-        if (!$currentValidation->isPasswordMatchingHash($currentUser, $userId, 'Password')) {
-            $this->errors = $currentValidation->getErrors();
-            return;
-        }
-        $this->usersRepository::update($user, $userId);
+        $this->usersRepository::update($user);
     }
 }

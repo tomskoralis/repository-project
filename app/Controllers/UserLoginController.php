@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use App\{Template, Redirect, Session};
-use App\Models\User;
 use App\Services\UserLoginService;
 
 class UserLoginController
@@ -15,9 +14,13 @@ class UserLoginController
         $this->userLoginService = $userLoginService;
     }
 
-    public function showLoginForm(): Template
+    public function showLoginForm()
     {
-        $urlPath = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH);
+        if (Session::has('userId')) {
+            return new Redirect('/');
+        }
+
+        $urlPath = parse_url($_SERVER['HTTP_REFERER'] ?? '', PHP_URL_PATH);
         if (
             isset($urlPath) &&
             $urlPath !== '' &&
@@ -25,24 +28,24 @@ class UserLoginController
             $urlPath !== '/login' &&
             $urlPath !== '/register'
         ) {
-            Session::add($urlPath, 'redirectUrl');
+            Session::add($urlPath, 'redirect', 'url');
         }
         return new Template('templates/login.twig');
     }
 
     public function login(): Redirect
     {
-        $password = $_POST['password'] ?? '';
-        $email = $_POST['email'] ?? '';
-        $user = new User($password, $email);
-
-        $userId = $this->userLoginService->loginAndGetId($user);
+        $userId = $this->userLoginService->loginAndGetId(
+            $_POST['email'] ?? '',
+            $_POST['password'] ?? ''
+        );
         Session::addErrors($this->userLoginService->getErrors());
         if (Session::has('errors') || $userId === 0) {
             return new Redirect('/login');
         }
 
         Session::add($userId, 'userId');
-        return new Redirect(Session::get('redirectUrl') ?? '/');
+        Session::add('true', 'redirect', 'success');
+        return new Redirect(Session::get('redirect', 'url') ?: '/');
     }
 }

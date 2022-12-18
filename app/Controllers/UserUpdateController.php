@@ -24,8 +24,8 @@ class UserUpdateController
     {
         if (!Session::has('userId')) {
             Session::add(
-                "Need to be logged in to view account",
-                'flashMessages', 'login'
+                'Need to be logged in to view account',
+                'errors', 'auth'
             );
             return new Redirect('/login');
         }
@@ -34,12 +34,15 @@ class UserUpdateController
 
     public function updateNameAndEmail(): Redirect
     {
-        $name = $_POST['name'] ?? '';
-        $email = $_POST['email'] ?? '';
-        $password = $_POST['password'] ?? '';
-        $user = new User($password, $email, $name);
+        $this->userUpdateService->updateNameAndEmail(
+            new User(
+                Session::get('userId'),
+                $_POST['name'] ?? '',
+                $_POST['email'] ?? '',
+                $_POST['password'] ?? ''
+            )
+        );
 
-        $this->userUpdateService->updateNameAndEmail($user, Session::get('userId'));
         Session::addErrors($this->userUpdateService->getErrors());
         if (Session::has('errors')) {
             return new Redirect('/account');
@@ -54,12 +57,17 @@ class UserUpdateController
 
     public function updatePassword(): Redirect
     {
-        $passwordCurrent = $_POST['passwordCurrent'] ?? '';
-        $passwordNew = $_POST['passwordNew'] ?? '';
-        $passwordNewRepeated = $_POST['passwordNewRepeated'] ?? '';
-        $userNew = new User($passwordNew, null, null, $passwordNewRepeated);
+        $this->userUpdateService->updatePassword(
+            new User(
+                Session::get('userId'),
+                null,
+                null,
+                $_POST['passwordNew'] ?? '',
+                $_POST['passwordNewRepeated'] ?? ''
+            ),
+            $_POST['passwordCurrent'] ?? ''
+        );
 
-        $this->userUpdateService->updatePassword($userNew, $passwordCurrent, Session::get('userId'));
         Session::addErrors($this->userUpdateService->getErrors());
         if (Session::has('errors')) {
             return new Redirect('/account');
@@ -72,12 +80,17 @@ class UserUpdateController
         return new Redirect('/account');
     }
 
-    public function delete(): Redirect
+    public function deleteUser(): Redirect
     {
-        $password = $_POST['passwordForDeletion'] ?? '';
-        $user = new User($password);
+        $this->userDeleteService->deleteUser(
+            new User(
+                Session::get('userId'),
+                null,
+                null,
+                $_POST['passwordForDeletion'] ?? ''
+            )
+        );
 
-        $this->userDeleteService->deleteUser($user, Session::get('userId'));
         Session::addErrors($this->userDeleteService->getErrors());
         if (Session::has('errors')) {
             return new Redirect('/account');

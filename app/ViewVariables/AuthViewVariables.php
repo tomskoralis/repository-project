@@ -24,11 +24,15 @@ class AuthViewVariables implements ViewVariables
         if (!Session::has('userId')) {
             return [];
         }
-        $user = $this->usersRepository->fetchUser(Session::get('userId'));
-        return [
-            'name' => $user->getName(),
-            'email' => $user->getEmail(),
-            'wallet' => $user->getWallet(),
-        ];
+        $user = $this->usersRepository::fetchUser(Session::get('userId'));
+
+        return (!$this->usersRepository::getError())
+            ? [
+                'id' => $user->getId(),
+                'name' => $user->getName(),
+                'email' => $user->getEmail(),
+                'wallet' => $user->getWallet(),
+            ]
+            : [];
     }
 }

@@ -109,15 +109,44 @@ form.twoFieldInputForm {
 }
 
 input.shortInputBox {
-    width: 11rem;
-    text-align: left;
+    width: 9rem;
     height: 1.8rem;
     margin-right: 0.2rem;
+    padding: 0.2rem 0.5rem;
+    border: 2px solid #707070;
+    border-radius: 0.3rem;
+    text-align: left;
+}
+
+.pageSelectorContainer {
+    align-items: center;
+    display: flex;
+}
+
+.previousPage {
+    flex: 1;
+    text-align: right;
+    padding-right: 0.3rem;
+}
+
+.nextPage {
+    flex: 1;
+    text-align: left;
+    padding-left: 0.3rem;
+}
+
+#userPagerForm {
+    max-width: inherit;
+}
+
+.pageInputBox {
+    width: 5rem;
+    text-align: center;
 }
 
 #accountControl {
     flex-grow: 1;
-    max-width: 15rem;
+    max-width: 18rem;
 }
 
 #accountDisplay {
@@ -147,12 +176,14 @@ div.tableGrid {
 }
 
 div.tableItem {
-    text-justify: inter-word;
-    text-align: right;
+    max-width: 11rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
 }
 
 div.tableItem:nth-child(5n-3) {
-    text-align: left;
+    justify-content: flex-start;
 }
 
 div.tableItem:nth-child(n+7):nth-child(-n+11) {
@@ -225,7 +256,7 @@ button.submitButton {
     border: 0;
     border-radius: 0.3rem;
     text-align: center;
-    padding: 0.2rem 0.7rem;
+    padding: 0.3rem 0.5rem;
     height: 1.8rem;
     cursor: pointer;
     touch-action: manipulation;
@@ -271,6 +302,11 @@ div.alignCenter {
     text-align: center;
 }
 
+div.centerSelf {
+    width: min-content;
+    margin: 0 auto;
+}
+
 div.alignRight {
     text-align: right;
 }
@@ -281,6 +317,10 @@ span.greenText {
 
 span.redText {
     color: #aa0000;
+}
+
+span.grayText {
+    color: #606060;
 }
 
 table.transactionsTable {
@@ -300,8 +340,9 @@ table.transactionsTable th {
 }
 
 table.transactionsTable thead > tr > td,
-table.transactionsTable tbody > tr > td {
-    padding: 0.15rem 0.5rem;
+table.transactionsTable tbody > tr > td,
+table.transactionsTable tbody > tr > td > a {
+    padding: 0.15rem 0.2rem;
     font-size: calc(4px + 0.6vw);
     overflow: hidden;
     white-space: nowrap;
@@ -317,7 +358,11 @@ table.transactionsTable tbody > tr > :nth-child(1) {
     text-align: left;
 }
 
-table.transactionsTable thead > tr > :nth-child(n+2):nth-child(-n+6),
-table.transactionsTable tbody > tr > :nth-child(n+2):nth-child(-n+6) {
+table.transactionsTable thead > tr > :nth-child(n+2):nth-child(-n+7),
+table.transactionsTable tbody > tr > :nth-child(n+2):nth-child(-n+7) {
     text-align: right;
+}
+
+table.transactionsTable tbody > tr > :nth-child(n+2):nth-child(-n+7) > a {
+    padding: 0;
 }

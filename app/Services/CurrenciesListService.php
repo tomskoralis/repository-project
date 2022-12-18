@@ -22,7 +22,7 @@ class CurrenciesListService
         return $this->errors;
     }
 
-    public function fetchCurrencies(array $symbols, string $currencyType): CurrenciesCollection
+    public function getCurrencies(array $symbols, string $currencyType): CurrenciesCollection
     {
         $error = $this->currenciesRepository::getError();
         if ($error !== null) {
@@ -31,7 +31,6 @@ class CurrenciesListService
         }
 
         $currencies = $this->currenciesRepository::fetchCurrencies($symbols, $currencyType);
-
         if ($currencies->getCount() === 0) {
             $this->errors->add(
                 new Error(

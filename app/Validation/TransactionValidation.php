@@ -53,14 +53,8 @@ class TransactionValidation
         return true;
     }
 
-    public function canBuyCurrency(Transaction $transaction, int $userId): bool
+    public function canBuyCurrency(Transaction $transaction): bool
     {
-        if ($transaction->getAmount() <= 0) {
-            $this->errors->add(
-                new Error('Incorrect amount!', 'currency')
-            );
-            return false;
-        }
         $cost = floor($transaction->getAmount() * $transaction->getPrice() * 100) / 100;
         if ($cost < 0.01) {
             $this->errors->add(
@@ -68,7 +62,8 @@ class TransactionValidation
             );
             return false;
         }
-        $user = $this->usersRepository->fetchUser($userId);
+
+        $user = $this->usersRepository::fetchUser($transaction->getUserId());
         if (isset($user) && $user->getWallet() < $cost) {
             $this->errors->add(
                 new Error('Not enough money in wallet!', 'currency')
@@ -78,36 +73,37 @@ class TransactionValidation
         return true;
     }
 
-    public function canSellCurrency(Transaction $transaction, int $userId): bool
+    public function canSellCurrency(Transaction $transaction): bool
     {
-        if ($transaction->getAmount() >= 0) {
-            $this->errors->add(
-                new Error('Incorrect amount!', 'currency')
-            );
-            return false;
-        }
         if (floor(abs($transaction->getAmount()) * $transaction->getPrice() * 100) / 100 < 0.01) {
             $this->errors->add(
                 new Error('Too small cost to sell!', 'currency')
             );
             return false;
         }
+
         if (!$this->hasUserEnoughBalance(
-            $userId,
-            new Balance($transaction->getSymbol(), abs($transaction->getAmount()))
+            new Balance(
+                $transaction->getUserId(),
+                $transaction->getSymbol(),
+                abs($transaction->getAmount())
+            )
         )) {
-            $this->errors->add(
-                new Error('Not enough ' . $transaction->getSymbol() . ' in the wallet!', 'currency')
-            );
             return false;
         }
         return true;
     }
 
-    private function hasUserEnoughBalance(int $userId, Balance $balanceToRemove): bool
+    public function hasUserEnoughBalance(Balance $balanceToRemove): bool
     {
-        $currentBalance = $this->transactionsRepository->fetchBalancesById(
-            $userId,
+        $error = $this->transactionsRepository::getError();
+        if ($error !== null) {
+            $this->errors->add($error);
+            return false;
+        }
+
+        $currentBalance = $this->transactionsRepository::fetchBalances(
+            $balanceToRemove->getId(),
             $balanceToRemove->getSymbol()
         )->getAll()->current();
 
@@ -118,6 +114,10 @@ class TransactionValidation
         ) {
             return true;
         }
+
+        $this->errors->add(
+            new Error('Not enough ' . $balanceToRemove->getSymbol() . ' in the wallet!', 'currency')
+        );
         return false;
     }
 }

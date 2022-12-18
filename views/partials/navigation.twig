@@ -1,0 +1,33 @@
+<div id="top">
+    <div id="headerContainer">
+        <div id="headerLinkContainer"><a class="headerLink" href="/">Crypto Market</a></div>
+        <div>
+            <form id="searchForm" class="twoFieldInputForm" action="/currency/" method="post"
+                  onsubmit="appendCurrencyUrl()">
+                <label for="searchInput">
+                    <input required id="searchInput" class="shortInputBox" type="text" name="searchInput"
+                           placeholder="Search" {% if searchText %} value="{{ searchText }}"{% endif %}>
+                </label>
+                <button class="submitButton">Search</button>
+            </form>
+        </div>
+        <div id="accountControl">
+            {% if auth %}
+                <div id="accountDisplay">
+                    Welcome, <p class="userName">{{ auth.name }}</p>
+                </div>
+                <div class="alignRight">
+                    <a href="/users">Users</a>
+                    <a href="/wallet">Wallet</a>
+                    <a href="/account">Account</a>
+                    <a href="/logout">Logout</a>
+                </div>
+            {% else %}
+                <div class="alignRight">
+                    <a href="/login">Login</a>
+                    <a href="/register">Register</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

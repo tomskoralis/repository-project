@@ -23,9 +23,9 @@ class Router
 
     public function handleUri(): void
     {
-        $httpMethod = $_SERVER["REQUEST_METHOD"];
-        $uri = $_SERVER["REQUEST_URI"];
-        if (false !== $pos = strpos($uri, "?")) {
+        $httpMethod = $_SERVER['REQUEST_METHOD'];
+        $uri = $_SERVER['REQUEST_URI'];
+        if (false !== $pos = strpos($uri, '?')) {
             $uri = substr($uri, 0, $pos);
         }
         $uri = rawurldecode($uri);
@@ -33,13 +33,13 @@ class Router
         switch ($routeInfo[0]) {
             case Dispatcher::NOT_FOUND:
                 (new Twig)->renderTemplate(
-                    new Template("templates/404.twig")
+                    new Template('templates/404.twig')
                 );
                 break;
             case Dispatcher::METHOD_NOT_ALLOWED:
                 (new Twig)->renderTemplate(
-                    new Template("templates/405.twig", [
-                        "allowedMethods" => $routeInfo[1],
+                    new Template('templates/405.twig', [
+                        'allowedMethods' => $routeInfo[1],
                     ])
                 );
                 break;
@@ -50,12 +50,14 @@ class Router
                 $response = Container::get($controller)->{$method}($vars);
                 if ($response instanceof Template) {
                     (new Twig)->renderTemplate($response);
-                    Session::remove("errors");
-                    Session::remove("flashMessages");
+                    Session::remove('errors');
+                    Session::remove('flashMessages');
                 }
                 if ($response instanceof Redirect) {
-                    Session::remove('redirectUrl');
-                    header("Location: " . $response->getUri());
+                    if (Session::get('redirect', 'success') === 'true') {
+                        Session::remove('redirect');
+                    }
+                    header('Location: ' . $response->getUri());
                     exit();
                 }
                 break;

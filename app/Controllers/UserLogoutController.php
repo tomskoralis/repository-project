@@ -9,7 +9,7 @@ class UserLogoutController
     public function logout(): Redirect
     {
         Session::remove('userId');
-        $urlPath = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH);
+        $urlPath = parse_url($_SERVER['HTTP_REFERER'] ?? '', PHP_URL_PATH);
         if (
             $urlPath === '/account' ||
             $urlPath === '/wallet' ||
@@ -18,6 +18,6 @@ class UserLogoutController
         ) {
             return new Redirect('/');
         }
-        return new Redirect($urlPath ?? '/');
+        return new Redirect($urlPath ?: '/');
     }
 }

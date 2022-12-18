@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use App\{Template, Redirect, Session};
-use App\Models\User;
 use App\Services\UserRegisterService;
 
 class UserRegisterController
@@ -15,9 +14,13 @@ class UserRegisterController
         $this->userRegisterService = $userRegisterService;
     }
 
-    public function showRegisterForm(): Template
+    public function showRegisterForm()
     {
-        $urlPath = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH);
+        if (Session::has('userId')) {
+            return new Redirect('/');
+        }
+
+        $urlPath = parse_url($_SERVER['HTTP_REFERER'] ?? '', PHP_URL_PATH);
         if (
             isset($urlPath) &&
             $urlPath !== '' &&
@@ -25,26 +28,26 @@ class UserRegisterController
             $urlPath !== '/login' &&
             $urlPath !== '/register'
         ) {
-            Session::add($urlPath, 'redirectUrl');
+            Session::add($urlPath, 'redirect', 'url');
         }
         return new Template('templates/register.twig');
     }
 
     public function register(): Redirect
     {
-        $password = $_POST['password'] ?? '';
-        $email = $_POST['email'] ?? '';
-        $name = $_POST['name'] ?? '';
-        $passwordRepeated = $_POST['passwordRepeated'] ?? '';
-        $user = new User($password, $email, $name, $passwordRepeated);
-
-        $userId = $this->userRegisterService->registerAndGetId($user);
+        $userId = $this->userRegisterService->registerAndGetId(
+            $_POST['name'] ?? '',
+            $_POST['email'] ?? '',
+            $_POST['password'] ?? '',
+            $_POST['passwordRepeated'] ?? ''
+        );
         Session::addErrors($this->userRegisterService->getErrors());
         if (Session::has('errors') || $userId === 0) {
             return new Redirect('/register');
         }
 
         Session::add($userId, 'userId');
-        return new Redirect(Session::get('redirectUrl') ?? '/');
+        Session::add('true', 'redirect', 'success');
+        return new Redirect(Session::get('redirect', 'url') ?: '/');
     }
 }

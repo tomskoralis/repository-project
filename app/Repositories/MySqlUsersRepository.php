@@ -2,7 +2,8 @@
 
 namespace App\Repositories;
 
-use App\Models\{User, Error};
+use Generator;
+use App\Models\{Collections\UsersCollection, User, Error};
 use Dotenv\Dotenv;
 use Dotenv\Exception\ValidationException;
 use Doctrine\DBAL\{Connection, DriverManager, Exception};
@@ -69,16 +70,19 @@ class MySqlUsersRepository implements UsersRepository
             );
             return null;
         }
-        return new User(
-            $user['password'],
-            $user['email'],
-            $user['name'],
-            null,
-            $user['wallet']
-        );
+        return ($user)
+            ? new User(
+                $user['id'],
+                $user['name'],
+                $user['email'],
+                $user['password'],
+                null,
+                $user['wallet']
+            )
+            : null;
     }
 
-    public static function add(User $user): void
+    public static function add($name, $email, $password): void
     {
         try {
             $queryBuilder = self::getConnection()->createQueryBuilder();
@@ -90,9 +94,9 @@ class MySqlUsersRepository implements UsersRepository
                     'password' => '?',
                     'wallet' => 0,
                 ])
-                ->setParameter(0, $user->getName())
-                ->setParameter(1, $user->getEmail())
-                ->setParameter(2, password_hash($user->getPassword(), PASSWORD_BCRYPT));
+                ->setParameter(0, $name)
+                ->setParameter(1, $email)
+                ->setParameter(2, password_hash($password, PASSWORD_BCRYPT));
             $queryBuilder->executeQuery();
         } catch (Exception $e) {
             self::$error = new Error(
@@ -103,7 +107,7 @@ class MySqlUsersRepository implements UsersRepository
         }
     }
 
-    public static function update(User $user, int $userId): void
+    public static function update(User $user): void
     {
         try {
             $queryBuilder = self::getConnection()->createQueryBuilder();
@@ -133,7 +137,7 @@ class MySqlUsersRepository implements UsersRepository
 
             $queryBuilder
                 ->where('id = ?')
-                ->setParameter($key, $userId)
+                ->setParameter($key, $user->getId())
                 ->executeQuery();
         } catch (Exception $e) {
             self::$error = new Error(
@@ -162,7 +166,7 @@ class MySqlUsersRepository implements UsersRepository
         }
     }
 
-    public static function searchId(User $user): int
+    public static function getId(string $email): int
     {
         try {
             $queryBuilder = self::getConnection()->createQueryBuilder();
@@ -170,7 +174,7 @@ class MySqlUsersRepository implements UsersRepository
                 ->select('id')
                 ->from('users')
                 ->where('email = ?')
-                ->setParameter(0, $user->getEmail());
+                ->setParameter(0, $email);
             return $queryBuilder->executeQuery()->fetchAssociative()['id'] ?? 0;
         } catch (Exception $e) {
             self::$error = new Error(
@@ -182,7 +186,7 @@ class MySqlUsersRepository implements UsersRepository
         return 0;
     }
 
-    public static function fetchEmailsExcept(int $userId = 0): \Generator
+    public static function fetchAllEmailsExcept(int $userId = 0): Generator
     {
         $emails = [];
         try {
@@ -223,6 +227,32 @@ class MySqlUsersRepository implements UsersRepository
                 'users'
             );
         }
+    }
+
+    public static function fetchAllUsers(): UsersCollection
+    {
+        try {
+            $queryBuilder = self::getConnection()->createQueryBuilder();
+            $queryBuilder
+                ->select('id, name')
+                ->from('users');
+            $users = $queryBuilder->executeQuery()->fetchAllAssociative();
+        } catch (Exception $e) {
+            self::$error = new Error(
+                'Database Exception: ' . $e->getMessage(),
+                'repository',
+                'users'
+            );
+            return new UsersCollection();
+        }
+        $usersCollection = new UsersCollection();
+        foreach ($users as $user) {
+            $usersCollection->add(new User(
+                $user['id'],
+                $user['name']
+            ));
+        }
+        return $usersCollection;
     }
 
     private static function getInstance(): ?MySqlUsersRepository

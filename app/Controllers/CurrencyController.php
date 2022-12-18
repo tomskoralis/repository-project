@@ -22,11 +22,15 @@ class CurrencyController
 
     public function showCurrency(array $symbol): Template
     {
-        $symbol = strtoupper($symbol["symbol"]);
-
-        $currency = $this->currencySearchService->fetchSingleCurrency($symbol, CURRENCY_CODE);
+        $currency = $this->currencySearchService->getCurrency(
+            strtoupper($symbol['symbol']),
+            CURRENCY_CODE
+        );
         $amountOwned = (Session::has('userId') && !empty($currency))
-            ? $this->currencySearchService->getAmountOwned(Session::get('userId'), $currency->getSymbol())
+            ? $this->currencySearchService->getAmountOwned(
+                Session::get('userId'),
+                $currency->getSymbol()
+            )
             : 0;
         Session::addErrors($this->currencySearchService->getErrors());
 
@@ -58,9 +62,9 @@ class CurrencyController
             rtrim(rtrim(number_format($amountToBuy, 8, '.', ''), '0'), '.') .
             ' ' . $symbol . ' for ' . $this->getCurrencySymbol() .
             floor($amountToBuy * $this->currencyTradeService->getPrice() * 100) / 100,
-            'flashMessages', 'wallet'
+            'flashMessages', 'currency'
         );
-        return new Redirect('/wallet');
+        return new Redirect('/currency/' . $symbol);
     }
 
     public function sellCurrency(): Redirect
@@ -84,16 +88,16 @@ class CurrencyController
             rtrim(rtrim(number_format($amountToSell, 8, '.', ''), '0'), '.') .
             ' ' . $symbol . ' for ' . $this->getCurrencySymbol() .
             floor($amountToSell * $this->currencyTradeService->getPrice() * 100) / 100,
-            'flashMessages', 'wallet'
+            'flashMessages', 'currency'
         );
-        return new Redirect('/wallet');
+        return new Redirect('/currency/' . $symbol);
     }
 
     private function getSymbolFromUrl(): string
     {
         $urlTokens = explode(
             '/',
-            parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PATH)
+            parse_url($_SERVER['HTTP_REFERER'] ?? '', PHP_URL_PATH)
         );
         return strtoupper(end($urlTokens));
     }

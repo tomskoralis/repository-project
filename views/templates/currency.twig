@@ -82,6 +82,9 @@
                 </div>
             </div>
 
+            {% if messages.currency %}
+                <div class="flashMessage">{{ messages.currency }}</div>
+            {% endif %}
             {% if errors.currency %}
                 <div class="errorMessage">ERROR: {{ errors.currency }}</div>
             {% endif %}

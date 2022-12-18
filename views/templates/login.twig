@@ -22,8 +22,8 @@
         </form>
         <br>
 
-        {% if messages.login %}
-            <div class="flashMessage">{{ messages.login }}</div>
+        {% if errors.auth %}
+            <div class="errorMessage">ERROR: {{ errors.auth }}</div>
         {% endif %}
         {% if errors.email %}
             <div class="errorMessage">ERROR: {{ errors.email }}</div>

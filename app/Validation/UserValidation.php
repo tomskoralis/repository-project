@@ -22,21 +22,21 @@ class UserValidation
         return $this->errors;
     }
 
-    public function isNameValid(User $user): bool
+    public function isNameValid(string $name): bool
     {
-        if (strlen($user->getName()) < 4) {
+        if (strlen($name) < 4) {
             $this->errors->add(
                 new Error('Username cannot be shorter than 4 characters!', 'name')
             );
             return false;
         }
-        if (strlen($user->getName()) > 100) {
+        if (strlen($name) > 100) {
             $this->errors->add(
                 new Error('Username cannot be longer than 100 characters!', 'name')
             );
             return false;
         }
-        if (!ctype_alnum($user->getName())) {
+        if (!ctype_alnum($name)) {
             $this->errors->add(
                 new Error('Username cannot contain special characters!', 'name')
             );
@@ -45,15 +45,15 @@ class UserValidation
         return true;
     }
 
-    public function isEmailValid(User $user): bool
+    public function isEmailValid(string $email): bool
     {
-        if (!filter_var($user->getEmail(), FILTER_VALIDATE_EMAIL)) {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $this->errors->add(
                 new Error('Invalid e-mail address!', 'email')
             );
             return false;
         }
-        if (strlen($user->getEmail()) > 255) {
+        if (strlen($email) > 255) {
             $this->errors->add(
                 new Error('E-mail cannot be longer than 255 characters!', 'email')
             );
@@ -62,21 +62,21 @@ class UserValidation
         return true;
     }
 
-    public function isPasswordValid(User $user): bool
+    public function isPasswordValid(string $password): bool
     {
-        if (strlen($user->getPassword()) < 6) {
+        if (strlen($password) < 6) {
             $this->errors->add(
                 new Error('Password cannot be shorter than 6 characters!', 'password')
             );
             return false;
         }
-        if (strlen($user->getPassword()) > 255) {
+        if (strlen($password) > 255) {
             $this->errors->add(
                 new Error('Password cannot be longer than 255 characters!', 'password')
             );
             return false;
         }
-        if (!ctype_graph($user->getPassword())) {
+        if (!ctype_graph($password)) {
             $this->errors->add(
                 new Error('Password cannot contain unknown characters!', 'password')
             );
@@ -85,9 +85,9 @@ class UserValidation
         return true;
     }
 
-    public function isPasswordRepeatedValid(User $user): bool
+    public function isPasswordRepeatedValid(string $password, string $passwordRepeated): bool
     {
-        if ($user->getPassword() !== $user->getPasswordRepeated()) {
+        if ($password !== $passwordRepeated) {
             $this->errors->add(
                 new Error('Passwords do not match!', 'passwordRepeated')
             );
@@ -96,17 +96,17 @@ class UserValidation
         return true;
     }
 
-    public function isEmailAvailable(User $user, int $userId = 0): bool
+    public function isEmailAvailable(string $newEmail, int $userId = 0): bool
     {
-        $error = $this->usersRepository->getError();
+        $error = $this->usersRepository::getError();
         if ($error !== null) {
             $this->errors->add($error);
             return false;
         }
 
-        $emails = $this->usersRepository->fetchEmailsExcept($userId);
+        $emails = $this->usersRepository::fetchAllEmailsExcept($userId);
         foreach ($emails as $email) {
-            if ($email === $user->getEmail()) {
+            if ($email === $newEmail) {
                 $this->errors->add(
                     new Error('This e-mail is already registered!', 'email')
                 );
@@ -116,17 +116,19 @@ class UserValidation
         return true;
     }
 
-    public function isPasswordMatchingHash(User $newUser, int $userId = 0, $form = ''): bool
+    public function isPasswordCorrect(User $user, $form = ''): bool
     {
-        $error = $this->usersRepository->getError();
+        $error = $this->usersRepository::getError();
         if ($error !== null) {
             $this->errors->add($error);
             return false;
         }
 
-        $currentUser = $this->usersRepository->fetchUser($userId);
-        if ($this->usersRepository->getError() === null) {
-            if (password_verify($newUser->getPassword(), $currentUser->getPassword())) {
+        if ($this->usersRepository::getError() === null) {
+            if (password_verify(
+                $user->getPassword(),
+                $this->usersRepository::fetchUser($user->getId())->getPassword()
+            )) {
                 return true;
             }
             $this->errors->add(

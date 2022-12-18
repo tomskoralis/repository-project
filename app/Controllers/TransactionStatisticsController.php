@@ -8,25 +8,25 @@ use const App\CURRENCY_CODE;
 
 class TransactionStatisticsController
 {
-    private TransactionStatisticsService $transactionStatisticsService;
+    private TransactionStatisticsService $statisticsService;
 
-    public function __construct(TransactionStatisticsService $transactionStatisticsService)
+    public function __construct(TransactionStatisticsService $statisticsService)
     {
-        $this->transactionStatisticsService = $transactionStatisticsService;
+        $this->statisticsService = $statisticsService;
     }
 
     public function showStatistics()
     {
         if (!Session::has('userId')) {
             Session::add(
-                "Need to be logged in to view statistics",
-                'flashMessages', 'login'
+                'Need to be logged in to view statistics',
+                'errors', 'auth'
             );
             return new Redirect('/login');
         }
 
-        $statistics = $this->transactionStatisticsService->getTransactionStatistics(Session::get('userId'));
-        Session::addErrors($this->transactionStatisticsService->getErrors());
+        $statistics = $this->statisticsService->getTransactionStatistics(Session::get('userId'));
+        Session::addErrors($this->statisticsService->getErrors());
 
         return new Template ('templates/statistics.twig', [
             'statistics' => $statistics,

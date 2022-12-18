@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Container;
-use App\Models\User;
 use App\Models\Collections\ErrorsCollection;
 use App\Repositories\UsersRepository;
 use App\Validation\UserValidation;
@@ -24,7 +23,12 @@ class UserRegisterService
         return $this->errors;
     }
 
-    public function registerAndGetId(User $user): int
+    public function registerAndGetId(
+        string $name,
+        string $email,
+        string $password,
+        string $passwordRepeated
+    ): int
     {
         $error = $this->usersRepository::getError();
         if ($error !== null) {
@@ -34,22 +38,22 @@ class UserRegisterService
 
         $validation = Container::get(UserValidation::class);
         /** @var UserValidation $validation */
-        $nameValid = $validation->isNameValid($user);
-        $emailValid = $validation->isEmailValid($user);
-        $passwordValid = $validation->isPasswordValid($user);
-        $passwordRepeatedValid = $validation->isPasswordRepeatedValid($user);
+        $nameValid = $validation->isNameValid($name);
+        $emailValid = $validation->isEmailValid($email);
+        $passwordValid = $validation->isPasswordValid($password);
+        $passwordRepeatedValid = $validation->isPasswordRepeatedValid($password, $passwordRepeated);
         if (
             !$nameValid ||
             !$emailValid ||
             !$passwordValid ||
             !$passwordRepeatedValid ||
-            !$validation->isEmailAvailable($user)
+            !$validation->isEmailAvailable($email)
         ) {
             $this->errors = $validation->getErrors();
             return 0;
         }
 
-        $this->usersRepository::add($user);
-        return $this->usersRepository::searchId($user);
+        $this->usersRepository::add($name, $email, $password);
+        return $this->usersRepository::getId($email);
     }
 }
