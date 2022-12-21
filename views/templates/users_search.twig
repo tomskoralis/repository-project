@@ -4,44 +4,46 @@
 
 {% block content %}
     <div class="userInputFormContainer">
-        <div class="pageTitle">Search for: {{ searchText }}</div>
+        <div class="pageTitle">Search for: {{ userSearchQuery }}</div>
 
         {% include('partials/form_search_user.twig') %}
 
-        {% for user in users %}
-            <div class="addMarginTop">
-                <a href="/profile/{{ user.getId }}">{{ user.getName }}</a>
-            </div>
-        {% endfor %}
-
-        {% if users %}
-            <br>
-            <div class="pageSelectorContainer">
-                <div class="previousPage">
-                    {% if page > 1 %}
-                        <a href="/search/{{ searchText }}/{{ page - 1 }}">Previous</a>
-                    {% else %}
-                        <span class="grayText">Previous</span>
-                    {% endif %}
+        {% if errors.nothingFound %}
+            <div class="errorMessage">ERROR: {{ errors.nothingFound }}</div>
+        {% else %}
+            {% for user in users %}
+                <div class="addMarginTop">
+                    <a href="/profile/{{ user.getId }}">{{ user.getName }}</a>
                 </div>
-                <div class="pageInputFormContainer">
-                    <form id="userPagerForm" action="/search/{{ searchText }}/" method="post"
-                          onsubmit="appendUsersSearchPageURl()">
-                        <label for="pageInput">
-                            <input required id="pageInput" class="pageInputBox" type="text" name="pageInput"
-                                   placeholder="Page {% if page %}{{ page }}{% else %}1{% endif %}">
-                        </label>
-                    </form>
-                </div>
-                <div class="nextPage">
-                    {% if page %}
-                        <a href="/search/{{ searchText }}/{{ page + 1 }}">Next</a>
-                    {% else %}
-                        <span class="grayText">Next</span>
-                    {% endif %}
-                </div>
-            </div>
+            {% endfor %}
         {% endif %}
+
+        <br>
+        <div class="pageSelectorContainer">
+            <div class="previousPage">
+                {% if page > 1 %}
+                    <a href="/search/{{ userSearchQuery }}/{{ page - 1 }}">Previous</a>
+                {% else %}
+                    <span class="grayText">Previous</span>
+                {% endif %}
+            </div>
+            <div class="pageInputFormContainer">
+                <form id="userPagerForm" action="/search/{{ userSearchQuery }}/" method="post"
+                      onsubmit="appendUsersSearchPageURl()">
+                    <label for="pageInput">
+                        <input required id="pageInput" class="pageInputBox" type="text" name="pageInput"
+                               placeholder="Page {% if page %}{{ page }} of {{ pageCount }}{% else %}1 of 1{% endif %}">
+                    </label>
+                </form>
+            </div>
+            <div class="nextPage">
+                {% if page < pageCount %}
+                    <a href="/search/{{ userSearchQuery }}/{{ page + 1 }}">Next</a>
+                {% else %}
+                    <span class="grayText">Next</span>
+                {% endif %}
+            </div>
+        </div>
 
     </div>
 {% endblock %}

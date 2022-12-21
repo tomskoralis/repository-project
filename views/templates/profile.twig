@@ -1,18 +1,17 @@
 {% extends 'base.twig' %}
 
-{% block title %} | {{ user.getName }}{% endblock %}
+{% block title %} | Profile {{ user.getName }}{% endblock %}
 
 {% block content %}
     {% if errors.nothingFound %}
         <div class="errorMessage">ERROR: {{ errors.nothingFound }}</div>
     {% else %}
         <div class="userInputFormContainer">
-            <div class="pageTitle">User Profile</div>
-            <div>Id: {{ user.getId }}</div>
-            <div>Username: {{ user.getName }}</div>
+            <div class="pageTitle">{{ user.getName }}</div>
             <div>E-mail: {{ user.getEmail }}</div>
 
             {% if auth and user.getId is not same as auth.id %}
+                <br>
                 <div class="pageTitle addMarginTop">Gift cryptocurrency</div>
                 <form class="userInputForm" action="/profile/{{ user.getId }}/gift" method="post">
                     <div>

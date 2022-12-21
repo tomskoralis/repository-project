@@ -24,7 +24,7 @@ class WalletController
     {
         if (!Session::has('userId')) {
             Session::add(
-                'Need to be logged in to view wallet',
+                'Need to be logged in to view wallet!',
                 'errors', 'auth'
             );
             return new Redirect('/login');
@@ -41,6 +41,14 @@ class WalletController
 
     public function depositMoney(): Redirect
     {
+        if (!Session::has('userId')) {
+            Session::add(
+                'Need to be logged in to view wallet!',
+                'errors', 'auth'
+            );
+            return new Redirect('/login');
+        }
+
         $amount = $_POST['amount'] ?? '0';
 
         $this->walletUpdateService->addMoneyToWallet(Session::get('userId'), $amount);
@@ -49,7 +57,7 @@ class WalletController
         if (!Session::has('errors')) {
             Session::add(
                 'Successfully deposited ' . $this->getCurrencySymbol() .
-                number_format($amount, 2, '.', ''),
+                number_format($amount, 2, '.', '') . ' in the wallet.',
                 'flashMessages', 'wallet'
             );
         }
@@ -58,6 +66,14 @@ class WalletController
 
     public function withdrawMoney(): Redirect
     {
+        if (!Session::has('userId')) {
+            Session::add(
+                'Need to be logged in to view wallet!',
+                'errors', 'auth'
+            );
+            return new Redirect('/login');
+        }
+
         $amount = $_POST['amount'] ?? '0';
 
         $this->walletUpdateService->subtractMoneyFromWallet(Session::get('userId'), $amount);
@@ -66,7 +82,7 @@ class WalletController
         if (!Session::has('errors')) {
             Session::add(
                 'Successfully withdrew ' . $this->getCurrencySymbol() .
-                number_format($amount, 2, '.', ''),
+                number_format($amount, 2, '.', '') . ' from the wallet.',
                 'flashMessages', 'wallet'
             );
         }

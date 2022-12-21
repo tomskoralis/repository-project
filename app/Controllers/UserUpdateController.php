@@ -34,6 +34,14 @@ class UserUpdateController
 
     public function updateNameAndEmail(): Redirect
     {
+        if (!Session::has('userId')) {
+            Session::add(
+                'Need to be logged in to update account!',
+                'errors', 'auth'
+            );
+            return new Redirect('/login');
+        }
+
         $this->userUpdateService->updateNameAndEmail(
             new User(
                 Session::get('userId'),
@@ -57,6 +65,14 @@ class UserUpdateController
 
     public function updatePassword(): Redirect
     {
+        if (!Session::has('userId')) {
+            Session::add(
+                'Need to be logged in to update account!',
+                'errors', 'auth'
+            );
+            return new Redirect('/login');
+        }
+
         $this->userUpdateService->updatePassword(
             new User(
                 Session::get('userId'),
@@ -82,6 +98,14 @@ class UserUpdateController
 
     public function deleteUser(): Redirect
     {
+        if (!Session::has('userId')) {
+            Session::add(
+                'Need to be logged in to update account!',
+                'errors', 'auth'
+            );
+            return new Redirect('/login');
+        }
+
         $this->userDeleteService->deleteUser(
             new User(
                 Session::get('userId'),

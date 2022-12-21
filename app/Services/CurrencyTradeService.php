@@ -7,6 +7,7 @@ use App\Models\Transaction;
 use App\Models\Collections\ErrorsCollection;
 use App\Repositories\{UsersRepository, CurrenciesRepository, TransactionsRepository};
 use App\Validation\TransactionValidation;
+use const App\MAINTENANCE_MARGIN;
 
 class CurrencyTradeService
 {
@@ -14,7 +15,6 @@ class CurrencyTradeService
     private CurrenciesRepository $currenciesRepository;
     private TransactionsRepository $transactionsRepository;
     private ErrorsCollection $errors;
-    private float $price;
 
     public function __construct(
         UsersRepository        $usersRepository,
@@ -38,23 +38,21 @@ class CurrencyTradeService
         string $symbol,
         string $amount,
         string $currencyType
-    ): void
+    ): ?Transaction
     {
         if ($this->repositoriesHaveErrors()) {
-            return;
+            return null;
         }
-
-        $this->price = $this->currenciesRepository
-            ->fetchCurrencies([$symbol], $currencyType)
-            ->getAll()
-            ->current()
-            ->getPrice();
 
         $transaction = new Transaction(
             $userId,
             $symbol,
-            $this->price,
-            floor((float)$amount * 100000000) / 100000000
+            $this->currenciesRepository
+                ::fetchCurrencies([$symbol], $currencyType)
+                ->getAll()
+                ->current()
+                ->getPrice(),
+            round((float)$amount, 8)
         );
 
         $validation = Container::get(TransactionValidation::class);
@@ -64,60 +62,67 @@ class CurrencyTradeService
             !$validation->canBuyCurrency($transaction)
         ) {
             $this->errors = $validation->getErrors();
-            return;
+            return null;
         }
 
         $this->transactionsRepository::add($transaction);
-        $this->usersRepository::addMoneyToWallet(
+        $this->usersRepository::addMoney(
             $transaction->getUserId(),
             -1 * floor($transaction->getAmount() * $transaction->getPrice() * 100) / 100
         );
+        return $transaction;
     }
 
     public function sellCurrency(
         int    $userId,
         string $symbol,
         string $amount,
-        string $currencyType
-    ): void
+        string $currencyType,
+        float  $commission
+    ): ?Transaction
     {
         if ($this->repositoriesHaveErrors()) {
-            return;
+            return null;
         }
-
-        $this->price = $this->currenciesRepository
-            ->fetchCurrencies([$symbol], $currencyType)
-            ->getAll()
-            ->current()
-            ->getPrice();
-
         $transaction = new Transaction(
             $userId,
             $symbol,
-            $this->price,
-            -1 * floor((float)$amount * 100000000) / 100000000
+            $this->currenciesRepository
+                ::fetchCurrencies([$symbol], $currencyType)
+                ->getAll()
+                ->current()
+                ->getPrice(),
+            -1 * round((float)$amount, 8)
         );
 
         $validation = Container::get(TransactionValidation::class);
         /** @var TransactionValidation $validation */
         if (
             !$validation->isAmountValid($amount) ||
-            !$validation->canSellCurrency($transaction)
+            !$validation->canSellCurrency($transaction, MAINTENANCE_MARGIN)
         ) {
             $this->errors = $validation->getErrors();
-            return;
+            return null;
         }
 
-        $this->transactionsRepository::add($transaction);
-        $this->usersRepository::addMoneyToWallet(
+        $balance = $this->transactionsRepository::fetchBalances(
             $transaction->getUserId(),
-            -1 * floor($transaction->getAmount() * $transaction->getPrice() * 100) / 100
-        );
-    }
+            $transaction->getSymbol()
+        )->getAll()->current();
 
-    public function getPrice(): float
-    {
-        return $this->price ?? 0;
+        $amountToCommission = abs($transaction->getAmount()) -
+            (isset($balance) && $balance->getAmount() > 0 ? $balance->getAmount() : 0);
+        $commissionFee = $amountToCommission * $transaction->getPrice() * $commission;
+
+        $this->transactionsRepository::add($transaction);
+
+        $transaction->setCommission($commissionFee);
+
+        $this->usersRepository::addMoney(
+            $transaction->getUserId(),
+            -1 * floor($transaction->getAmount() * $transaction->getPrice() * 100) / 100 - $commissionFee
+        );
+        return $transaction;
     }
 
     private function repositoriesHaveErrors(): bool

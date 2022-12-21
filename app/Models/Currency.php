@@ -10,6 +10,7 @@ class Currency
     private float $change1h;
     private float $change24h;
     private float $change7d;
+    private ?float $amountOwned;
 
     public function __construct(
         string $symbol,
@@ -17,7 +18,8 @@ class Currency
         float  $price,
         float  $change1h,
         float  $change24h,
-        float  $change7d
+        float  $change7d,
+        ?float $amountOwned = null
     )
     {
         $this->symbol = $symbol;
@@ -26,6 +28,7 @@ class Currency
         $this->change1h = $change1h;
         $this->change24h = $change24h;
         $this->change7d = $change7d;
+        $this->amountOwned = $amountOwned;
     }
 
     public function getSymbol(): string
@@ -56,5 +59,15 @@ class Currency
     public function getChange7d(): float
     {
         return $this->change7d;
+    }
+
+    public function getAmountOwned(): ?float
+    {
+        return $this->amountOwned;
+    }
+
+    public function setAmountOwned(float $amountOwned): void
+    {
+        $this->amountOwned = $amountOwned;
     }
 }

@@ -39,7 +39,7 @@ class WalletUpdateService
         }
 
         $amount = floor($amount * 100) / 100;
-        $this->usersRepository::addMoneyToWallet($userId, $amount);
+        $this->usersRepository::addMoney($userId, $amount);
     }
 
     public function subtractMoneyFromWallet(int $userId, string $amount): void
@@ -61,6 +61,6 @@ class WalletUpdateService
         }
 
         $amount = floor((float)$amount * 100) / 100;
-        $this->usersRepository::addMoneyToWallet($userId, -1 * $amount);
+        $this->usersRepository::addMoney($userId, -1 * $amount);
     }
 }

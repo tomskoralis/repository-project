@@ -26,23 +26,23 @@
                 </div>
                 <div class="tableItem">
                     {% if currency.getChange1h > 0 %}
-                        <span class="greenText">&#9650;{{ (currency.getChange1h) | number_format(2, '.', '') }}%</span>
+                        <span class="greenText">&#9650;{{ (currency.getChange1h) | round(2) }}%</span>
                     {% else %}
-                        <span class="redText">&#9660;{{ (currency.getChange1h) | abs | number_format(2, '.', '') }}%</span>
+                        <span class="redText">&#9660;{{ (currency.getChange1h) | abs | round(2) }}%</span>
                     {% endif %}
                 </div>
                 <div class="tableItem">
                     {% if currency.getChange24h > 0 %}
-                        <span class="greenText">&#9650;{{ (currency.getChange24h) | number_format(2, '.', '') }}%</span>
+                        <span class="greenText">&#9650;{{ (currency.getChange24h) | round(2) }}%</span>
                     {% else %}
-                        <span class="redText">&#9660;{{ (currency.getChange24h) | abs | number_format(2, '.', '') }}%</span>
+                        <span class="redText">&#9660;{{ (currency.getChange24h) | abs | round(2) }}%</span>
                     {% endif %}
                 </div>
                 <div class="tableItem">
                     {% if currency.getChange7d > 0 %}
-                        <span class="greenText">&#9650;{{ (currency.getChange7d) | number_format(2, '.', '') }}%</span>
+                        <span class="greenText">&#9650;{{ (currency.getChange7d) | round(2) }}%</span>
                     {% else %}
-                        <span class="redText">&#9660;{{ (currency.getChange7d) | abs | number_format(2, '.', '') }}%</span>
+                        <span class="redText">&#9660;{{ (currency.getChange7d) | abs | round(2) }}%</span>
                     {% endif %}
                 </div>
             {% endfor %}

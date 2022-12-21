@@ -1,6 +1,6 @@
 function appendCurrencyUrl() {
     document.getElementById('searchForm').action =
-        "/currency/" + document.getElementsByName('searchInput')[0].value;
+        "/currency/" + document.getElementsByName('searchInput')[0].value.toUpperCase();
 }
 
 function appendUsersPageURl() {

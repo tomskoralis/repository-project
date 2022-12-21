@@ -7,6 +7,7 @@ const ROUTES_MAP = [
 
     ['GET', '/register', [\App\Controllers\UserRegisterController::class, 'showRegisterForm']],
     ['POST', '/register', [\App\Controllers\UserRegisterController::class, 'register']],
+
     ['GET', '/login', [\App\Controllers\UserLoginController::class, 'showLoginForm']],
     ['POST', '/login', [\App\Controllers\UserLoginController::class, 'login']],
     ['GET', '/logout', [\App\Controllers\UserLogoutController::class, 'logout']],
@@ -17,10 +18,9 @@ const ROUTES_MAP = [
     ['POST', '/account/delete', [\App\Controllers\UserUpdateController::class, 'deleteUser']],
 
     ['GET', '/currency', [\App\Controllers\CurrenciesController::class, 'showCurrenciesList']],
-    [['GET', 'POST'], '/currency/', [\App\Controllers\CurrenciesController::class, 'showCurrenciesList']],
     [['GET', 'POST'], '/currency/{symbol}', [\App\Controllers\CurrencyController::class, 'showCurrency']],
-    ['POST', '/buy-currency', [\App\Controllers\CurrencyController::class, 'buyCurrency']],
-    ['POST', '/sell-currency', [\App\Controllers\CurrencyController::class, 'sellCurrency']],
+    ['POST', '/currency/{symbol}/buy', [\App\Controllers\CurrencyController::class, 'buyCurrency']],
+    ['POST', '/currency/{symbol}/sell', [\App\Controllers\CurrencyController::class, 'sellCurrency']],
 
     ['GET', '/wallet', [\App\Controllers\WalletController::class, 'showWallet']],
     ['POST', '/wallet/deposit', [\App\Controllers\WalletController::class, 'depositMoney']],
@@ -30,7 +30,6 @@ const ROUTES_MAP = [
     ['GET', '/statistics', [\App\Controllers\TransactionStatisticsController::class, 'showStatistics']],
 
     ['GET', '/users', [\App\Controllers\UsersListController::class, 'showUsersList']],
-    [['GET', 'POST'], '/users/', [\App\Controllers\UsersListController::class, 'showUsersList']],
     [['GET', 'POST'], '/users/{page}', [\App\Controllers\UsersListController::class, 'showUsersList']],
     [['GET', 'POST'], '/search/{query}', [\App\Controllers\UsersSearchController::class, 'searchUsers']],
     [['GET', 'POST'], '/search/{query}/{page}', [\App\Controllers\UsersSearchController::class, 'searchUsers']],

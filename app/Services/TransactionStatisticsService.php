@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\{Error, CurrencyPrice, Transaction, TransactionStatistics};
-use App\Models\Collections\{PriceCollection, ErrorsCollection};
+use App\Models\{TransactionStatistics, Transaction, CurrencyStatistic, Error};
+use App\Models\Collections\{CurrencyStatisticsCollection, ErrorsCollection};
 use App\Repositories\TransactionsRepository;
 
 class TransactionStatisticsService
@@ -22,12 +22,12 @@ class TransactionStatisticsService
         return $this->errors;
     }
 
-    public function getTransactionStatistics(int $userId): TransactionStatistics
+    public function getTransactionStatistics(int $userId): ?TransactionStatistics
     {
         $error = $this->transactionsRepository::getError();
         if ($error !== null) {
             $this->errors->add($error);
-            return new TransactionStatistics();
+            return null;
         }
 
         $transactions = $this->transactionsRepository::fetchTransactions($userId);
@@ -35,56 +35,83 @@ class TransactionStatisticsService
             $this->errors->add(
                 new Error('No transactions found!', 'nothingFound')
             );
-            return new TransactionStatistics();
+            return null;
         }
 
-        $costsByCurrency = [];
-        $amountsByCurrency = [];
+        $spentByCurrency = [];
+        $amountSpentByCurrency = [];
+        $earnedByCurrency = [];
+        $amountEarnedByCurrency = [];
         $amountsInWallet = [];
-        $totalSpent = 0;
-        $totalEarned = 0;
+        $walletValues = [];
+
         foreach ($transactions->getAll() as $transaction) {
             /** @var Transaction $transaction */
+            if (!isset($spentByCurrency[$transaction->getSymbol()])) {
+                $spentByCurrency[$transaction->getSymbol()] = 0;
+            }
+            if (!isset($amountSpentByCurrency[$transaction->getSymbol()])) {
+                $amountSpentByCurrency[$transaction->getSymbol()] = 0;
+            }
+            if (!isset($earnedByCurrency[$transaction->getSymbol()])) {
+                $earnedByCurrency[$transaction->getSymbol()] = 0;
+            }
+            if (!isset($amountEarnedByCurrency[$transaction->getSymbol()])) {
+                $amountEarnedByCurrency[$transaction->getSymbol()] = 0;
+            }
+
             if ($transaction->getAmount() > 0) {
-                $totalSpent += $transaction->getAmount() * $transaction->getPrice();
+                $spentByCurrency[$transaction->getSymbol()] += $transaction->getPrice() * $transaction->getAmount();
+                $amountSpentByCurrency[$transaction->getSymbol()] += $transaction->getAmount();
             } else {
-                $totalEarned -= $transaction->getAmount() * $transaction->getPrice();
+                $earnedByCurrency[$transaction->getSymbol()] += $transaction->getPrice() * abs($transaction->getAmount());
+                $amountEarnedByCurrency[$transaction->getSymbol()] += abs($transaction->getAmount());
             }
 
-            if (!array_key_exists($transaction->getSymbol(), $costsByCurrency)) {
-                $costsByCurrency [$transaction->getSymbol()] = 0;
+            if (!isset($amountsInWallet[$transaction->getSymbol()])) {
+                $amountsInWallet[$transaction->getSymbol()] = 0;
             }
-            $costsByCurrency [$transaction->getSymbol()] += $transaction->getPrice() * abs($transaction->getAmount());
+            $amountsInWallet[$transaction->getSymbol()] += $transaction->getAmount();
 
-            if (!array_key_exists($transaction->getSymbol(), $amountsByCurrency)) {
-                $amountsByCurrency [$transaction->getSymbol()] = 0;
+            if (!isset($walletValues[$transaction->getSymbol()])) {
+                $walletValues[$transaction->getSymbol()] = 0;
             }
-            $amountsByCurrency [$transaction->getSymbol()] += abs($transaction->getAmount());
-
-            if (!array_key_exists($transaction->getSymbol(), $amountsInWallet)) {
-                $amountsInWallet [$transaction->getSymbol()] = 0;
-            }
-            $amountsInWallet [$transaction->getSymbol()] += $transaction->getAmount();
         }
 
-        $walletValue = 0;
-        $averagePrices = new PriceCollection();
-        foreach ($costsByCurrency as $key => $currencyCost) {
-            $averagePrice = new CurrencyPrice(
-                $key,
-                $currencyCost / $amountsByCurrency [$key]
+        $currencyStatistics = new CurrencyStatisticsCollection();
+        foreach ($spentByCurrency as $key => $spent) {
+            $averagePrice = ($amountEarnedByCurrency[$key] + $amountSpentByCurrency[$key] !== 0)
+                ? ($spent + $earnedByCurrency[$key]) / ($amountEarnedByCurrency[$key] + $amountSpentByCurrency[$key])
+                : 0;
+            $profit = $earnedByCurrency[$key] + $amountsInWallet[$key] * $averagePrice - $spent;
+            $walletValues[$key] = $amountsInWallet[$key] * $averagePrice;
+
+            $currencyStatistics->add(
+                new CurrencyStatistic(
+                    $key,
+                    $amountEarnedByCurrency[$key] + $amountSpentByCurrency[$key],
+                    $averagePrice,
+                    $earnedByCurrency[$key],
+                    $spent,
+                    $walletValues[$key],
+                    $profit
+                )
             );
-            $averagePrices->add($averagePrice);
-            $walletValue += $amountsInWallet[$key] * $averagePrice->getPrice();
         }
-        $totalProfit = $totalEarned + $walletValue - $totalSpent;
+
+        $amountTotal = array_sum($amountEarnedByCurrency) + array_sum($amountSpentByCurrency);
+        $earnedTotal = array_sum($earnedByCurrency);
+        $spentTotal = array_sum($spentByCurrency);
+        $walletTotal = array_sum($walletValues);
 
         return new TransactionStatistics(
-            $totalEarned,
-            $walletValue,
-            $totalSpent,
-            $totalProfit,
-            $averagePrices
+            $amountTotal,
+            ($earnedTotal + $spentTotal) / $amountTotal,
+            $earnedTotal,
+            $spentTotal,
+            $walletTotal,
+            $earnedTotal + $walletTotal - $spentTotal,
+            $currencyStatistics
         );
     }
 }

@@ -17,7 +17,7 @@ class UsersSearchController
 
     public function searchUsers(array $request): Template
     {
-        $page = ((int)$request['page'] > 0) ? $request['page'] : 1;
+        $page = (isset($request['page']) && (int)$request['page'] > 0) ? (int)$request['page'] : 1;
         $searchQuery = $request['query'] ?? '';
 
         $users = $this->userSearchService->getUsersList(
@@ -31,7 +31,8 @@ class UsersSearchController
         return new Template ('templates/users_search.twig', [
             'users' => $users,
             'page' => $page,
-            'searchText' => $searchQuery,
+            'userSearchQuery' => $searchQuery,
+            'pageCount' => $this->userSearchService->getPageCount(),
         ]);
     }
 }

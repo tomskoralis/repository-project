@@ -76,14 +76,6 @@ class CurrencyGiftService
             -1 * $amountRounded,
         );
 
-        $recipientTransaction = new Transaction(
-            $recipientId,
-            $symbol,
-            $averagePrice,
-            $amountRounded,
-            $senderId
-        );
-
         $transactionValidation = Container::get(TransactionValidation::class);
         /** @var TransactionValidation $transactionValidation */
         if (
@@ -115,7 +107,15 @@ class CurrencyGiftService
         }
 
         $this->transactionsRepository::add($senderTransaction);
-        $this->transactionsRepository::add($recipientTransaction);
+        $this->transactionsRepository::add(
+            new Transaction(
+                $recipientId,
+                $symbol,
+                $averagePrice,
+                $amountRounded,
+                $senderId
+            )
+        );
         return $this->usersRepository::fetchUser($recipientId)->getName();
     }
 }

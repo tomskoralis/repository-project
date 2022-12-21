@@ -138,6 +138,7 @@ class MySqlTransactionsRepository implements TransactionsRepository
                 $balance['id'],
                 $balance['symbol'],
                 $balance['amount'],
+                $balance['value'],
             ));
         }
         return $userBalances;

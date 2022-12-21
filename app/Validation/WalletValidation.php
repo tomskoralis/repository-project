@@ -2,18 +2,24 @@
 
 namespace App\Validation;
 
+use App\Models\Balance;
 use App\Models\Error;
 use App\Models\Collections\ErrorsCollection;
-use App\Repositories\UsersRepository;
+use App\Repositories\{UsersRepository, TransactionsRepository};
 
 class WalletValidation
 {
     private UsersRepository $usersRepository;
+    private TransactionsRepository $transactionsRepository;
     private ErrorsCollection $errors;
 
-    public function __construct(UsersRepository $usersRepository)
+    public function __construct(
+        UsersRepository        $usersRepository,
+        TransactionsRepository $transactionsRepository
+    )
     {
         $this->usersRepository = $usersRepository;
+        $this->transactionsRepository = $transactionsRepository;
         $this->errors = new ErrorsCollection();
     }
 
@@ -64,6 +70,18 @@ class WalletValidation
             );
             return false;
         }
+
+        foreach ($this->transactionsRepository::fetchBalances($userId)->getAll() as $balance) {
+            /** @var Balance $balance */
+            if ($balance->getAmount() < 0) {
+                var_dump($balance->getAmount());
+                $this->errors->add(
+                    new Error('Cannot withdraw money from the wallet while short selling a cryptocurrency!', 'wallet')
+                );
+                return false;
+            }
+        }
+
         return true;
     }
 }

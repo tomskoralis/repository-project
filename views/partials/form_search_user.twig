@@ -3,7 +3,7 @@
           onsubmit="appendUsersSearchUrl()">
         <label for="userSearchInputBox">
             <input required id="userSearchInputBox" class="shortInputBox" type="text" name="userSearchQuery"
-                   placeholder="Search Users" {% if userSearchText %} value="{{ userSearchText }}"{% endif %}>
+                   placeholder="Search Users" {% if userSearchQuery %} value="{{ userSearchQuery }}"{% endif %}>
         </label>
         <button class="submitButton">Search</button>
     </form>

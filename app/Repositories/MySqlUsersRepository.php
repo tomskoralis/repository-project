@@ -212,14 +212,17 @@ class MySqlUsersRepository implements UsersRepository
         }
     }
 
-    public static function addMoneyToWallet(int $userId, float $amount): void
+    public static function addMoney(int $userId, float $amount): void
     {
         try {
-            $sql = "UPDATE users SET wallet = wallet + ? WHERE id = ?";
-            $statement = self::getConnection()->prepare($sql);
-            $statement->bindValue(1, $amount);
-            $statement->bindValue(2, $userId);
-            $statement->executeQuery();
+            $queryBuilder = self::getConnection()->createQueryBuilder();
+            $queryBuilder
+                ->update('users')
+                ->set('wallet', 'wallet + ?')
+                ->where('id = ?')
+                ->setParameter(0, $amount)
+                ->setParameter(1, $userId)
+                ->executeQuery();
         } catch (Exception $e) {
             self::$error = new Error(
                 'Database Exception: ' . $e->getMessage(),

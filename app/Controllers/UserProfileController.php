@@ -3,8 +3,7 @@
 namespace App\Controllers;
 
 use App\{Redirect, Session, Template};
-use App\Services\UserProfileService;
-use App\Services\CurrencyGiftService;
+use App\Services\{UserProfileService, CurrencyGiftService};
 
 class UserProfileController
 {
@@ -32,6 +31,14 @@ class UserProfileController
 
     public function giftCurrency(array $userId): Redirect
     {
+        if (!Session::has('userId')) {
+            Session::add(
+                'Need to be logged in to gift currency!',
+                'errors', 'auth'
+            );
+            return new Redirect('/login');
+        }
+
         $symbol = strtoupper($_POST['symbol']) ?? '';
         $amount = $_POST['amountToGift'] ?? '0';
         $recipientId = (int)$userId['userId'];
@@ -50,9 +57,7 @@ class UserProfileController
         }
 
         Session::add(
-            'Successfully gifted ' .
-            rtrim(rtrim(number_format($amount, 8, '.', ''), '0'), '.') .
-            ' ' . $symbol . ' to ' . $userName,
+            'Successfully gifted ' . round($amount, 8) . ' ' . $symbol . ' to ' . $userName,
             'flashMessages', 'gift'
         );
         return new Redirect('/profile/' . $recipientId);

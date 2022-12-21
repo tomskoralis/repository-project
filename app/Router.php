@@ -10,18 +10,20 @@ require_once 'constants.php';
 
 class Router
 {
-    private Dispatcher $dispatcher;
+    private static ?Router $instance = null;
+    private static Dispatcher $dispatcher;
 
     public function __construct()
     {
-        $this->dispatcher = simpleDispatcher(function (RouteCollector $route) {
+        Session::start();
+        self::$dispatcher = simpleDispatcher(function (RouteCollector $route) {
             foreach (ROUTES_MAP as $routePoint) {
                 $route->addRoute($routePoint[0], $routePoint[1], [$routePoint[2][0], $routePoint[2]][1]);
             }
         });
     }
 
-    public function handleUri(): void
+    public static function handleUri(): void
     {
         $httpMethod = $_SERVER['REQUEST_METHOD'];
         $uri = $_SERVER['REQUEST_URI'];
@@ -29,7 +31,7 @@ class Router
             $uri = substr($uri, 0, $pos);
         }
         $uri = rawurldecode($uri);
-        $routeInfo = $this->dispatcher->dispatch($httpMethod, $uri);
+        $routeInfo = self::getDispatcher()->dispatch($httpMethod, $uri);
         switch ($routeInfo[0]) {
             case Dispatcher::NOT_FOUND:
                 (new Twig)->renderTemplate(
@@ -62,5 +64,18 @@ class Router
                 }
                 break;
         }
+    }
+
+    private static function getInstance(): ?Router
+    {
+        if (!isset(self::$instance)) {
+            self::$instance = new Router();
+        }
+        return self::$instance;
+    }
+
+    private static function getDispatcher(): Dispatcher
+    {
+        return self::getInstance()::$dispatcher;
     }
 }

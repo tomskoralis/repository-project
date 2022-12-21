@@ -22,7 +22,7 @@ interface UsersRepository
 
     public static function fetchAllEmailsExcept(int $userId = 0): Generator;
 
-    public static function addMoneyToWallet(int $userId, float $amount): void;
+    public static function addMoney(int $userId, float $amount): void;
 
     public static function fetchAllUsers(): UsersCollection;
 }

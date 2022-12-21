@@ -6,15 +6,18 @@
     <div class="userInputFormContainer">
         <div class="pageTitle">Wallet</div>
         <div>
-            Wallet:
-            {{ (auth.wallet | format_currency(currencyCode)) | replace({',': ''}) }}
+            Account Balance: {{ (auth.wallet | format_currency(currencyCode)) | replace({',': ''}) }}
         </div>
-        {% for balance in balances %}
-            <div class="addMarginTop">
-                {{ balance.getSymbol }}:
-                {{ balance.getAmount | number_format(8, '.', '') | trim('0', 'right') | trim('.', 'right') }}
-            </div>
-        {% endfor %}
+
+        {% if balances %}
+            <div class="addMarginTop">Cryptocurrencies:</div>
+            {% for balance in balances %}
+                <ul class="addMarginTop">
+                    {{ balance.getSymbol }}:
+                    {{ balance.getAmount | round(8) }}
+                </ul>
+            {% endfor %}
+        {% endif %}
         <br>
 
         <div class="addMarginTop">Actions:</div>
@@ -32,18 +35,18 @@
         <br>
 
         <div class="addMarginTop">
-            <label for="addMoney">Deposit money:</label>
+            <label for="depositMoney">Deposit money:</label>
         </div>
         <form class="twoFieldInputForm" action="/wallet/deposit" method="post">
-            <input required id="addMoney" class="shortInputBox" name="amount" type="text" placeholder="Amount">
+            <input required id="depositMoney" class="shortInputBox" name="amount" type="text" placeholder="Amount">
             <button class="submitButton">Confirm</button>
         </form>
 
         <div class="addMarginTop">
-            <label for="addMoney">Withdraw money:</label>
+            <label for="withdrawMoney">Withdraw money:</label>
         </div>
         <form class="twoFieldInputForm" action="/wallet/withdraw" method="post">
-            <input required id="addMoney" class="shortInputBox" name="amount" type="text" placeholder="Amount">
+            <input required id="withdrawMoney" class="shortInputBox" name="amount" type="text" placeholder="Amount">
             <button class="submitButton">Confirm</button>
         </form>
 

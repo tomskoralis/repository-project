@@ -53,7 +53,7 @@ ul {
 
 #top {
     background: #252525;
-    width: 40rem;
+    width: 45rem;
     position: fixed;
     top: 0;
     height: 3.2rem;
@@ -64,7 +64,7 @@ ul {
 #content {
     background: #252525;
     height: 100%;
-    width: 40rem;
+    width: 45rem;
     overflow-wrap: break-word;
     text-align: left;
     padding: 0 1rem;
@@ -73,7 +73,7 @@ ul {
 #bottom {
     background: #252525;
     height: 100%;
-    width: 40rem;
+    width: 45rem;
     margin: 0 auto;
     display: flex;
 }
@@ -140,7 +140,7 @@ input.shortInputBox {
 }
 
 .pageInputBox {
-    width: 5rem;
+    width: 6rem;
     text-align: center;
 }
 
@@ -311,26 +311,26 @@ div.alignRight {
     text-align: right;
 }
 
-span.greenText {
+.greenText {
     color: #00aa00;
 }
 
-span.redText {
-    color: #aa0000;
+.redText {
+    color: #cc0000;
 }
 
-span.grayText {
+.grayText {
     color: #606060;
 }
 
-table.transactionsTable {
+table.walletDetailsTable {
     margin: 0 auto;
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
 }
 
-table.transactionsTable th {
+table.walletDetailsTable th {
     position: -webkit-sticky;
     position: sticky;
     top: 0;
@@ -339,9 +339,9 @@ table.transactionsTable th {
     border-bottom: 2px solid #606060;
 }
 
-table.transactionsTable thead > tr > td,
-table.transactionsTable tbody > tr > td,
-table.transactionsTable tbody > tr > td > a {
+table.walletDetailsTable thead > tr > td,
+table.walletDetailsTable tbody > tr > td,
+table.walletDetailsTable tbody > tr > td > a {
     padding: 0.15rem 0.2rem;
     font-size: calc(4px + 0.6vw);
     overflow: hidden;
@@ -349,20 +349,20 @@ table.transactionsTable tbody > tr > td > a {
     text-overflow: ellipsis;
 }
 
-table.transactionsTable tbody > tr > td {
+table.walletDetailsTable tbody > tr > td {
     border-top: 1px solid #404040;
 }
 
-table.transactionsTable thead > tr > :nth-child(1),
-table.transactionsTable tbody > tr > :nth-child(1) {
+table.walletDetailsTable thead > tr > :nth-child(1),
+table.walletDetailsTable tbody > tr > :nth-child(1) {
     text-align: left;
 }
 
-table.transactionsTable thead > tr > :nth-child(n+2):nth-child(-n+7),
-table.transactionsTable tbody > tr > :nth-child(n+2):nth-child(-n+7) {
+table.walletDetailsTable thead > tr > :nth-child(n+2):nth-child(-n+7),
+table.walletDetailsTable tbody > tr > :nth-child(n+2):nth-child(-n+7) {
     text-align: right;
 }
 
-table.transactionsTable tbody > tr > :nth-child(n+2):nth-child(-n+7) > a {
+table.walletDetailsTable tbody > tr > :nth-child(n+2):nth-child(-n+7) > a {
     padding: 0;
 }

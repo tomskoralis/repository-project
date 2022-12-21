@@ -17,7 +17,7 @@ class UsersListController
 
     public function showUsersList(array $page): Template
     {
-        $page = ((int)$page['page'] > 0) ? $page['page'] : 1;
+        $page = (isset($page['page']) && (int)$page['page'] > 0) ? (int)$page['page'] : 1;
         $users = $this->usersListService->getUsersList(
             USERS_PER_PAGE,
             $page
@@ -28,6 +28,7 @@ class UsersListController
         return new Template ('templates/users.twig', [
             'users' => $users,
             'page' => $page,
+            'pageCount' => $this->usersListService->getPageCount(),
         ]);
     }
 }

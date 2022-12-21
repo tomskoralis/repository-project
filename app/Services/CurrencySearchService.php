@@ -27,7 +27,7 @@ class CurrencySearchService
         return $this->errors;
     }
 
-    public function getCurrency(string $symbol, string $currencyType): ?Currency
+    public function getCurrency(string $symbol, string $currencyType, ?int $userId = null): ?Currency
     {
         $error = $this->currenciesRepository::getError();
         if ($error !== null) {
@@ -35,6 +35,7 @@ class CurrencySearchService
             return null;
         }
 
+        /** @var Currency $currency */
         $currency = $this->currenciesRepository::fetchCurrencies([$symbol], $currencyType)->getAll()->current();
         if (empty($currency)) {
             $this->errors->add(
@@ -43,12 +44,19 @@ class CurrencySearchService
                     'nothingFound'
                 )
             );
+            return null;
         }
+
+        $currency->setAmountOwned(
+            (isset($userId))
+                ? $this->getAmountOwned($userId, $currency->getSymbol())
+                : 0
+        );
+
         return $currency;
     }
 
-    //TODO: combine methods into one
-    public function getAmountOwned($userId, $symbol): float
+    private function getAmountOwned($userId, $symbol): float
     {
         $error = $this->transactionsRepository::getError();
         if ($error !== null) {
@@ -58,7 +66,6 @@ class CurrencySearchService
         $balance = $this->transactionsRepository::fetchBalances($userId, $symbol)->getAll()->current();
         if (isset($balance) && $balance->getSymbol() === $symbol) {
             return $balance->getAmount();
-
         }
         return 0;
     }

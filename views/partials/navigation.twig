@@ -6,7 +6,7 @@
                   onsubmit="appendCurrencyUrl()">
                 <label for="searchInput">
                     <input required id="searchInput" class="shortInputBox" type="text" name="searchInput"
-                           placeholder="Search" {% if searchText %} value="{{ searchText }}"{% endif %}>
+                           placeholder="Search" {% if currency %} value="{{ currency.getSymbol }}"{% endif %}>
                 </label>
                 <button class="submitButton">Search</button>
             </form>

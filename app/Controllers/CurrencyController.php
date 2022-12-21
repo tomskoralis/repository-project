@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use App\{Template, Redirect, Session};
 use App\Services\{CurrencySearchService, CurrencyTradeService};
-use const App\CURRENCY_CODE;
+use const App\{CURRENCY_CODE, SHORT_SELL_COMMISSION};
 
 class CurrencyController
 {
@@ -24,32 +24,33 @@ class CurrencyController
     {
         $currency = $this->currencySearchService->getCurrency(
             strtoupper($symbol['symbol']),
-            CURRENCY_CODE
+            CURRENCY_CODE,
+            Session::get('userId')
         );
-        $amountOwned = (Session::has('userId') && !empty($currency))
-            ? $this->currencySearchService->getAmountOwned(
-                Session::get('userId'),
-                $currency->getSymbol()
-            )
-            : 0;
+
         Session::addErrors($this->currencySearchService->getErrors());
 
         return new Template ('templates/currency.twig', [
             'currency' => $currency,
             'currencyCode' => CURRENCY_CODE,
-            'amountOwned' => $amountOwned,
         ]);
     }
 
-    public function buyCurrency(): Redirect
+    public function buyCurrency(array $symbol): Redirect
     {
-        $amountToBuy = $_POST['amountToBuy'] ?? '0';
-        $symbol = $this->getSymbolFromUrl();
+        if (!Session::has('userId')) {
+            Session::add(
+                'Need to be logged in to buy currency!',
+                'errors', 'auth'
+            );
+            return new Redirect('/login');
+        }
 
-        $this->currencyTradeService->buyCurrency(
+        $symbol = strtoupper($symbol['symbol']);
+        $transaction = $this->currencyTradeService->buyCurrency(
             Session::get('userId'),
             $symbol,
-            $amountToBuy,
+            $_POST['amountToBuy'] ?? '0',
             CURRENCY_CODE
         );
         Session::addErrors($this->currencyTradeService->getErrors());
@@ -58,48 +59,47 @@ class CurrencyController
         }
 
         Session::add(
-            'Successfully bought ' .
-            rtrim(rtrim(number_format($amountToBuy, 8, '.', ''), '0'), '.') .
-            ' ' . $symbol . ' for ' . $this->getCurrencySymbol() .
-            floor($amountToBuy * $this->currencyTradeService->getPrice() * 100) / 100,
+            'Successfully bought ' . round($transaction->getAmount(), 8) . ' ' .
+            $transaction->getSymbol() . ' for ' . $this->getCurrencySymbol() .
+            number_format(round($transaction->getAmount() * $transaction->getPrice(), 2), 2, '.', ''),
             'flashMessages', 'currency'
         );
         return new Redirect('/currency/' . $symbol);
     }
 
-    public function sellCurrency(): Redirect
+    public function sellCurrency(array $symbol): Redirect
     {
-        $amountToSell = floor((float)$_POST['amountToSell'] * 100000000) / 100000000;
-        $symbol = $this->getSymbolFromUrl();
+        if (!Session::has('userId')) {
+            Session::add(
+                'Need to be logged in to sell currency!',
+                'errors', 'auth'
+            );
+            return new Redirect('/login');
+        }
 
-        $this->currencyTradeService->sellCurrency(
+        $symbol = strtoupper($symbol['symbol']);
+        $transaction = $this->currencyTradeService->sellCurrency(
             Session::get('userId'),
             $symbol,
-            $amountToSell,
-            CURRENCY_CODE
+            $_POST['amountToSell'] ?? '0',
+            CURRENCY_CODE,
+            SHORT_SELL_COMMISSION
         );
+
         Session::addErrors($this->currencyTradeService->getErrors());
         if (Session::has('errors')) {
             return new Redirect('/currency/' . $symbol);
         }
 
         Session::add(
-            'Successfully sold ' .
-            rtrim(rtrim(number_format($amountToSell, 8, '.', ''), '0'), '.') .
-            ' ' . $symbol . ' for ' . $this->getCurrencySymbol() .
-            floor($amountToSell * $this->currencyTradeService->getPrice() * 100) / 100,
+            'Successfully sold ' . round(abs($transaction->getAmount()), 8) . ' ' .
+            $transaction->getSymbol() . ' for ' . $this->getCurrencySymbol() .
+            number_format(round(abs($transaction->getAmount()) * $transaction->getPrice(), 2), 2, '.', '') .
+            ($transaction->getCommission() > 0 ? ' (' . SHORT_SELL_COMMISSION * 100 . '% commission ' . $this->getCurrencySymbol() .
+                number_format(round(abs($transaction->getCommission()), 2), 2, '.', '') . ')' : ''),
             'flashMessages', 'currency'
         );
         return new Redirect('/currency/' . $symbol);
-    }
-
-    private function getSymbolFromUrl(): string
-    {
-        $urlTokens = explode(
-            '/',
-            parse_url($_SERVER['HTTP_REFERER'] ?? '', PHP_URL_PATH)
-        );
-        return strtoupper(end($urlTokens));
     }
 
     private function getCurrencySymbol(): string

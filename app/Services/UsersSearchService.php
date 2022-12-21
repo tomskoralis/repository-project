@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\User;
+use App\Models\{User, Error};
 use App\Models\Collections\{UsersCollection, ErrorsCollection};
 use App\Repositories\UsersRepository;
 
@@ -10,6 +10,7 @@ class UsersSearchService
 {
     private UsersRepository $usersRepository;
     private ErrorsCollection $errors;
+    private int $pageCount;
 
     public function __construct(UsersRepository $usersRepository)
     {
@@ -22,7 +23,6 @@ class UsersSearchService
         return $this->errors;
     }
 
-    //TODO: do the searching and paging in the repository instead
     public function getUsersList(string $searchQuery, int $pageSize, int $page): UsersCollection
     {
         $error = $this->usersRepository::getError();
@@ -49,6 +49,24 @@ class UsersSearchService
             }
         }
 
+        $this->pageCount = ceil($foundUsers->getCount() / $pageSize) ?: 1;
+
+        if ($foundUsers->getCount() === 0 && $page === 1) {
+            $this->errors->add(
+                new Error("No users found when searching for '$searchQuery'!", 'nothingFound')
+            );
+        }
+
+        if ($selectedUsers->getCount() === 0 && $page > 1) {
+            $this->errors->add(
+                new Error("No users found on page $page!", 'nothingFound')
+            );
+        }
         return $selectedUsers;
+    }
+
+    public function getPageCount(): int
+    {
+        return $this->pageCount;
     }
 }

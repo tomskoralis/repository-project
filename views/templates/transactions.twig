@@ -7,7 +7,7 @@
     {% if errors.nothingFound %}
         <div class="errorMessage">ERROR: {{ errors.nothingFound }}</div>
     {% else %}
-        <table class="transactionsTable">
+        <table class="walletDetailsTable">
             <thead>
             <tr>
                 <th>&#8470;</th>
@@ -32,7 +32,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        {{ transaction.getAmount | abs | number_format(8, '.', '') | trim('0', 'right') | trim('.', 'right') }}
+                        {{ transaction.getAmount | abs | round(8) }}
                     </td>
                     <td>
                         {% if transaction.getAmount > 0 %} added {% else %} removed {% endif %}

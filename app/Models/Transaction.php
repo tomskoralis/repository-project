@@ -11,6 +11,7 @@ class Transaction
     private ?int $senderId;
     private ?string $dateTime;
     private ?string $senderName;
+    private ?float $commission;
 
     public function __construct(
         int     $userId,
@@ -19,7 +20,8 @@ class Transaction
         float   $amount,
         ?int    $senderId = null,
         ?string $dateTime = null,
-        ?string $senderName = null
+        ?string $senderName = null,
+        ?float $commission = null
     )
     {
         $this->userId = $userId;
@@ -29,6 +31,7 @@ class Transaction
         $this->senderId = $senderId;
         $this->dateTime = $dateTime;
         $this->senderName = $senderName;
+        $this->commission = $commission;
     }
 
     public function getUserId(): int
@@ -66,8 +69,18 @@ class Transaction
         return $this->senderName;
     }
 
+    public function getCommission(): ?float
+    {
+        return $this->commission;
+    }
+
     public function setSenderName(string $name): void
     {
         $this->senderName = $name;
+    }
+
+    public function setCommission(?float $commission): void
+    {
+        $this->commission = $commission;
     }
 }

@@ -2,54 +2,69 @@
 
 namespace App\Models;
 
-use App\Models\Collections\PriceCollection;
+use App\Models\Collections\CurrencyStatisticsCollection;
 
 class TransactionStatistics
 {
-
-    private float $revenue;
-    private float $value;
-    private float $expenses;
-    private float $profit;
-    private ?PriceCollection $averages;
+    private float $totalAmount;
+    private float $averagePrice;
+    private float $totalIncome;
+    private float $totalExpenditure;
+    private float $walletValue;
+    private float $totalProfit;
+    private CurrencyStatisticsCollection $statistics;
 
     public function __construct(
-        float            $totalRevenue = 0,
-        float            $walletValue = 0,
-        float            $totalExpenses = 0,
-        float            $totalProfit = 0,
-        ?PriceCollection $averagePrices = null
+        float                        $totalAmount,
+        float                        $averagePrice,
+        float                        $totalRevenue,
+        float                        $totalExpenses,
+        float                        $walletValue,
+        float                        $totalProfit,
+        CurrencyStatisticsCollection $statistics
     )
     {
-        $this->revenue = $totalRevenue;
-        $this->value = $walletValue;
-        $this->expenses = $totalExpenses;
-        $this->profit = $totalProfit;
-        $this->averages = $averagePrices;
+        $this->totalAmount = $totalAmount;
+        $this->averagePrice = $averagePrice;
+        $this->totalIncome = $totalRevenue;
+        $this->totalExpenditure = $totalExpenses;
+        $this->walletValue = $walletValue;
+        $this->totalProfit = $totalProfit;
+        $this->statistics = $statistics;
     }
 
-    public function getRevenue(): float
+    public function getTotalAmount(): float
     {
-        return $this->revenue;
+        return $this->totalAmount;
     }
 
-    public function getValue(): float
+    public function getAveragePrice(): float
     {
-        return $this->value;
+        return $this->averagePrice;
     }
 
-    public function getExpenses(): float
+    public function getTotalIncome(): float
     {
-        return $this->expenses;
+        return $this->totalIncome;
     }
 
-    public function getProfit(): float
+    public function getTotalExpenditure(): float
     {
-        return $this->profit;
+        return $this->totalExpenditure;
     }
 
-    public function getAverages(): ?PriceCollection
+    public function getWalletValue(): float
     {
-        return $this->averages;
+        return $this->walletValue;
+    }
+
+    public function getTotalProfit(): float
+    {
+        return $this->totalProfit;
+    }
+
+    public function getStatistics(): CurrencyStatisticsCollection
+    {
+        return $this->statistics;
     }
 }
