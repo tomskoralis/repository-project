@@ -6,29 +6,45 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Crypto{% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="/styles/styles.css">
     <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
-    <script src="/scripts/scripts.js"></script>
+    <link rel="stylesheet" href="/styles/styles.css">
+    <link rel="stylesheet" href="/styles/styles_old.css">
+    <script>
+        if (localStorage.getItem('color-theme') === 'dark' ||
+            (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        ) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+    </script>
 </head>
 <body>
-<div id="pageContainer">
 
+<div class="flex flex-col min-h-screen bg-white dark:bg-gray-900">
     {% include('partials/navigation.twig') %}
+    <main class="bg-gray-50 dark:bg-gray-900 my-2">
+        <div class="flex flex-col justify-center items-center px-6 mx-auto">
 
-    <div id="content">
-        {% if messages.userDeleted %}
-            <div class="flashMessage">{{ messages.userDeleted }}</div>
-        {% endif %}
-        {% for error in errors.repository %}
-            <div class="errorMessage">ERROR: {{ error }}</div>
-        {% endfor %}
-        {% if not errors.repository %}
-            {% block content %}{% endblock %}
-        {% endif %}
-    </div>
+                {% if messages.userDeleted %}
+                    <p class="p-2 mt-2 rounded-lg bg-green-100 border-2 border-green-600 text-sm text-green-600 font-medium">
+                        {{ messages.userDeleted }}
+                    </p>
+                {% endif %}
+                {% for error in errors.repository %}
+                    <p class="p-2 mt-2 rounded-lg bg-red-100 border-2 border-red-600 text-sm text-red-600 font-medium">
+                        ERROR: {{ error }}
+                    </p>
+                {% endfor %}
+                {% if not errors.repository %}
+                    {% block content %}{% endblock %}
+                {% endif %}
 
-    <div id="bottom"></div>
-
+        </div>
+    </main>
 </div>
+
+<script src="/node_modules/flowbite/dist/flowbite.js"></script>
+<script src="/scripts/scripts.js"></script>
 </body>
 </html>

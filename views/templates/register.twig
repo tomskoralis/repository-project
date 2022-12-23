@@ -3,47 +3,105 @@
 {% block title %} | register{% endblock %}
 
 {% block content %}
-    <div class="userInputFormContainer">
-        <div class="pageTitle">Register account</div>
-        <form class="userInputForm" action="/register" method="post">
-            <div>
-                <label class="userInputBoxLabel">Username:<br>
-                    <input required class="userInputBox" name="name">
-                </label>
+    <div class="w-full max-w-sm p-4 bg-white border border-gray-500 rounded-lg shadow-md sm:p-6 md:p-8 dark:bg-gray-800">
+        <h2 class="text-4xl dark:text-white mb-4 text-center">Register</h2>
+
+        <form class="max-w-sm" action="/register" method="post">
+            <div class="mb-4">
+                <label for="name"
+                        {% if errors.name %}
+                            class="block font-medium text-red-700 dark:text-red-500"
+                        {% else %}
+                            class="block font-medium text-gray-900 dark:text-white"
+                        {% endif %}
+                >Username</label>
+                <input type="text" id="name" name="name" spellcheck="false"
+                        {% if errors.name %}
+                            class="bg-red-50 border-4 dark:border-2 dark:m-0.5 border-red-500 text-red-900 placeholder-red-700 rounded-lg focus:ring-red-500 dark:bg-gray-700 focus:border-red-500 block w-full p-1 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500"
+                        {% else %}
+                            class="bg-gray-50 border-4 dark:border-2 dark:m-0.5 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        {% endif %}
+                       required>
+                {% if errors.name %}
+                    <p class="mt-2 text-sm text-red-600 dark:text-red-500 font-medium">
+                        {{ errors.name }}
+                    </p>
+                {% endif %}
             </div>
-            <div class="addMarginTop">
-                <label class="userInputBoxLabel">E-mail:<br>
-                    <input required class="userInputBox" name="email">
-                </label>
+
+            <div class="mb-4">
+                <label for="email"
+                        {% if errors.email %}
+                            class="block font-medium text-red-700 dark:text-red-500"
+                        {% else %}
+                            class="block font-medium text-gray-900 dark:text-white"
+                        {% endif %}
+                >E-mail</label>
+                <input type="text" id="email" name="email" spellcheck="false"
+                        {% if errors.email %}
+                            class="bg-red-50 border-4 dark:border-2 dark:m-0.5 border-red-500 text-red-900 placeholder-red-700 rounded-lg focus:ring-red-500 dark:bg-gray-700 focus:border-red-500 block w-full p-1 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500"
+                        {% else %}
+                            class="bg-gray-50 border-4 dark:border-2 dark:m-0.5 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        {% endif %}
+                       required>
+                {% if errors.email %}
+                    <p class="mt-2 text-sm text-red-600 dark:text-red-500 font-medium">
+                        {{ errors.email }}
+                    </p>
+                {% endif %}
             </div>
-            <div class="addMarginTop">
-                <label class="userInputBoxLabel">Password:<br>
-                    <input required class="userInputBox" name="password" type="password">
-                </label>
+
+            <div class="mb-4">
+                <label for="password"
+                        {% if errors.password %}
+                            class="block font-medium text-red-700 dark:text-red-500"
+                        {% else %}
+                            class="block font-medium text-gray-900 dark:text-white"
+                        {% endif %}
+                >Password</label>
+                <input type="password" id="password" name="password" spellcheck="false"
+                        {% if errors.password %}
+                            class="bg-red-50 border-4 dark:border-2 dark:m-0.5 border-red-500 text-red-900 placeholder-red-700 rounded-lg focus:ring-red-500 dark:bg-gray-700 focus:border-red-500 block w-full p-1 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500"
+                        {% else %}
+                            class="bg-gray-50 border-4 dark:border-2 dark:m-0.5 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        {% endif %}
+                       required>
+                {% if errors.password %}
+                    <p class="mt-2 text-sm text-red-600 dark:text-red-500 font-medium">
+                        {{ errors.password }}
+                    </p>
+                {% endif %}
             </div>
-            <div class="addMarginTop">
-                <label class="userInputBoxLabel">Repeat password:<br>
-                    <input required class="userInputBox" name="passwordRepeated" type="password">
-                </label>
+
+            <div class="mb-4">
+                <label for="password_repeated"
+                        {% if errors.passwordRepeated %}
+                            class="block font-medium text-red-700 dark:text-red-500"
+                        {% else %}
+                            class="block font-medium text-gray-900 dark:text-white"
+                        {% endif %}
+                >Password repeated</label>
+                <input type="password" id="password_repeated" name="passwordRepeated" spellcheck="false"
+                        {% if errors.passwordRepeated %}
+                            class="bg-red-50 border-4 dark:border-2 dark:m-0.5 border-red-500 text-red-900 placeholder-red-700 rounded-lg focus:ring-red-500 dark:bg-gray-700 focus:border-red-500 block w-full p-1 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500"
+                        {% else %}
+                            class="bg-gray-50 border-4 dark:border-2 dark:m-0.5 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        {% endif %}
+                       required>
+                {% if errors.passwordRepeated %}
+                    <p class="mt-2 text-sm text-red-600 dark:text-red-500 font-medium">
+                        {{ errors.passwordRepeated }}
+                    </p>
+                {% endif %}
             </div>
-            <div class="addMarginTop alignCenter">
-                <button class="submitButton">Register</button>
+
+            <div class="text-center">
+                <button type="submit"
+                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                    Register
+                </button>
             </div>
+
         </form>
-        <br>
-
-        {% if errors.name %}
-            <div class="errorMessage">ERROR: {{ errors.name }}</div>
-        {% endif %}
-        {% if errors.email %}
-            <div class="errorMessage">ERROR: {{ errors.email }}</div>
-        {% endif %}
-        {% if errors.password %}
-            <div class="errorMessage">ERROR: {{ errors.password }}</div>
-        {% endif %}
-        {% if errors.passwordRepeated %}
-            <div class="errorMessage">ERROR: {{ errors.passwordRepeated }}</div>
-        {% endif %}
-
     </div>
 {% endblock %}

@@ -3,49 +3,57 @@
 {% block title %} | Transactions{% endblock %}
 
 {% block content %}
-    <div class="pageHeading addMarginTop">Transaction Statistics</div>
     {% if errors.nothingFound %}
-        <div class="errorMessage">ERROR: {{ errors.nothingFound }}</div>
+        <p class="p-2 mt-2 rounded-lg bg-red-100 border-2 border-red-600 text-sm text-red-600 font-medium">
+            ERROR: {{ errors.nothingFound }}
+        </p>
     {% else %}
-        <table class="walletDetailsTable">
-            <thead>
-            <tr>
-                <th>&#8470;</th>
-                <th>Symbol</th>
-                <th>Amount</th>
-                <th>Average Price</th>
-                <th>Income</th>
-                <th>Expenditure</th>
-                <th>Value in wallet</th>
-                <th>Profit</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for statistic in statistics.getStatistics.getAll %}
+        <div class="w-full max-w-4xl min-w-fit p-0.5 bg-white border border-gray-500 rounded-lg shadow-md sm:p-2 md:p-4 dark:bg-gray-800 dark:border-gray-700">
+            <h2 class="text-4xl dark:text-white mb-4 text-center">Statistics</h2>
+
+            <table class="w-full text-right dark:text-white">
+                <thead>
                 <tr>
-                    <td>{{ loop.index }}</td>
-                    <td>{{ statistic.getSymbol }}</td>
-                    <td>
-                        {{ statistic.getAmount | abs | round(2) }}
-                    </td>
-                    <td>
-                        {{ statistic.getAveragePrice | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
-                    </td>
-                    <td>
-                        {{ statistic.getIncome | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
-                    </td>
-                    <td>
-                        {{ statistic.getExpenditure | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
-                    </td>
-                    <td>
-                        {{ statistic.getWalletValue | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
-                    </td>
-                    <td class="{% if profit > 0 %}greenText{% else %}redText{% endif %}">
-                        {{ statistic.getProfit | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
-                    </td>
+                    <th>&#8470;</th>
+                    <th>Symbol</th>
+                    <th>Amount</th>
+                    <th>Average Price</th>
+                    <th>Income</th>
+                    <th>Expenditure</th>
+                    <th>Value in wallet</th>
+                    <th>Profit</th>
                 </tr>
-            {% endfor %}
-                <tr>
+                </thead>
+                <tbody>
+                {% for statistic in statistics.getStatistics.getAll %}
+                    <tr class="border-t-2 border-gray-300 dark:border-gray-700">
+                        <td>{{ loop.index }}</td>
+                        <td>{{ statistic.getSymbol }}</td>
+                        <td>
+                            {{ statistic.getAmount | abs | round(2) }}
+                        </td>
+                        <td>
+                            {{ statistic.getAveragePrice | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+                        </td>
+                        <td>
+                            {{ statistic.getIncome | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+                        </td>
+                        <td>
+                            {{ statistic.getExpenditure | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+                        </td>
+                        <td>
+                            {{ statistic.getWalletValue | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+                        </td>
+                        <td {% if statistic.getProfit >= 0 %}
+                            class="text-green-700 dark:text-green-400"
+                        {% else %}
+                            class="text-red-700 dark:text-red-400"
+                                {% endif %}>
+                            {{ statistic.getProfit | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+                        </td>
+                    </tr>
+                {% endfor %}
+                <tr class="border-t-2 border-gray-300 dark:border-gray-700">
                     <td>Total</td>
                     <td></td>
                     <td>
@@ -63,11 +71,17 @@
                     <td>
                         {{ statistics.getWalletValue | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
                     </td>
-                    <td class="{% if profit > 0 %}greenText{% else %}redText{% endif %}">
+                    <td{% if statistics.getTotalProfit >= 0 %}
+                        class="text-green-700 dark:text-green-400"
+                    {% else %}
+                        class="text-red-700 dark:text-red-400"
+                            {% endif %}>
                         {{ statistics.getTotalProfit | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
                     </td>
                 </tr>
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
+
     {% endif %}
 {% endblock %}

@@ -4,46 +4,74 @@
 
 {% block content %}
     {% if errors.nothingFound %}
-        <div class="errorMessage">ERROR: {{ errors.nothingFound }}</div>
+        <p class="p-2 mt-2 rounded-lg bg-red-100 border-2 border-red-600 text-sm text-red-600 font-medium">
+            ERROR: {{ errors.nothingFound }}
+        </p>
     {% else %}
-        <div class="userInputFormContainer">
-            <div class="pageTitle">{{ user.getName }}</div>
-            <div>E-mail: {{ user.getEmail }}</div>
+        <div class="w-full max-w-sm p-4 bg-white border border-gray-700 rounded-lg shadow-md sm:p-6 md:p-8 dark:bg-gray-800">
+
+            <h2 class="text-4xl dark:text-white mb-4 text-center">{{ user.getName }}</h2>
+
+            <div class="dark:text-white">
+                E-mail: {{ user.getEmail }}
+            </div>
 
             {% if auth and user.getId is not same as auth.id %}
-                <br>
-                <div class="pageTitle addMarginTop">Gift cryptocurrency</div>
-                <form class="userInputForm" action="/profile/{{ user.getId }}/gift" method="post">
-                    <div>
-                        <label class="userInputBoxLabel">Cryptocurrency symbol:<br>
-                            <input required class="userInputBox" name="symbol">
+                <div class="mt-6 text-center text-lg font-semibold dark:text-white">Gift cryptocurrency</div>
+
+                <form class="max-w-sm" action="/profile/{{ user.getId }}/gift" method="post">
+
+                    <div class="mb-4">
+                        <label for="symbol" class="block font-medium text-gray-900 dark:text-white">
+                            Cryptocurrency
+                            <input type="text" id="symbol" name="symbol" spellcheck="false"
+                                   class="bg-gray-50 border-4 dark:border-2 dark:m-0.5 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                   required>
                         </label>
                     </div>
-                    <div class="addMarginTop">
-                        <label class="userInputBoxLabel">Amount:<br>
-                            <input required class="userInputBox" name="amountToGift">
+
+                    <div class="mb-4">
+                        <label for="amountToGift" class="block font-medium text-gray-900 dark:text-white">
+                            Amount
+                            <input type="text" id="amountToGift" name="amountToGift" spellcheck="false"
+                                   class="bg-gray-50 border-4 dark:border-2 dark:m-0.5 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                   required>
                         </label>
                     </div>
-                    <div class="addMarginTop">
-                        <label class="userInputBoxLabel">Password:<br>
-                            <input required class="userInputBox" name="password" type="password">
+
+                    <div class="mb-4">
+                        <label for="password" class="block font-medium text-gray-900 dark:text-white">
+                            Password
+                            <input type="password" id="password" name="password" spellcheck="false"
+                                   class="bg-gray-50 border-4 dark:border-2 dark:m-0.5 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                   required>
                         </label>
                     </div>
-                    <div class="addMarginTop alignCenter">
-                        <button class="submitButton">Confirm</button>
+
+                    {% if messages.gift %}
+                        <p class="p-2 mb-4 mt-2 rounded-lg bg-green-100 border-2 border-green-600 text-sm text-green-600 font-medium">
+                            {{ messages.gift }}
+                        </p>
+                    {% endif %}
+                    {% if errors.currency %}
+                        <p class="p-2 mb-4 mt-2 rounded-lg bg-red-100 border-2 border-red-600 text-sm text-red-600 font-medium">
+                            ERROR: {{ errors.currency }}
+                        </p>
+                    {% endif %}
+                    {% if errors.passwordMatching %}
+                        <p class="p-2 mb-4 mt-2 rounded-lg bg-red-100 border-2 border-red-600 text-sm text-red-600 font-medium">
+                            ERROR: {{ errors.passwordMatching }}
+                        </p>
+                    {% endif %}
+
+                    <div class="text-center">
+                        <button type="submit"
+                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            Confirm
+                        </button>
                     </div>
+
                 </form>
-
-                {% if messages.gift %}
-                    <div class="flashMessage">{{ messages.gift }}</div>
-                {% endif %}
-                {% if errors.currency %}
-                    <div class="errorMessage">ERROR: {{ errors.currency }}</div>
-                {% endif %}
-                {% if errors.passwordMatching %}
-                    <div class="errorMessage">ERROR: {{ errors.passwordMatching }}</div>
-                {% endif %}
-
             {% endif %}
 
         </div>

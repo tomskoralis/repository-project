@@ -24,7 +24,7 @@ class UserUpdateController
     {
         if (!Session::has('userId')) {
             Session::add(
-                'Need to be logged in to view account',
+                'Need to be logged in to view account!',
                 'errors', 'auth'
             );
             return new Redirect('/login');

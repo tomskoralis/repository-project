@@ -19,7 +19,7 @@ class TransactionsListController
     {
         if (!Session::has('userId')) {
             Session::add(
-                'Need to be logged in to view transactions',
+                'Need to be logged in to view transactions!',
                 'errors', 'auth'
             );
             return new Redirect('/login');

@@ -3,54 +3,64 @@
 {% block title %} | Transactions{% endblock %}
 
 {% block content %}
-    <div class="pageHeading addMarginTop">Transactions</div>
     {% if errors.nothingFound %}
-        <div class="errorMessage">ERROR: {{ errors.nothingFound }}</div>
+        <p class="p-2 mt-2 rounded-lg bg-red-100 border-2 border-red-600 text-sm text-red-600 font-medium">
+            ERROR: {{ errors.nothingFound }}
+        </p>
     {% else %}
-        <table class="walletDetailsTable">
-            <thead>
-            <tr>
-                <th>&#8470;</th>
-                <th>Symbol</th>
-                <th>Price</th>
-                <th>Amount</th>
-                <th>Type</th>
-                <th>From</th>
-                <th>Time</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for transaction in transactions %}
+        <div class="w-full max-w-4xl min-w-fit p-0.5 bg-white border border-gray-500 rounded-lg shadow-md sm:p-2 md:p-4 dark:bg-gray-800 dark:border-gray-700">
+            <h2 class="text-4xl dark:text-white mb-4 text-center">All transactions</h2>
+
+            <table class="w-full text-right dark:text-white">
+                <thead>
                 <tr>
-                    <td>{{ loop.index }}</td>
-                    <td>{{ transaction.getSymbol }}</td>
-                    <td>
-                        {% if transaction.getPrice < 1 %}
-                            {{ transaction.getPrice | format_currency(currencyCode, {max_significant_digits_used: 4}) }}
-                        {% else %}
-                            {{ transaction.getPrice | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
-                        {% endif %}
-                    </td>
-                    <td>
-                        {{ transaction.getAmount | abs | round(8) }}
-                    </td>
-                    <td>
-                        {% if transaction.getAmount > 0 %} added {% else %} removed {% endif %}
-                    </td>
-                    <td>
-                        {% if transaction.getSenderId %}
-                            <a id="alignCellContentsRight" href="/profile/{{ transaction.getSenderId }}">{{ transaction.getSenderName }}</a>
-                        {% elseif transaction.getAmount > 0 %}
-                            market
-                        {% else %}
-                            wallet
-                        {% endif %}
-                    </td>
-                    <td>{{ transaction.getDateTime }}</td>
+                    <th>&#8470;</th>
+                    <th>Symbol</th>
+                    <th>Price</th>
+                    <th>Amount</th>
+                    <th>Type</th>
+                    <th>From</th>
+                    <th>Time</th>
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-        <br>
+                </thead>
+                <tbody>
+                {% for transaction in transactions %}
+                    <tr class="border-t-2 border-gray-300 dark:border-gray-700">
+                        <td>{{ loop.index }}</td>
+                        <td>{{ transaction.getSymbol }}</td>
+                        <td>
+                            {% if transaction.getPrice < 1 %}
+                                {{ transaction.getPrice | format_currency(currencyCode, {max_significant_digits_used: 4}) }}
+                            {% else %}
+                                {{ transaction.getPrice | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ transaction.getAmount | abs | round(8) }}
+                        </td>
+                        <td>
+                            {% if transaction.getAmount > 0 %} added {% else %} removed {% endif %}
+                        </td>
+                        <td>
+                            {% if transaction.getSenderId %}
+                                <a class="hover:underline" href="/profile/{{ transaction.getSenderId }}">
+                                    {% if transaction.getSenderName %}
+                                        {{ transaction.getSenderName }}
+                                    {% else %}
+                                        {{ transaction.getSenderId }}
+                                    {% endif %}
+                                </a>
+                            {% elseif transaction.getAmount > 0 %}
+                                market
+                            {% else %}
+                                wallet
+                            {% endif %}
+                        </td>
+                        <td>{{ transaction.getDateTime }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     {% endif %}
 {% endblock %}

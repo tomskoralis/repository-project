@@ -3,10 +3,12 @@
 {% block title %} | Error 405{% endblock %}
 
 {% block content %}
-    <div class="errorMessage">Error 405: Method not allowed!<br>
+    <p class="p-2 mt-2 rounded-lg bg-red-100 border-2 border-red-600 text-sm text-red-600 font-medium">
+        ERROR 405: Method not allowed!<br>
         Allowed Methods:
         {% for method in allowedMethods %}
             {{ method }}
         {% endfor %}
-    </div>
+    </p>
+    <a href="/" class="font-semibold hover:underline">Go back</a>
 {% endblock %}

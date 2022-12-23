@@ -45,7 +45,7 @@ class UserLoginService
         $userId = $this->usersRepository::getId($email);
         if ($userId === 0) {
             $this->errors->add(
-                new Error('Incorrect password!', 'password')
+                new Error('Incorrect password!', 'passwordMatching')
             );
             return 0;
         }
