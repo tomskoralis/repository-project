@@ -3,67 +3,60 @@
 {% block title %} | Wallet{% endblock %}
 
 {% block content %}
-    <div class="w-full max-w-sm p-4 bg-white border border-gray-500 rounded-lg shadow-md sm:p-6 md:p-8 dark:bg-gray-800">
-        <h2 class="text-4xl dark:text-white mb-4 text-center">Wallet</h2>
+    <div class="w-full max-w-sm min-w-xs p-2 bg-white border border-gray-500 rounded-lg shadow-md sm:p-4 md:p-6
+         dark:bg-gray-800">
+
+        <h2 class="w-fit mb-4 mx-auto text-4xl dark:text-white">
+            Wallet
+        </h2>
+
         <div class="mb-2 dark:text-white">
-            Account Balance: {{ (auth.wallet | format_currency(currencyCode)) | replace({',': ''}) }}
+            Account Balance: {{ auth.wallet | format_currency(currencyCode) | replace({',': ''}) }}
         </div>
 
-        {% if balances %}
-            <div class="dark:text-white">Cryptocurrencies:</div>
-            <ul>
-                {% for balance in balances %}
-                    <li class="ml-4 dark:text-white">
-                        {{ balance.getSymbol }}:
-                        {{ balance.getAmount | round(8) }}
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-
-
-        <ul class="mt-6">
-            <li class="font-semibold hover:underline dark:text-white">
-                <a href="/statistics">Statistics</a>
-            </li>
-            <li class="font-semibold hover:underline dark:text-white">
-                <a href="/transactions">All transactions</a>
-            </li>
-            <li class="font-semibold hover:underline dark:text-white">
-                <a href="/users">Gift cryptocurrency</a>
-            </li>
-        </ul>
-        <br>
-
-        <div class="mt-2 block font-medium text-gray-900 dark:text-white">
-            <label for="amountToDeposit">Deposit money:</label>
-        </div>
-        <form class="max-w-sm mb-4 flex content-center gap-1" action="/wallet/deposit" method="post">
-            <input type="text" id="amountToDeposit" name="amount" placeholder="Amount" spellcheck="false"
-                   class="w-56 bg-gray-50 border-4 dark:border-2 dark:m-0.5 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                   required>
-            <div class="justify-center self-end">
-                <button type="submit"
-                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    Confirm
-                </button>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <div class="mt-2 block font-medium text-gray-900 dark:text-white">
+                    <label for="amountToDeposit">Deposit money:</label>
+                </div>
+                <form class="w-full" action="/wallet/deposit" method="post">
+                    <input type="text" id="amountToDeposit" name="amount" placeholder="Amount" spellcheck="false"
+                           class="w-full bg-gray-50 border-4 border-gray-300 text-gray-900 rounded-lg
+                   focus:ring-blue-500 focus:border-blue-500 block p-1 dark:bg-gray-700 dark:border-gray-600
+                   dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                           required>
+                    <div class="w-fit mx-auto mt-2">
+                        <button type="submit"
+                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none
+                                focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto px-5 py-2 text-center
+                                dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            Deposit
+                        </button>
+                    </div>
+                </form>
             </div>
-        </form>
 
-        <div class="mt-2 block font-medium text-gray-900 dark:text-white">
-            <label for="amountToWithdraw">Withdraw money:</label>
-        </div>
-        <form class="max-w-sm mb-4 flex content-center gap-1" action="/wallet/withdraw" method="post">
-            <input type="text" id="amountToWithdraw" name="amount" placeholder="Amount" spellcheck="false"
-                   class="w-56 bg-gray-50 border-4 dark:border-2 dark:m-0.5 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                   required>
-            <div class="justify-center self-end">
-                <button type="submit"
-                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    Confirm
-                </button>
+            <div>
+                <div class="mt-2 block font-medium text-gray-900 dark:text-white">
+                    <label for="amountToWithdraw">Withdraw money:</label>
+                </div>
+                <form class="w-full" action="/wallet/withdraw" method="post">
+                    <input type="text" id="amountToWithdraw" name="amount" placeholder="Amount" spellcheck="false"
+                           class="w-full bg-gray-50 border-4 border-gray-300 text-gray-900 rounded-lg
+                           focus:ring-blue-500 focus:border-blue-500 block p-1 dark:bg-gray-700 dark:border-gray-600
+                           dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                           required>
+                    <div class="w-fit mx-auto mt-2">
+                        <button type="submit"
+                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none
+                                focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto px-5 py-2 text-center
+                                dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            Withdraw
+                        </button>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
 
         {% if messages.wallet %}
             <p class="p-2 mt-2 rounded-lg bg-green-100 border-2 border-green-600 text-sm text-green-600 font-medium">
@@ -75,5 +68,57 @@
                 ERROR: {{ errors.wallet }}
             </p>
         {% endif %}
+
     </div>
+
+    {% if balances.getCount is not same as 0 %}
+        <div class="w-full max-w-sm min-w-xs mt-3 p-2 bg-white border border-gray-500 rounded-lg shadow-md sm:p-4 md:p-6
+             dark:bg-gray-800">
+
+            <h2 class="w-fit mb-4 mx-auto text-4xl dark:text-white">
+                Cryptocurrencies
+            </h2>
+
+            <div class="grid grid-cols-[minmax(2rem,_auto)_minmax(5rem,_auto)_minmax(6rem,_auto)_minmax(6rem,_1fr)]
+                     text-lg text-right dark:text-white">
+                <div class="text-left">
+                    &#8470;
+                </div>
+                <div>Symbol</div>
+                <div>Amount</div>
+                <div>Value</div>
+
+                {% for balance in balances.getAll %}
+                    <div class="text-left">
+                        {{ loop.index }}
+                    </div>
+                    <div>
+                        <a class="hover:underline font-semibold" href="/currency/{{ balance.getSymbol }}">
+                            {{ balance.getSymbol }}
+                        </a>
+                    </div>
+                    <div {% if balance.getAmount < 0 %} class="text-red-700 dark:text-red-400"{% endif %}>
+                        {{ balance.getAmount | round(8) }}
+                    </div>
+                    <div {% if balance.getAmount < 0 %} class="text-red-700 dark:text-red-400"{% endif %}>
+                        {{ balance.getValue | format_currency(currencyCode) | replace({',': ''}) }}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <ul class="mt-6">
+                <li class="font-semibold hover:underline dark:text-white mt-2">
+                    <a href="/transactions">List all transactions</a>
+                </li>
+                <li class="font-semibold hover:underline dark:text-white mt-2">
+                    <a href="/statistics">Transaction statistics</a>
+                </li>
+                <li class="font-semibold hover:underline dark:text-white mt-2">
+                    <a href="/users">Gift cryptocurrency</a>
+                </li>
+            </ul>
+
+        </div>
+    {% endif %}
+
 {% endblock %}

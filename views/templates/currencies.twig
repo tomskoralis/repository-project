@@ -1,0 +1,78 @@
+{% extends 'base.twig' %}
+
+{% block content %}
+    {% if errors.nothingFound %}
+        <p class="p-2 mt-2 rounded-lg bg-red-100 border-2 border-red-600 text-sm text-red-600 font-medium">
+            ERROR: {{ errors.nothingFound }}
+        </p>
+    {% else %}
+        <div class="max-w-3xl min-w-xs p-0.5 bg-white border border-gray-500 rounded-lg shadow-md sm:p-2 md:p-4
+             dark:bg-gray-800 dark:border-gray-700">
+
+            <h2 class="w-fit mb-4 mx-auto text-4xl dark:text-white">
+                Cryptocurrency Prices
+            </h2>
+
+            <div class="w-full text-right dark:text-white grid
+                 grid-cols-[minmax(4rem,_auto)_minmax(6rem,_auto)_minmax(5rem,_auto)_minmax(5rem,_auto)_minmax(4.25rem,_auto)]">
+
+                <div class="pr-3 font-bold text-left flex items-end">
+                    Name
+                </div>
+                <div class="pr-3 font-bold flex items-end justify-end">
+                    Price
+                </div>
+                <div class="pr-3 font-bold flex items-end justify-end">
+                    Change 1h
+                </div>
+                <div class="pr-3 font-bold flex items-end justify-end">
+                    Change 24h
+                </div>
+                <div class="font-bold flex items-end justify-end">
+                    Change 7d
+                </div>
+
+                {% for currency in currencies %}
+                    <div class="pr-3 border-t-2 border-gray-300 dark:border-gray-700 text-left">
+                        <a href="/currency/{{ currency.getSymbol }}"
+                           class="font-semibold hover:underline">
+                            {{ currency.getName }}
+                            {% if currency.getName is not same as currency.getSymbol %}
+                                ({{ currency.getSymbol }})
+                            {% endif %}
+                        </a>
+                    </div>
+                    <div class="pr-3 border-t-2 border-gray-300 dark:border-gray-700">
+                        {% if currency.getPrice < 1 %}
+                            {{ currency.getPrice | format_currency(currencyCode, {max_significant_digits_used: 4}) }}
+                        {% else %}
+                            {{ (currency.getPrice | format_currency(currencyCode, {fraction_digit: 2})) | replace({',': ''}) }}
+                        {% endif %}
+                    </div>
+                    <div class="pr-3 border-t-2 border-gray-300 dark:border-gray-700">
+                        {% if currency.getChange1h > 0 %}
+                            <span class="text-green-700 dark:text-green-400">&#9650;{{ (currency.getChange1h) | round(2) }}%</span>
+                        {% else %}
+                            <span class="text-red-700 dark:text-red-400">&#9660;{{ (currency.getChange1h) | abs | round(2) }}%</span>
+                        {% endif %}
+                    </div>
+                    <div class="pr-3 border-t-2 border-gray-300 dark:border-gray-700">
+                        {% if currency.getChange24h > 0 %}
+                            <span class="text-green-700 dark:text-green-400">&#9650;{{ (currency.getChange24h) | round(2) }}%</span>
+                        {% else %}
+                            <span class="text-red-700 dark:text-red-400">&#9660;{{ (currency.getChange24h) | abs | round(2) }}%</span>
+                        {% endif %}
+                    </div>
+                    <div class="border-t-2 border-gray-300 dark:border-gray-700">
+                        {% if currency.getChange7d > 0 %}
+                            <span class="text-green-700 dark:text-green-400">&#9650;{{ (currency.getChange7d) | round(2) }}%</span>
+                        {% else %}
+                            <span class="text-red-700 dark:text-red-400">&#9660;{{ (currency.getChange7d) | abs | round(2) }}%</span>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    {% endif %}
+{% endblock %}

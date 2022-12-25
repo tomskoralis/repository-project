@@ -30,7 +30,7 @@ class WalletController
             return new Redirect('/login');
         }
 
-        $balances = $this->walletShowService->getUserBalances(Session::get('userId'))->getAll();
+        $balances = $this->walletShowService->getUserBalances(Session::get('userId'));
         Session::addErrors($this->walletShowService->getErrors());
 
         return new Template ('templates/wallet.twig', [

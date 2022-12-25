@@ -20,7 +20,7 @@ class CurrenciesController
         $currencies = $this->currenciesListService->getCurrencies(CRYPTOCURRENCY_SYMBOLS, CURRENCY_CODE);
         Session::addErrors($this->currenciesListService->getErrors());
 
-        return new Template ('templates/list.twig', [
+        return new Template ('templates/currencies.twig', [
             'currencies' => $currencies->getAll(),
             'currencyCode' => CURRENCY_CODE,
         ]);

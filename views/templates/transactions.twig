@@ -8,59 +8,78 @@
             ERROR: {{ errors.nothingFound }}
         </p>
     {% else %}
-        <div class="w-full max-w-4xl min-w-fit p-0.5 bg-white border border-gray-500 rounded-lg shadow-md sm:p-2 md:p-4 dark:bg-gray-800 dark:border-gray-700">
-            <h2 class="text-4xl dark:text-white mb-4 text-center">All transactions</h2>
+        <div class="w-full max-w-2xl min-w-fit p-2 bg-white border border-gray-500 rounded-lg shadow-md sm:p-4 md:p-6 dark:bg-gray-800">
 
-            <table class="w-full text-right dark:text-white">
-                <thead>
-                <tr>
-                    <th>&#8470;</th>
-                    <th>Symbol</th>
-                    <th>Price</th>
-                    <th>Amount</th>
-                    <th>Type</th>
-                    <th>From</th>
-                    <th>Time</th>
-                </tr>
-                </thead>
-                <tbody>
+            <h2 class="w-fit mb-4 mx-auto text-4xl dark:text-white">
+                All transactions
+            </h2>
+
+            <div class="w-full text-right dark:text-white grid
+                 grid-cols-[minmax(2rem,_auto)_minmax(3rem,_auto)_minmax(5rem,_auto)_minmax(3rem,_auto)_minmax(5rem,_auto)_minmax(4rem,_auto)_minmax(5.5rem,_auto)]">
+
+                <div class="pr-3 font-bold text-left">
+                    &#8470;
+                </div>
+                <div class="pr-3 font-bold">
+                    Symbol
+                </div>
+                <div class="pr-3 font-bold">
+                    Price
+                </div>
+                <div class="pr-3 font-bold">
+                    Amount
+                </div>
+                <div class="pr-3 font-bold">
+                    Type
+                </div>
+                <div class="pr-3 font-bold">
+                    From
+                </div>
+                <div class="font-bold">
+                    Time
+                </div>
+
                 {% for transaction in transactions %}
-                    <tr class="border-t-2 border-gray-300 dark:border-gray-700">
-                        <td>{{ loop.index }}</td>
-                        <td>{{ transaction.getSymbol }}</td>
-                        <td>
-                            {% if transaction.getPrice < 1 %}
-                                {{ transaction.getPrice | format_currency(currencyCode, {max_significant_digits_used: 4}) }}
-                            {% else %}
-                                {{ transaction.getPrice | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
-                            {% endif %}
-                        </td>
-                        <td>
-                            {{ transaction.getAmount | abs | round(8) }}
-                        </td>
-                        <td>
-                            {% if transaction.getAmount > 0 %} added {% else %} removed {% endif %}
-                        </td>
-                        <td>
-                            {% if transaction.getSenderId %}
-                                <a class="hover:underline" href="/profile/{{ transaction.getSenderId }}">
-                                    {% if transaction.getSenderName %}
-                                        {{ transaction.getSenderName }}
-                                    {% else %}
-                                        {{ transaction.getSenderId }}
-                                    {% endif %}
-                                </a>
-                            {% elseif transaction.getAmount > 0 %}
-                                market
-                            {% else %}
-                                wallet
-                            {% endif %}
-                        </td>
-                        <td>{{ transaction.getDateTime }}</td>
-                    </tr>
+                    <div class="pr-3 text-left border-t-2 border-gray-300 dark:border-gray-700">
+                        {{ loop.index }}
+                    </div>
+                    <div class="pr-3 border-t-2 border-gray-300 dark:border-gray-700">
+                        {{ transaction.getSymbol }}
+                    </div>
+                    <div class="pr-3 border-t-2 border-gray-300 dark:border-gray-700">
+                        {% if transaction.getPrice < 1 %}
+                            {{ transaction.getPrice | format_currency(currencyCode, {max_significant_digits_used: 4}) }}
+                        {% else %}
+                            {{ transaction.getPrice | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+                        {% endif %}
+                    </div>
+                    <div class="pr-3 border-t-2 border-gray-300 dark:border-gray-700">
+                        {{ transaction.getAmount | abs | round(8) }}
+                    </div>
+                    <div class="pr-3 border-t-2 border-gray-300 dark:border-gray-700">
+                        {% if transaction.getAmount > 0 %} added {% else %} removed {% endif %}
+                    </div>
+                    <div class="pr-3 border-t-2 border-gray-300 dark:border-gray-700 truncate">
+                        {% if transaction.getSenderId %}
+                            <a class="hover:underline" href="/profile/{{ transaction.getSenderId }}">
+                                {% if transaction.getSenderName %}
+                                    {{ transaction.getSenderName }}
+                                {% else %}
+                                    {{ transaction.getSenderId }}
+                                {% endif %}
+                            </a>
+                        {% elseif transaction.getAmount > 0 %}
+                            market
+                        {% else %}
+                            wallet
+                        {% endif %}
+                    </div>
+                    <div class="border-t-2 border-gray-300 dark:border-gray-700">
+                        {{ transaction.getDateTime }}
+                    </div>
                 {% endfor %}
-                </tbody>
-            </table>
+
+            </div>
         </div>
     {% endif %}
 {% endblock %}

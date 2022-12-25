@@ -10,6 +10,9 @@ class UserLogoutController
     {
         Session::remove('userId');
         $urlPath = parse_url($_SERVER['HTTP_REFERER'] ?? '', PHP_URL_PATH);
+        if ($urlPath && substr($urlPath, -1) === '/') {
+            $urlPath = substr($urlPath, 0, -1);
+        }
         if (
             $urlPath === '/account' ||
             $urlPath === '/wallet' ||

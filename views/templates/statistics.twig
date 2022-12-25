@@ -1,6 +1,6 @@
 {% extends 'base.twig' %}
 
-{% block title %} | Transactions{% endblock %}
+{% block title %} | Statistics{% endblock %}
 
 {% block content %}
     {% if errors.nothingFound %}
@@ -8,79 +8,114 @@
             ERROR: {{ errors.nothingFound }}
         </p>
     {% else %}
-        <div class="w-full max-w-4xl min-w-fit p-0.5 bg-white border border-gray-500 rounded-lg shadow-md sm:p-2 md:p-4 dark:bg-gray-800 dark:border-gray-700">
-            <h2 class="text-4xl dark:text-white mb-4 text-center">Statistics</h2>
+        <div class="w-full max-w-4xl min-w-fit p-2 bg-white border border-gray-500 rounded-lg shadow-md sm:p-4 md:p-6 dark:bg-gray-800">
 
-            <table class="w-full text-right dark:text-white">
-                <thead>
-                <tr>
-                    <th>&#8470;</th>
-                    <th>Symbol</th>
-                    <th>Amount</th>
-                    <th>Average Price</th>
-                    <th>Income</th>
-                    <th>Expenditure</th>
-                    <th>Value in wallet</th>
-                    <th>Profit</th>
-                </tr>
-                </thead>
-                <tbody>
+            <h2 class="w-fit mb-4 mx-auto text-4xl dark:text-white">
+                Statistics
+            </h2>
+
+            <div class="w-full text-right dark:text-white grid
+             grid-cols-[minmax(2.5rem,_auto)_minmax(3rem,_auto)_minmax(6rem,_auto)_minmax(5rem,_auto)_minmax(6rem,_auto)_minmax(6rem,_auto)_minmax(6rem,_auto)_minmax(4rem,_auto)]">
+
+                <div class="pr-3 font-bold text-left flex items-end">
+                    &#8470;
+                </div>
+                <div class="pr-3 font-bold flex items-end justify-end">
+                    Symbol
+                </div>
+                <div class="pr-3 font-bold flex items-end justify-end">
+                    Average Price
+                </div>
+                <div class="pr-3 font-bold flex items-end justify-end">
+                    Amount
+                </div>
+                <div class="pr-3 font-bold flex items-end justify-end">
+                    Income
+                </div>
+                <div class="pr-3 font-bold flex items-end justify-end">
+                    Expenditure
+                </div>
+                <div class="pr-3 font-bold flex items-end justify-end">
+                    Owned Value
+                </div>
+                <div class="font-bold flex items-end justify-end">
+                    Profit
+                </div>
+
                 {% for statistic in statistics.getStatistics.getAll %}
-                    <tr class="border-t-2 border-gray-300 dark:border-gray-700">
-                        <td>{{ loop.index }}</td>
-                        <td>{{ statistic.getSymbol }}</td>
-                        <td>
-                            {{ statistic.getAmount | abs | round(2) }}
-                        </td>
-                        <td>
-                            {{ statistic.getAveragePrice | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
-                        </td>
-                        <td>
-                            {{ statistic.getIncome | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
-                        </td>
-                        <td>
-                            {{ statistic.getExpenditure | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
-                        </td>
-                        <td>
-                            {{ statistic.getWalletValue | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
-                        </td>
-                        <td {% if statistic.getProfit >= 0 %}
-                            class="text-green-700 dark:text-green-400"
+                    <div class="text-left pr-3 border-t-2 border-gray-300 dark:border-gray-700">
+                        {{ loop.index }}
+                    </div>
+                    <div class="pr-3 border-t-2 border-gray-300 dark:border-gray-700">
+                        {{ statistic.getSymbol }}
+                    </div>
+                    <div class="pr-3 border-t-2 border-gray-300 dark:border-gray-700">
+                        {{ statistic.getAveragePrice | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+                    </div>
+                    <div class="pr-3 border-t-2 border-gray-300 dark:border-gray-700">
+                        {{ statistic.getAmount | abs | round(2) }}
+                    </div>
+                    <div class="pr-3 border-t-2 border-gray-300 dark:border-gray-700">
+                        {{ statistic.getIncome | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+                    </div>
+                    <div class="pr-3 border-t-2 border-gray-300 dark:border-gray-700">
+                        {{ statistic.getExpenditure | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+                    </div>
+                    <div class="pr-3 border-t-2 border-gray-300 dark:border-gray-700">
+                        {% if statistic.getWalletValue < 0 %}
+                            <span class="text-red-700 dark:text-red-400">
+                                {{ statistic.getWalletValue | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+                            </span>
                         {% else %}
-                            class="text-red-700 dark:text-red-400"
-                                {% endif %}>
-                            {{ statistic.getProfit | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
-                        </td>
-                    </tr>
-                {% endfor %}
-                <tr class="border-t-2 border-gray-300 dark:border-gray-700">
-                    <td>Total</td>
-                    <td></td>
-                    <td>
-                        {{ statistics.getTotalAmount | abs | round(2) }}
-                    </td>
-                    <td>
-                        {{ statistics.getAveragePrice | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
-                    </td>
-                    <td>
-                        {{ statistics.getTotalIncome | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
-                    </td>
-                    <td>
-                        {{ statistics.getTotalExpenditure | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
-                    </td>
-                    <td>
-                        {{ statistics.getWalletValue | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
-                    </td>
-                    <td{% if statistics.getTotalProfit >= 0 %}
-                        class="text-green-700 dark:text-green-400"
+                            {{ statistic.getWalletValue | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+                        {% endif %}
+                    </div>
+                    <div {% if statistic.getProfit | round(2) == 0 %}
+                        class="border-t-2 border-gray-300 dark:border-gray-700"
+                    {% elseif statistic.getProfit | round(2) < 0 %}
+                        class="text-red-700 dark:text-red-400 border-t-2 border-gray-300 dark:border-gray-700"
                     {% else %}
-                        class="text-red-700 dark:text-red-400"
+                        class="text-green-700 dark:text-green-400 border-t-2 border-gray-300 dark:border-gray-700"
                             {% endif %}>
-                        {{ statistics.getTotalProfit | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+                        {{ statistic.getProfit | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+                    </div>
+                {% endfor %}
+
+                <div class="pr-3 col-span-2 text-left border-t-2 border-gray-300 dark:border-gray-700">
+                    Total
+                </div>
+                <div class="pr-3 border-t-2 border-gray-300 dark:border-gray-700">
+                    {{ statistics.getAveragePrice | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+                </div>
+                <div class="pr-3 border-t-2 border-gray-300 dark:border-gray-700">
+                    {{ statistics.getTotalAmount | abs | round(2) }}
+                </div>
+                <div class="pr-3 border-t-2 border-gray-300 dark:border-gray-700">
+                    {{ statistics.getTotalIncome | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+                </div>
+                <div class="pr-3 border-t-2 border-gray-300 dark:border-gray-700">
+                    {{ statistics.getTotalExpenditure | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+                </div>
+                <div class="pr-3 border-t-2 border-gray-300 dark:border-gray-700">
+                    {% if statistics.getWalletValue < 0 %}
+                        <span class="text-red-700 dark:text-red-400">
+                                {{ statistics.getWalletValue | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+                            </span>
+                    {% else %}
+                        {{ statistics.getWalletValue | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+                    {% endif %}
+                </div>
+
+                <div {% if statistics.getTotalProfit | round(2) == 0 %}
+                    class="border-t-2 border-gray-300 dark:border-gray-700"
+                {% elseif statistics.getTotalProfit | round(2) < 0 %}
+                    class="text-red-700 dark:text-red-400 border-t-2 border-gray-300 dark:border-gray-700"
+                {% else %}
+                    class="text-green-700 dark:text-green-400 border-t-2 border-gray-300 dark:border-gray-700"
+                        {% endif %}>
+                    {{ statistics.getTotalProfit | format_currency(currencyCode, {fraction_digit: 2}) | replace({',': ''}) }}
+                </div>
+            </div>
         </div>
 
     {% endif %}

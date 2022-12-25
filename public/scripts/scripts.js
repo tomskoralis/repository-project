@@ -47,23 +47,23 @@ function appendCurrencyUrl() {
         "/currency/" + document.getElementById('searchInput').value.toUpperCase();
 }
 
-function appendCurrencyUrlSmall() {
+function appendCurrencyUrlSmallForm() {
     document.getElementById('searchFormSmall').action =
         "/currency/" + document.getElementById('searchInputSmall').value.toUpperCase();
 }
 
-function appendUsersPageURl() {
+function appendUrlUsersPage() {
     document.getElementById('userPagerForm').action =
         "/users/" + document.getElementById('pageInput').value;
 }
 
-function appendUsersSearchUrl() {
+function appendUrlUsersSearch() {
     document.getElementById('usersSearchForm').action =
         "/search/" + document.getElementById('userSearchInput').value;
 }
 
-function appendUsersSearchPageURl() {
+function appendUrlUsersSearchPage() {
     document.getElementById('userPagerForm').action =
         "/search/" + location.pathname.split("/")[2] + "/" +
-        document.getElementsByName('pageInput')[0].value;
+        document.getElementById('pageInput').value;
 }

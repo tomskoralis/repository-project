@@ -8,24 +8,35 @@
             ERROR: {{ errors.nothingFound }}
         </p>
     {% else %}
-        <div class="w-full max-w-sm p-4 bg-white border border-gray-700 rounded-lg shadow-md sm:p-6 md:p-8 dark:bg-gray-800">
+        <div class="w-full max-w-sm min-w-xs p-2 bg-white border border-gray-500 rounded-lg shadow-md sm:p-4 md:p-6 dark:bg-gray-800">
 
-            <h2 class="text-4xl dark:text-white mb-4 text-center">{{ user.getName }}</h2>
+            <h2 class="w-fit text-4xl overflow-hidden dark:text-white mb-4 mx-auto hover:h-auto hover:overflow-visible hover:break-all">
+                {{ user.getName }}
+            </h2>
 
             <div class="dark:text-white">
                 E-mail: {{ user.getEmail }}
             </div>
 
-            {% if auth and user.getId is not same as auth.id %}
-                <div class="mt-6 text-center text-lg font-semibold dark:text-white">Gift cryptocurrency</div>
+        </div>
 
-                <form class="max-w-sm" action="/profile/{{ user.getId }}/gift" method="post">
+        {% if auth and user.getId is not same as auth.id %}
+            <div class="w-full max-w-sm min-w-xs mt-3 p-2 bg-white border border-gray-500 rounded-lg shadow-md sm:p-4 md:p-6
+                 dark:bg-gray-800">
+
+                <h3 class="w-fit mb-4 mx-auto text-xl font-semibold dark:text-white">
+                    Gift cryptocurrency
+                </h3>
+
+                <form class="w-full" action="/profile/{{ user.getId }}/gift" method="post">
 
                     <div class="mb-4">
                         <label for="symbol" class="block font-medium text-gray-900 dark:text-white">
                             Cryptocurrency
                             <input type="text" id="symbol" name="symbol" spellcheck="false"
-                                   class="bg-gray-50 border-4 dark:border-2 dark:m-0.5 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                   class="bg-gray-50 border-4 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500
+                                   focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600
+                                   dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                    required>
                         </label>
                     </div>
@@ -34,7 +45,9 @@
                         <label for="amountToGift" class="block font-medium text-gray-900 dark:text-white">
                             Amount
                             <input type="text" id="amountToGift" name="amountToGift" spellcheck="false"
-                                   class="bg-gray-50 border-4 dark:border-2 dark:m-0.5 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                   class="bg-gray-50 border-4 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500
+                                   focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600
+                                   dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                    required>
                         </label>
                     </div>
@@ -43,7 +56,9 @@
                         <label for="password" class="block font-medium text-gray-900 dark:text-white">
                             Password
                             <input type="password" id="password" name="password" spellcheck="false"
-                                   class="bg-gray-50 border-4 dark:border-2 dark:m-0.5 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                   class="bg-gray-50 border-4 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500
+                                   focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600
+                                   dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                    required>
                         </label>
                     </div>
@@ -64,16 +79,17 @@
                         </p>
                     {% endif %}
 
-                    <div class="text-center">
+                    <div class="w-fit mx-auto">
                         <button type="submit"
-                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none
+                                focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto px-3 py-2 text-center
+                                dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                             Confirm
                         </button>
                     </div>
 
                 </form>
-            {% endif %}
-
-        </div>
+            </div>
+        {% endif %}
     {% endif %}
 {% endblock %}

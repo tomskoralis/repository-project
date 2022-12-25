@@ -8,7 +8,6 @@
     <title>Crypto{% block title %}{% endblock %}</title>
     <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="/styles/styles.css">
-    <link rel="stylesheet" href="/styles/styles_old.css">
     <script>
         if (localStorage.getItem('color-theme') === 'dark' ||
             (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
@@ -19,26 +18,30 @@
         }
     </script>
 </head>
-<body>
+<body class="bg-white dark:bg-gray-900">
 
-<div class="flex flex-col min-h-screen bg-white dark:bg-gray-900">
+<div class="flex flex-col min-h-screen">
+
     {% include('partials/navigation.twig') %}
-    <main class="bg-gray-50 dark:bg-gray-900 my-2">
-        <div class="flex flex-col justify-center items-center px-6 mx-auto">
 
-                {% if messages.userDeleted %}
-                    <p class="p-2 mt-2 rounded-lg bg-green-100 border-2 border-green-600 text-sm text-green-600 font-medium">
-                        {{ messages.userDeleted }}
-                    </p>
-                {% endif %}
-                {% for error in errors.repository %}
-                    <p class="p-2 mt-2 rounded-lg bg-red-100 border-2 border-red-600 text-sm text-red-600 font-medium">
-                        ERROR: {{ error }}
-                    </p>
-                {% endfor %}
-                {% if not errors.repository %}
-                    {% block content %}{% endblock %}
-                {% endif %}
+    <main class="bg-gray-50 dark:bg-gray-900 my-3">
+        <div class="w-fit flex flex-col xs:justify-center xs:px-6 xs:mx-auto">
+
+            {% if messages.userDeleted %}
+                <p class="p-2 mt-3 rounded-lg bg-green-100 border-2 border-green-600 text-sm text-green-600 font-medium">
+                    {{ messages.userDeleted }}
+                </p>
+            {% endif %}
+
+            {% for error in errors.repository %}
+                <p class="p-2 mt-3 rounded-lg bg-red-100 border-2 border-red-600 text-sm text-red-600 font-medium">
+                    ERROR: {{ error }}
+                </p>
+            {% endfor %}
+
+            {% if not errors.repository %}
+                {% block content %}{% endblock %}
+            {% endif %}
 
         </div>
     </main>

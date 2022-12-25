@@ -3,97 +3,263 @@
 {% block title %} | Account{% endblock %}
 
 {% block content %}
-    <div class="userInputFormContainer">
-        <div class="pageTitle">Edit Account</div>
-        <form class="userInputForm" action="/account/update" method="post">
-            <div>
-                <label class="userInputBoxLabel">Username:<br>
-                    <input required class="userInputBox" name="name" value="{{ auth.name }}">
+    <div class="w-full max-w-sm min-w-xs p-2 bg-white border border-gray-500 rounded-lg shadow-md sm:p-4 md:p-6 dark:bg-gray-800">
+
+        <h3 class="w-fit mb-4 mx-auto text-xl font-semibold dark:text-white">
+            Edit Account
+        </h3>
+
+        <form class="w-full" action="/account/update" method="post">
+            <div class="mb-3">
+                <label for="name"
+                        {% if errors.name %}
+                    class="block font-medium text-red-700 dark:text-red-500"
+                        {% else %}
+                    class="block font-medium text-gray-900 dark:text-white"
+                        {% endif %}>
+                    Username
                 </label>
+                <input type="text" id="name" name="name" value="{{ auth.name }}" spellcheck="false"
+                        {% if errors.name %}
+                            class="bg-red-50 border-4 border-red-500 text-gray-900 placeholder-red-700 rounded-lg
+                            focus:ring-red-500 dark:bg-gray-700 focus:border-red-500 block w-full p-1 dark:text-white
+                            dark:placeholder-red-500 dark:border-red-500"
+                        {% else %}
+                            class="bg-gray-50 border-4 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500
+                            focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600
+                            dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        {% endif %}
+                       required>
             </div>
-            <div class="addMarginTop">
-                <label class="userInputBoxLabel">E-mail:<br>
-                    <input required class="userInputBox" name="email" value="{{ auth.email }}">
+
+            <div class="mb-3">
+                <label for="email"
+                        {% if errors.email %}
+                    class="block font-medium text-red-700 dark:text-red-500"
+                        {% else %}
+                    class="block font-medium text-gray-900 dark:text-white"
+                        {% endif %}>
+                    E-mail
                 </label>
+                <input type="text" id="email" name="email" value="{{ auth.email }}" spellcheck="false"
+                        {% if errors.email %}
+                            class="bg-red-50 border-4 border-red-500 text-gray-900 placeholder-red-700 rounded-lg
+                            focus:ring-red-500 dark:bg-gray-700 focus:border-red-500 block w-full p-1 dark:text-white
+                            dark:placeholder-red-500 dark:border-red-500"
+                        {% else %}
+                            class="bg-gray-50 border-4 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500
+                            focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600
+                            dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        {% endif %}
+                       required>
             </div>
-            <div class="addMarginTop">
-                <label class="userInputBoxLabel">Enter password to confirm:<br>
-                    <input required class="userInputBox" name="password" type="password">
+
+            <div class="mb-3">
+                <label for="password"
+                        {% if errors.passwordMatchingEdit %}
+                    class="block font-medium text-red-700 dark:text-red-500"
+                        {% else %}
+                    class="block font-medium text-gray-900 dark:text-white"
+                        {% endif %}>
+                    Enter password to confirm:
                 </label>
+                <input type="password" id="password" name="password" spellcheck="false"
+                        {% if errors.passwordMatchingEdit %}
+                            class="bg-red-50 border-4 border-red-500 text-gray-900 placeholder-red-700 rounded-lg
+                            focus:ring-red-500 dark:bg-gray-700 focus:border-red-500 block w-full p-1 dark:text-white
+                            dark:placeholder-red-500 dark:border-red-500"
+                        {% else %}
+                            class="bg-gray-50 border-4 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500
+                            focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600
+                            dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        {% endif %}
+                       required>
             </div>
-            <div class="alignCenter addMarginTop">
-                <button class="submitButton">Save</button>
+
+            <div class="w-fit mx-auto">
+                <button type="submit"
+                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none
+                        focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto px-3 py-2 text-center
+                        dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                    Save
+                </button>
             </div>
         </form>
 
         {% if messages.update %}
-            <div class="flashMessage">{{ messages.update }}</div>
+            <p class="p-2 mt-2 rounded-lg bg-green-100 border-2 border-green-600 text-sm text-green-600 font-medium">
+                {{ messages.update }}
+            </p>
         {% endif %}
         {% if errors.name %}
-            <div class="errorMessage">ERROR: {{ errors.name }}</div>
+            <p class="p-2 mt-2 rounded-lg bg-red-100 border-2 border-red-600 text-sm text-red-600 font-medium">
+                {{ errors.name }}
+            </p>
         {% endif %}
         {% if errors.email %}
-            <div class="errorMessage">ERROR: {{ errors.email }}</div>
+            <p class="p-2 mt-2 rounded-lg bg-red-100 border-2 border-red-600 text-sm text-red-600 font-medium">
+                {{ errors.email }}
+            </p>
         {% endif %}
         {% if errors.passwordMatchingEdit %}
-            <div class="errorMessage">ERROR: {{ errors.passwordMatchingEdit }}</div>
+            <p class="p-2 mt-2 rounded-lg bg-red-100 border-2 border-red-600 text-sm text-red-600 font-medium">
+                {{ errors.passwordMatchingEdit }}
+            </p>
         {% endif %}
     </div>
 
-    <div class="userInputFormContainer">
-        <div class="pageTitle">Change Password</div>
-        <form class="userInputForm" action="/account/update-password" method="post">
-            <div>
-                <label class="userInputBoxLabel">Current password:<br>
-                    <input required class="userInputBox" name="passwordCurrent" type="password">
+
+    <div class="w-full max-w-sm min-w-xs p-2 mt-2 bg-white border border-gray-500 rounded-lg shadow-md sm:p-4 md:p-6 dark:bg-gray-800">
+
+        <h3 class="w-fit mb-4 mx-auto text-xl font-semibold dark:text-white">
+            Change Password
+        </h3>
+
+        <form class="w-full" action="/account/update-password" method="post">
+
+            <div class="mb-3">
+                <label for="passwordNew"
+                        {% if errors.password %}
+                    class="block font-medium text-red-700 dark:text-red-500"
+                        {% else %}
+                    class="block font-medium text-gray-900 dark:text-white"
+                        {% endif %}>
+                    New password:
                 </label>
+                <input type="password" id="passwordNew" name="passwordNew" spellcheck="false"
+                        {% if errors.password %}
+                            class="bg-red-50 border-4 border-red-500 text-gray-900 placeholder-red-700 rounded-lg
+                            focus:ring-red-500 dark:bg-gray-700 focus:border-red-500 block w-full p-1 dark:text-white
+                            dark:placeholder-red-500 dark:border-red-500"
+                        {% else %}
+                            class="bg-gray-50 border-4 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500
+                            focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600
+                            dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        {% endif %}
+                       required>
             </div>
-            <div class="addMarginTop">
-                <label class="userInputBoxLabel">New password:<br>
-                    <input required class="userInputBox" name="passwordNew" type="password">
+
+            <div class="mb-3">
+                <label for="passwordNewRepeated"
+                        {% if errors.passwordRepeated %}
+                    class="block font-medium text-red-700 dark:text-red-500"
+                        {% else %}
+                    class="block font-medium text-gray-900 dark:text-white"
+                        {% endif %}>
+                    Repeat new password:
                 </label>
+                <input type="password" id="passwordNewRepeated" name="passwordNewRepeated" spellcheck="false"
+                        {% if errors.passwordRepeated %}
+                            class="bg-red-50 border-4 border-red-500 text-gray-900 placeholder-red-700 rounded-lg
+                            focus:ring-red-500 dark:bg-gray-700 focus:border-red-500 block w-full p-1 dark:text-white
+                            dark:placeholder-red-500 dark:border-red-500"
+                        {% else %}
+                            class="bg-gray-50 border-4 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500
+                            focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600
+                            dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        {% endif %}
+                       required>
             </div>
-            <div class="addMarginTop">
-                <label class="userInputBoxLabel">Repeat new password:<br>
-                    <input required class="userInputBox" name="passwordNewRepeated" type="password">
+
+            <div class="mb-3">
+                <label for="passwordCurrent"
+                        {% if errors.passwordMatchingPassword %}
+                    class="block font-medium text-red-700 dark:text-red-500"
+                        {% else %}
+                    class="block font-medium text-gray-900 dark:text-white"
+                        {% endif %}>
+                    Current password:
                 </label>
+                <input type="password" id="passwordCurrent" name="passwordCurrent" spellcheck="false"
+                        {% if errors.passwordMatchingPassword %}
+                            class="bg-red-50 border-4 border-red-500 text-gray-900 placeholder-red-700 rounded-lg
+                            focus:ring-red-500 dark:bg-gray-700 focus:border-red-500 block w-full p-1 dark:text-white
+                            dark:placeholder-red-500 dark:border-red-500"
+                        {% else %}
+                            class="bg-gray-50 border-4 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500
+                            focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600
+                            dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        {% endif %}
+                       required>
             </div>
-            <div class="alignCenter addMarginTop">
-                <button class="submitButton">Save</button>
+
+            <div class="w-fit mx-auto">
+                <button type="submit"
+                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none
+                        focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto px-3 py-2 text-center
+                        dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                    Save
+                </button>
             </div>
         </form>
 
         {% if messages.updatePassword %}
-            <div class="flashMessage">{{ messages.updatePassword }}</div>
-        {% endif %}
-        {% if errors.passwordMatchingPassword %}
-            <div class="errorMessage">ERROR: {{ errors.passwordMatchingPassword }}</div>
+            <p class="p-2 mt-2 rounded-lg bg-green-100 border-2 border-green-600 text-sm text-green-600 font-medium">
+                {{ messages.updatePassword }}
+            </p>
         {% endif %}
         {% if errors.password %}
-            <div class="errorMessage">ERROR: {{ errors.password }}</div>
+            <p class="p-2 mt-2 rounded-lg bg-red-100 border-2 border-red-600 text-sm text-red-600 font-medium">
+                {{ errors.password }}
+            </p>
         {% endif %}
         {% if errors.passwordRepeated %}
-            <div class="errorMessage">ERROR: {{ errors.passwordRepeated }}</div>
+            <p class="p-2 mt-2 rounded-lg bg-red-100 border-2 border-red-600 text-sm text-red-600 font-medium">
+                {{ errors.passwordRepeated }}
+            </p>
+        {% endif %}
+        {% if errors.passwordMatchingPassword %}
+            <p class="p-2 mt-2 rounded-lg bg-red-100 border-2 border-red-600 text-sm text-red-600 font-medium">
+                {{ errors.passwordMatchingPassword }}
+            </p>
         {% endif %}
 
     </div>
 
-    <div class="userInputFormContainer">
-        <div class="pageTitle">Delete Account</div>
-        <form class="userInputForm" action="/account/delete" method="post">
-            <div>
-                <label class="userInputBoxLabel">Enter password to confirm:<br>
-                    <input required class="userInputBox " name="passwordForDeletion" type="password">
+    <div class="w-full max-w-sm min-w-xs p-2 mt-2 bg-white border border-gray-500 rounded-lg shadow-md sm:p-4 md:p-6 dark:bg-gray-800">
+
+        <h3 class="w-fit mb-4 mx-auto text-xl font-semibold dark:text-white">
+            Delete Account
+        </h3>
+
+        <form class="w-full" action="/account/delete" method="post">
+            <div class="mb-3">
+                <label for="passwordForDeletion"
+                        {% if errors.passwordMatchingDelete %}
+                    class="block font-medium text-red-700 dark:text-red-500"
+                        {% else %}
+                    class="block font-medium text-gray-900 dark:text-white"
+                        {% endif %}>
+                    Enter password to confirm:
                 </label>
+                <input type="password" id="passwordForDeletion" name="passwordForDeletion" spellcheck="false"
+                        {% if errors.passwordMatchingDelete %}
+                            class="bg-red-50 border-4 border-red-500 text-gray-900 placeholder-red-700 rounded-lg
+                            focus:ring-red-500 dark:bg-gray-700 focus:border-red-500 block w-full p-1 dark:text-white
+                            dark:placeholder-red-500 dark:border-red-500"
+                        {% else %}
+                            class="bg-gray-50 border-4 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500
+                            focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600
+                            dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        {% endif %}
+                       required>
             </div>
-            <div class="alignCenter addMarginTop">
-                <button class="submitButton dangerButton">Delete Account</button>
+
+            <div class="w-fit mx-auto">
+                <button type="submit"
+                        class="text-white bg-orange-500 hover:bg-orange-700 focus:ring-4 focus:outline-none
+                        focus:ring-orange-300 font-medium rounded-lg w-full sm:w-auto px-3 py-2 text-center
+                        dark:bg-orange-500 dark:hover:bg-orange-500 dark:focus:ring-orange-800">
+                    Delete Account
+                </button>
             </div>
         </form>
 
         {% if errors.passwordMatchingDelete %}
-            <div class="errorMessage">ERROR: {{ errors.passwordMatchingDelete }}</div>
+            <p class="p-2 mt-2 rounded-lg bg-red-100 border-2 border-red-600 text-sm text-red-600 font-medium">
+                {{ errors.passwordMatchingDelete }}
+            </p>
         {% endif %}
-    </div>
 
+    </div>
 {% endblock %}

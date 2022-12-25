@@ -10,92 +10,123 @@
             ERROR: {{ errors.nothingFound }}
         </p>
     {% else %}
-        <div class="w-full max-w-sm p-4 bg-white border border-gray-500 rounded-lg shadow-md sm:p-6 md:p-8 dark:bg-gray-800">
+        <div class="w-full max-w-sm min-w-xs p-2 bg-white border border-gray-500 rounded-lg shadow-md sm:p-4 md:p-6 dark:bg-gray-800">
 
-            <div>
-                <h2 class="text-4xl dark:text-white mb-4">{{ currency.getName }}
-                    {% if currency.getName is not same as currency.getSymbol %}
-                        ({{ currency.getSymbol }})
-                    {% endif %}
-                </h2>
+            <h2 class="w-fit mb-4 mx-auto text-4xl dark:text-white">
+                {{ currency.getName }}
+                {% if currency.getName is not same as currency.getSymbol %}
+                    ({{ currency.getSymbol }})
+                {% endif %}
+            </h2>
+
+            <p class="dark:text-white">
+                <span>Price:</span>
+                {% if currency.getPrice < 1 %}
+                    {{ currency.getPrice | format_currency(currencyCode, {max_significant_digits_used: 4}) }}
+                {% else %}
+                    {{ (currency.getPrice | format_currency(currencyCode, {fraction_digit: 2})) | replace({',': ''}) }}
+                {% endif %}
+            </p>
+            <p>
+                <span class="dark:text-white">Change 1h:</span>
+                {% if currency.getChange1h > 0 %}
+                    <span class="text-green-700 dark:text-green-400">&#9650;{{ (currency.getChange1h) | round(2) }}%</span>
+                {% else %}
+                    <span class="text-red-700 dark:text-red-400">&#9660;{{ (currency.getChange1h) | abs | round(2) }}%</span>
+                {% endif %}
+            </p>
+            <p>
+                <span class="dark:text-white">Change 24h:</span>
+                {% if currency.getChange24h > 0 %}
+                    <span class="text-green-700 dark:text-green-400">&#9650;{{ (currency.getChange24h) | round(2) }}%</span>
+                {% else %}
+                    <span class="text-red-700 dark:text-red-400">&#9660;{{ (currency.getChange24h) | abs | round(2) }}%</span>
+                {% endif %}
+            </p>
+            <p>
+                <span class="dark:text-white">Change 7d:</span>
+                {% if currency.getChange7d > 0 %}
+                    <span class="text-green-700 dark:text-green-400">&#9650;{{ (currency.getChange7d) | round(2) }}%</span>
+                {% else %}
+                    <span class="text-red-700 dark:text-red-400">&#9660;{{ (currency.getChange7d) | abs | round(2) }}%</span>
+                {% endif %}
+            </p>
+        </div>
+
+        <div class="w-full max-w-sm min-w-xs mt-3 p-2 bg-white border border-gray-500 rounded-lg shadow-md sm:p-4 md:p-6 dark:bg-gray-800">
+
+            <h2 class="w-fit mb-4 mx-auto text-4xl dark:text-white">
+                Trade {{ currency.getName }}
+            </h2>
+
+            <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <div class="dark:text-white">
-                        <span>Price:</span>
-                        {% if currency.getPrice < 1 %}
-                            {{ currency.getPrice | format_currency(currencyCode, {max_significant_digits_used: 4}) }}
-                        {% else %}
-                            {{ (currency.getPrice | format_currency(currencyCode, {fraction_digit: 2})) | replace({',': ''}) }}
-                        {% endif %}
-                    </div>
-                    <div>
-                        <span class="dark:text-white">Change 1h:</span>
-                        {% if currency.getChange1h > 0 %}
-                            <span class="text-green-700 dark:text-green-400">&#9650;{{ (currency.getChange1h) | round(2) }}%</span>
-                        {% else %}
-                            <span class="text-red-700 dark:text-red-400">&#9660;{{ (currency.getChange1h) | abs | round(2) }}%</span>
-                        {% endif %}
-                    </div>
-                    <div>
-                        <span class="dark:text-white">Change 24h:</span>
-                        {% if currency.getChange24h > 0 %}
-                            <span class="text-green-700 dark:text-green-400">&#9650;{{ (currency.getChange24h) | round(2) }}%</span>
-                        {% else %}
-                            <span class="text-red-700 dark:text-red-400">&#9660;{{ (currency.getChange24h) | abs | round(2) }}%</span>
-                        {% endif %}
-                    </div>
-                    <div>
-                        <span class="dark:text-white">Change 7d:</span>
-                        {% if currency.getChange7d > 0 %}
-                            <span class="text-green-700 dark:text-green-400">&#9650;{{ (currency.getChange7d) | round(2) }}%</span>
-                        {% else %}
-                            <span class="text-red-700 dark:text-red-400">&#9660;{{ (currency.getChange7d) | abs | round(2) }}%</span>
-                        {% endif %}
-                    </div>
+                    {% if auth %}
+                        <div class="my-2 text-center dark:text-white">
+                            Wallet: {{ auth.wallet | format_currency(currencyCode) | replace({',': ''}) }}
+                        </div>
+                    {% endif %}
+                    <form class="w-full" action="/currency/{{ currency.getSymbol }}/buy"
+                          method="post">
+                        <label for="amountToBuy">
+                            <input type="text" id="amountToBuy" name="amountToBuy" placeholder="Amount"
+                                   spellcheck="false"
+                                   class="w-full bg-gray-50 border-4 border-gray-300 text-gray-900 rounded-lg
+                                   focus:ring-blue-500 focus:border-blue-500 block p-1 dark:bg-gray-700
+                                   dark:border-gray-600 dark:placeholder-gray-400 dark:text-white
+                                   dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                   required>
+                        </label>
+                        <div class="w-fit mx-auto mt-2">
+                            <button type="submit"
+                                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none
+                                    focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto px-5 py-2 text-center
+                                    dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                Buy
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div>
+                    {% if auth %}
+                        <div class="my-2 text-center dark:text-white">
+                            You own:
+                            {% if currency.getAmountOwned %}
+                                {% if currency.getAmountOwned < 0 %}
+                                    <span class="text-red-700 dark:text-red-400">
+                                        {{ currency.getAmountOwned | round(8) }}
+                                    </span>
+                                {% else %}
+                                    {{ currency.getAmountOwned | round(8) }}
+                                {% endif %}
+                            {% else %}
+                                0
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                    <form class="w-full" action="/currency/{{ currency.getSymbol }}/sell"
+                          method="post">
+                        <label for="amountToSell">
+                            <input type="text" id="amountToSell" name="amountToSell" placeholder="Amount"
+                                   spellcheck="false"
+                                   class="w-full bg-gray-50 border-4 border-gray-300 text-gray-900 rounded-lg
+                                   focus:ring-blue-500 focus:border-blue-500 block p-1 dark:bg-gray-700
+                                   dark:border-gray-600 dark:placeholder-gray-400 dark:text-white
+                                   dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                   required>
+                        </label>
+                        <div class="w-fit mx-auto mt-2">
+                            <button type="submit"
+                                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none
+                                    focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto px-5 py-2 text-center
+                                    dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                Sell
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
-            {% if auth %}
-                <div class="dark:text-white my-4">
-                    <div>
-                        You own:
-                        {% if currency.getAmountOwned %} {{ currency.getAmountOwned | round(8) }} {% else %} 0 {% endif %}
-                    </div>
-                    <div>
-                        Wallet: {{ auth.wallet | format_currency(currencyCode) | replace({',': ''}) }}
-                    </div>
-                </div>
-            {% endif %}
-
-            <form class="max-w-sm mb-4 flex content-center gap-1" action="/currency/{{ currency.getSymbol }}/buy"
-                  method="post">
-                <label for="amountToBuy">
-                    <input type="text" id="amountToBuy" name="amountToBuy" placeholder="Amount to buy"
-                           spellcheck="false"
-                           class="w-56 bg-gray-50 border-4 dark:border-2 dark:m-0.5 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                           required>
-                </label>
-                <div class="justify-center self-end">
-                    <button type="submit"
-                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                        Buy
-                    </button>
-                </div>
-            </form>
-
-            <form class="max-w-sm mb-4 flex content-center gap-1" action="/currency/{{ currency.getSymbol }}/sell"
-                  method="post">
-                <label for="amountToSell">
-                    <input type="text" id="amountToSell" name="amountToSell" placeholder="Amount to sell"
-                           spellcheck="false"
-                           class="w-56 bg-gray-50 border-4 dark:border-2 dark:m-0.5 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                           required>
-                </label>
-                <div class="justify-center self-end">
-                    <button type="submit"
-                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                        Sell
-                    </button>
-                </div>
-            </form>
 
             {% if messages.currency %}
                 <p class="p-2 mt-2 rounded-lg bg-green-100 border-2 border-green-600 text-sm text-green-600 font-medium">

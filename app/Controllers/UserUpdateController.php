@@ -57,7 +57,7 @@ class UserUpdateController
         }
 
         Session::add(
-            'Successfully changed the username and e-mail!',
+            'Successfully changed username and e-mail!',
             'flashMessages', 'update'
         );
         return new Redirect('/account');
@@ -90,7 +90,7 @@ class UserUpdateController
         }
 
         Session::add(
-            'Successfully changed the password!',
+            'Successfully changed password!',
             'flashMessages', 'updatePassword'
         );
         return new Redirect('/account');

@@ -31,6 +31,9 @@ class Router
             $uri = substr($uri, 0, $pos);
         }
         $uri = rawurldecode($uri);
+        if (substr($uri, -1) === '/') {
+            $uri = substr($uri, 0, -1);
+        }
         $routeInfo = self::getDispatcher()->dispatch($httpMethod, $uri);
         switch ($routeInfo[0]) {
             case Dispatcher::NOT_FOUND:

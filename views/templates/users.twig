@@ -3,8 +3,12 @@
 {% block title %} | Users{% endblock %}
 
 {% block content %}
-    <div class="w-full max-w-sm p-4 bg-white border border-gray-500 rounded-lg shadow-md sm:p-6 md:p-8 dark:bg-gray-800">
-        <h2 class="text-4xl dark:text-white mb-4 text-center">All Users</h2>
+    <div class="w-full max-w-sm min-w-xs p-2 bg-white border border-gray-500 rounded-lg shadow-md sm:p-4 md:p-6
+         dark:bg-gray-800">
+
+        <h2 class="w-fit mb-4 mx-auto text-4xl dark:text-white">
+            All Users
+        </h2>
 
         {% include('partials/form_user_search.twig') %}
 
@@ -15,39 +19,45 @@
         {% else %}
             <div class="my-4">
                 {% for user in users %}
-                    <p class="font-semibold hover:underline mb-1 dark:text-white">
-                        <a href="/profile/{{ user.getId }}">{{ user.getName }}</a>
+                    <p class="font-semibold hover:underline mb-1 dark:text-white w-60 truncate">
+                        <a href="/profile/{{ user.getId }}">
+                            {{ user.getName }}
+                        </a>
                     </p>
                 {% endfor %}
             </div>
         {% endif %}
 
-        <div class="pageSelectorContainer">
-            <div class="previousPage dark:text-white">
+        <div class="flex items-center">
+
+            <div class="flex-1 text-right pr-[0.3rem] dark:text-white">
                 {% if page > 1 %}
                     <a href="/users/{{ page - 1 }}" class="font-semibold hover:underline dark:text-white">
                         Previous
                     </a>
                 {% else %}
-                    <span class="grayText">Previous</span>
+                    <span class="text-neutral-400 dark:text-neutral-600">Previous</span>
                 {% endif %}
             </div>
-            <div class="pageInputFormContainer">
-                <form id="userPagerForm" action="/users/" method="post" onsubmit="appendUsersPageURl()">
-                    <label for="pageInput">
-                        <input required id="pageInput" type="text" name="pageInput" spellcheck="false"
-                               class="w-32 text-center bg-gray-50 border-4 dark:border-2 dark:m-0.5 border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                               placeholder="Page {% if page %}{{ page }} of {{ pageCount }}{% else %}1 of 1{% endif %}">
-                    </label>
-                </form>
-            </div>
-            <div class="nextPage dark:text-white">
+
+            <form id="userPagerForm" action="/users/" method="post" onsubmit="appendUrlUsersPage()">
+                <label for="pageInput">
+                    <input required id="pageInput" type="text" name="pageInput" spellcheck="false"
+                           class="w-24 text-center bg-gray-50 border-4 border-gray-300 text-gray-900 rounded-lg
+                           focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700
+                           dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500
+                           dark:focus:border-blue-500"
+                           placeholder="{% if page %}{{ page }}{% else %}1{% endif %} of {{ pageCount }}">
+                </label>
+            </form>
+
+            <div class="flex-1 text-left pl-[0.3rem] dark:text-white">
                 {% if page < pageCount %}
                     <a href="/users/{{ page + 1 }}" class="font-semibold hover:underline dark:text-white">
                         Next
                     </a>
                 {% else %}
-                    <span class="grayText">Next</span>
+                    <span class="text-neutral-400 dark:text-neutral-600">Next</span>
                 {% endif %}
             </div>
         </div>

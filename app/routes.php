@@ -3,6 +3,7 @@
 namespace App;
 
 const ROUTES_MAP = [
+    ['GET', '', [\App\Controllers\CurrenciesController::class, 'showCurrenciesList']],
     ['GET', '/', [\App\Controllers\CurrenciesController::class, 'showCurrenciesList']],
 
     ['GET', '/register', [\App\Controllers\UserRegisterController::class, 'showRegisterForm']],
