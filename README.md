@@ -1,4 +1,4 @@
-# Crypto Market
+# Crypto Market website
 
 ![home.png](screenshots%2Fhome.png)
 
@@ -11,6 +11,7 @@
 ### Technologies used:
 - PHP 7.4
 - mySQL 8.0.31
+- Twig 3.4
 - Tailwind CSS 3.2.4
 - Flowbite 1.5.5
 
