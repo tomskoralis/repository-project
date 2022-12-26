@@ -1119,28 +1119,16 @@ input[type="range"]::-ms-fill-lower {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.grid-cols-\[minmax\(2\.5rem\2c _auto\)_minmax\(3rem\2c _auto\)_minmax\(6rem\2c _12rem\)_minmax\(5rem\2c _auto\)_minmax\(6rem\2c _12rem\)_minmax\(6rem\2c _12rem\)_minmax\(6rem\2c _12rem\)_minmax\(4rem\2c _10rem\)\] {
-  grid-template-columns: minmax(2.5rem, auto) minmax(3rem, auto) minmax(6rem, 12rem) minmax(5rem, auto) minmax(6rem, 12rem) minmax(6rem, 12rem) minmax(6rem, 12rem) minmax(4rem, 10rem);
-}
-
-.grid-cols-\[minmax\(2rem\2c _auto\)_minmax\(3rem\2c _auto\)_minmax\(5rem\2c _auto\)_minmax\(3rem\2c _auto\)_minmax\(5rem\2c _auto\)_minmax\(4rem\2c _8rem\)_minmax\(5\.5rem\2c _auto\)\] {
-  grid-template-columns: minmax(2rem, auto) minmax(3rem, auto) minmax(5rem, auto) minmax(3rem, auto) minmax(5rem, auto) minmax(4rem, 8rem) minmax(5.5rem, auto);
-}
-
-.grid-cols-\[minmax\(2rem\2c _auto\)_minmax\(5rem\2c _auto\)_minmax\(6rem\2c _auto\)_minmax\(6rem\2c _1fr\)\] {
-  grid-template-columns: minmax(2rem, auto) minmax(5rem, auto) minmax(6rem, auto) minmax(6rem, 1fr);
-}
-
-.grid-cols-\[minmax\(2\.5rem\2c _auto\)_minmax\(3rem\2c _auto\)_minmax\(6rem\2c _8rem\)_minmax\(5rem\2c _8rem\)_minmax\(6rem\2c _8rem\)_minmax\(6rem\2c _8rem\)_minmax\(6rem\2c _8rem\)_minmax\(4rem\2c _8rem\)\] {
-  grid-template-columns: minmax(2.5rem, auto) minmax(3rem, auto) minmax(6rem, 8rem) minmax(5rem, 8rem) minmax(6rem, 8rem) minmax(6rem, 8rem) minmax(6rem, 8rem) minmax(4rem, 8rem);
-}
-
 .grid-cols-\[minmax\(2\.5rem\2c _auto\)_minmax\(3rem\2c _auto\)_minmax\(6rem\2c _auto\)_minmax\(5rem\2c _auto\)_minmax\(6rem\2c _auto\)_minmax\(6rem\2c _auto\)_minmax\(6rem\2c _auto\)_minmax\(4rem\2c _auto\)\] {
   grid-template-columns: minmax(2.5rem, auto) minmax(3rem, auto) minmax(6rem, auto) minmax(5rem, auto) minmax(6rem, auto) minmax(6rem, auto) minmax(6rem, auto) minmax(4rem, auto);
 }
 
 .grid-cols-\[minmax\(2rem\2c _auto\)_minmax\(3rem\2c _auto\)_minmax\(5rem\2c _auto\)_minmax\(3rem\2c _auto\)_minmax\(5rem\2c _auto\)_minmax\(4rem\2c _auto\)_minmax\(5\.5rem\2c _auto\)\] {
   grid-template-columns: minmax(2rem, auto) minmax(3rem, auto) minmax(5rem, auto) minmax(3rem, auto) minmax(5rem, auto) minmax(4rem, auto) minmax(5.5rem, auto);
+}
+
+.grid-cols-\[minmax\(2rem\2c _auto\)_minmax\(5rem\2c _auto\)_minmax\(6rem\2c _auto\)_minmax\(6rem\2c _1fr\)\] {
+  grid-template-columns: minmax(2rem, auto) minmax(5rem, auto) minmax(6rem, auto) minmax(6rem, 1fr);
 }
 
 .flex-row {
