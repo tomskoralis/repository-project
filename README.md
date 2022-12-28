@@ -48,28 +48,16 @@
    ```
 
 ## Preview
-![home.png](screenshots/home.png)
+![home.png](https://raw.githubusercontent.com/tomskoralis/repository-project/master/screenshots/home.png)
 
 ### Login and edit account
-
-<video src="https://raw.githubusercontent.com/tomskoralis/repository-project/master/screenshots/1account.mp4" controls="controls">
-   https://raw.githubusercontent.com/tomskoralis/repository-project/master/screenshots/1account.gif
-</video>
+![account](https://raw.githubusercontent.com/tomskoralis/repository-project/master/screenshots/1account.mp4)
 
 ### Dark mode and wallet
-
-<video src="https://raw.githubusercontent.com/tomskoralis/repository-project/master/screenshots/2wallet.mp4" controls="controls">
-   https://raw.githubusercontent.com/tomskoralis/repository-project/master/screenshots/2wallet.gif
-</video>
+![wallet](https://raw.githubusercontent.com/tomskoralis/repository-project/master/screenshots/2wallet.mp4)
 
 ### Buying, selling, short selling
-
-<video src="https://raw.githubusercontent.com/tomskoralis/repository-project/master/screenshots/3currency.mp4" controls="controls">
-   https://raw.githubusercontent.com/tomskoralis/repository-project/master/screenshots/3currency.gif
-</video>
+![currency](https://raw.githubusercontent.com/tomskoralis/repository-project/master/screenshots/3currency.mp4)
 
 ### Transactions, statistics, gifting
-
-<video src="https://raw.githubusercontent.com/tomskoralis/repository-project/master/screenshots/4transactions.mp4">
-   https://raw.githubusercontent.com/tomskoralis/repository-project/master/screenshots/4transactions.gif
-</video>
+![transactions](https://raw.githubusercontent.com/tomskoralis/repository-project/master/screenshots/4transactions.mp4)
