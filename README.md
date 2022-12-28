@@ -48,16 +48,16 @@
    ```
 
 ## Preview
-![home](screenshots/home.png)
+![home.png](https://raw.githubusercontent.com/tomskoralis/repository-project/master/screenshots/home.png)
 
 ### Login and edit account
-![account](screenshots/1account.gif)
+![account](https://raw.githubusercontent.com/tomskoralis/repository-project/master/screenshots/1account.mp4)
 
 ### Dark mode and wallet
-![wallet](screenshots/2wallet.gif)
+![wallet](https://raw.githubusercontent.com/tomskoralis/repository-project/master/screenshots/2wallet.mp4)
 
 ### Buying, selling, short selling
-![currency](screenshots/3currency.gif)
+![currency](https://raw.githubusercontent.com/tomskoralis/repository-project/master/screenshots/3currency.mp4)
 
 ### Transactions, statistics, gifting
-![transactions](screenshots/4transactions.gif)
+![transactions](https://raw.githubusercontent.com/tomskoralis/repository-project/master/screenshots/4transactions.mp4)
