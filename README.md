@@ -1,4 +1,5 @@
 # Crypto Market website
+
 ## Features
 - Change appearance between light and dark mode
 - View cryptocurrency price and price changes from coinmarketcap.com API
@@ -7,12 +8,13 @@
 - Buy, sell, and short sell cryptocurrencies 
 - View user profiles and gift cryptocurrency to another user
 - View transaction history and transaction statistics
+
 ## Technologies used
 - PHP 7.4
-- mySQL 8.0.31
-- Twig 3.4
-- Tailwind CSS 3.2.4
-- Flowbite 1.5.5
+- mySQL 8.0
+- Composer 2.4
+- Node.js npm 8.5
+
 ## Instructions to run the website
 1. Clone this repository using the command:
    ```
@@ -35,20 +37,27 @@
    cd public/
    npm i -D tailwindcss@3.2.4
    npm i flowbite@1.5.5
+   ```
+9. (optional) Recompile styles
+   ```
    npx tailwindcss -i styles/input.css -o styles/styles.css
    ```
-9. Test the website by using the command and opening it in the browser:
+10. Test the website by using the command and opening it in the browser:
    ```
    php -S localhost:8000
    ```
+
 ## Preview
-![home.png](screenshots/home.png)
+![home.png](https://raw.githubusercontent.com/tomskoralis/repository-project/master/screenshots/home.png)
+
+### Login and edit account
+![account](https://raw.githubusercontent.com/tomskoralis/repository-project/master/screenshots/1account.webm)
 
 ### Dark mode and wallet
-![1wallet.gif](screenshots/1wallet.gif)
+![wallet](https://raw.githubusercontent.com/tomskoralis/repository-project/master/screenshots/2wallet.webm)
 
 ### Buying, selling, short selling
-![2currency.gif](screenshots/2currency.gif)
+![currency](https://raw.githubusercontent.com/tomskoralis/repository-project/master/screenshots/3currency.webm)
 
 ### Transactions, statistics, gifting
-![3transactions.gif](screenshots/3transactions.gif)
+![transactions](https://raw.githubusercontent.com/tomskoralis/repository-project/master/screenshots/4transactions.webm)
