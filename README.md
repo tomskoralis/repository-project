@@ -48,16 +48,16 @@
    ```
 
 ## Preview
-![home](screenshots/home.png)
+![home](pictures/home.png)
 
 ### Login and edit account
-![account](screenshots/1account.gif)
+![account](pictures/1account.gif)
 
 ### Dark mode and wallet
-![wallet](screenshots/2wallet.gif)
+![wallet](pictures/2wallet.gif)
 
 ### Buying, selling, short selling
-![currency](screenshots/3currency.gif)
+![currency](pictures/3currency.gif)
 
 ### Transactions, statistics, gifting
-![transactions](screenshots/4transactions.gif)
+![transactions](pictures/4transactions.gif)
